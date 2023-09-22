@@ -1,0 +1,24 @@
+Database Tables:
+Customers
+CustomerID, Name, Password, Email, AccountBalance, FK OrderID (as Order History), FK ReportID (as Report History)
+
+Operators
+OperatorID, Name, Password, Email, FK RecordID (as Record History)
+
+Managers
+ManagerID, Name, Password, Email
+
+Vehicle
+VehicleID, Types, Prices, BatteryStatus, Conditions (Repaired, Defective, New), isRented, FK locationID
+
+Vehicle Storing Location
+LocationID, Name, Axis, MaxCapacity, CurrentCapacity.
+
+Order
+OrderID, StartLocation, EndLocation, StartTime, EndTime, Price, isPaid, FK CustomerID, FK VehicleID
+
+Maintenance Record
+RecordID, Notation, FK VehicleID, FK OperatorID
+
+Report
+ReportID, Notation, FK CustomerID, FK VehicleID, FK LocationID
