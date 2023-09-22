@@ -22,3 +22,5 @@ RecordID, Notation, FK VehicleID, FK OperatorID
 
 Report
 ReportID, Notation, FK CustomerID, FK VehicleID, FK LocationID
+
+Predict '''
