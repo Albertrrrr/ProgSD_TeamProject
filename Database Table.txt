@@ -9,7 +9,7 @@ Managers
 ManagerID, Name, Password, Email
 
 Vehicle
-VehicleID, Types, Prices, BatteryStatus, Conditions (Repaired, Defective, New), isRented, FK locationID
+VehicleID, Types, Prices, BatteryStatus, Conditions (Repaired, Available), isRented, FK locationID
 
 Vehicle Storing Location
 LocationID, Name, Axis, MaxCapacity, CurrentCapacity.
