@@ -1,4 +1,11 @@
-print("Welcome")
+from tkinter import *
+from GUI import LoginPage
 
-print("doing push")
-print("I'm testing")
+def main():
+    tk = Tk()
+    root.title("Vehicle Sharing System")
+    loginPage.LoginPage(root)
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
