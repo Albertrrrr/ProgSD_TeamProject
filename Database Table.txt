@@ -11,7 +11,7 @@ ManagerID, Name, Password, Email
 Vehicle
 VehicleID, Types, Prices, BatteryStatus, Conditions (Repaired, Available), isRented, FK locationID
 
-Vehicle Storing Location
+VehicleStop
 LocationID, Name, Axis, MaxCapacity, CurrentCapacity.
 
 Order
