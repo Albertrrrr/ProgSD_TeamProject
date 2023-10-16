@@ -6,7 +6,7 @@ from GUI import CustomerIndex
 class LoginPage(object):
     def __init__(self):
         self.root = master
-        self.root.geometry("1600x1200")
+        self.root.geometry("1300x800")
         self.username = StringVar()
         self.password = StringVar()
         self.CreatePage()
