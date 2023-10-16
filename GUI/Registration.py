@@ -4,7 +4,7 @@ from tkinter import font
 window = Tk()
 window.geometry("1300x800")
 window.title("Bike-sharing system")
-l1_font = font.Font(family = "Registration", size = 24)
+l1_font = font.Font(family = "Times New Roman", size = 24)
 label1 = Label(text = "Welcome customer!", font = l1_font)
 label1.place(x = 500, y = 100)
 
