@@ -1,26 +1,59 @@
 Database Tables:
-Customers
-CustomerID, Name, Password, Email, AccountBalance, FK OrderID (as Order History), FK ReportID (as Report History)
+Customer
+字段类型不是      null 默认值
+customerID      int COMMENT     ''ID'' 不是 null
+name            varchar(255)    COMMENT ''姓名'' 不是 null
+password        varchar(255)    COMMENT ''密码'' 不是 null
+email           varchar(255)    COMMENT ''邮箱'' 不是 null
+accountBalance  float(128,2)    COMMENT ''余额''
 
 Operators
-OperatorID, Name, Password, Email, FK RecordID (as Record History)
+字段类型不是      null 默认值
+operatorID      int             COMMENT ''维修⼈员ID'' 不是 null
+name            varchar(255)    COMMENT ''姓名'' 不是 null
+password        varchar(255)    COMMENT ''密码'' 不是 null
+email           varchar(255)    COMMENT ''邮箱'' 不是 null
 
-Managers
-ManagerID, Name, Password, Email
-
-Vehicle
-VehicleID, Types, Prices, BatteryStatus, Conditions (Repaired, Available), isRented, FK locationID
-
-VehicleStop
-LocationID, Name, Axis, MaxCapacity, CurrentCapacity.
 
 Order
-OrderID, StartLocation, EndLocation, StartTime, EndTime, Price, isPaid, FK CustomerID, FK VehicleID
-
-Maintenance Record
-RecordID, Notation, FK VehicleID, FK OperatorID
+字段类型不是      null 默认值
+orderID         int             COMMENT ''订单编号'' 不是 null
+renter          int             COMMENT ''租⽤⼈ID'' 不是 null
+bike            int             COMMENT ''租⽤⻋ID'' 不是 null
+startTime       datetime        COMMENT ''起租时间'' 不是 null
+endTime         datetime        COMMENT ''租⽤结束时间'' 不是 null
+createTime      datetime        COMMENT ''订单创建时间'' 不是 null
+finishTime      datetime        COMMENT ''订单结束时间'' 不是 null
+cost            double(10,2)    COMMENT ''⽀付⾦额'' 不是 null
+isPaid          tinyint(1)      COMMENT ''⽀付状态'' 不是 null
+status          varchar(255)    COMMENT ''订单状态'' 不是 null
 
 Report
-ReportID, Notation, FK CustomerID, FK VehicleID, FK LocationID
+字段类型不是      null 默认值
+reportID        int             COMMENT ''报告ID'' 不是 null
+fromID          int             COMMENT ''报告⼈ID'' 不是 null
+message         varchar(255)    COMMENT ''正⽂''
+date            datetime        COMMENT ''时间'' 不是 null
+status          varchar(255)    COMMENT ''报告状态'' 不是 null
+authen          tinyint(1)      COMMENT ''报告人类型'' 不是 null
 
+Vehicle
+字段类型不是      null 默认值
+vehicleID       int             COMMENT ''⻋ID'' 不是 null
+types           varchar(128)    COMMENT ''⻋类型'' 不是 null
+price           double(10,2)    COMMENT ''价格'' 不是 null
+batteryStatus   double(8,2)     COMMENT ''电池电量'' 不是 null
+locations       varchar(255)    COMMENT ''位置''
+status          varchar(255)    COMMENT ''⻋状态'' 不是 null
+isRented        tinyint(1)      COMMENT ''租⽤状态'' 不是 null
+isLocked        tinyint(1)      COMMENT ''上锁状态'' 不是 null
+renter          int             COMMENT ''租⽤⼈ID''
+
+VehicleStop
+字段类型不是      null 默认值
+locationID      int             COMMENT ''站点ID'' 不是 null
+name            varchar(255)    COMMENT ''站点名称'' 不是 null
+axis            varchar(255)    COMMENT ''位置'' 不是 null
+maxCapacity     int             COMMENT ''最⼤容量'' 不是 null
+currentCapactiy int             COMMENT ''当前可⽤数⽬''
 Predict '''
