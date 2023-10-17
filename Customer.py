@@ -21,7 +21,6 @@ data = cursor.fetchall()
 # 拿到属于数据库的最后一个id
 currentID = data[-1][0]
 
-
 class Customer:
     def __init__(self, email, par=None):
         if par is None:
@@ -112,4 +111,3 @@ class Customer:
 
         print("Change successfully")
 
-    
