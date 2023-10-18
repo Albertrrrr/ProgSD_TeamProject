@@ -41,6 +41,14 @@ class Customer:
             self.__balance = 5.5
 
     @property
+    def id(self):
+        return self.__id
+
+    @id.setter
+    def id(self, value):
+        self.__id = value
+
+    @property
     def name(self):
         return self.__name
 
@@ -114,6 +122,13 @@ class Customer:
         cursor.execute(saveSQL, (self.__id, self.name, self.password, newEmail, self.__balance))
         db.commit()
 
+        print("Change successfully")
+
+    def updateBalance(self,newBalance: str):
+        self.__balance = newBalance
+        updateSQL = "update Customers set accountBalance = %s where customerID = %s"
+        cursor.execute(updateSQL, (self.__balance, self.__id))
+        db.commit()
         print("Change successfully")
 
     def topUpBalance(self,topupNumber: float):
