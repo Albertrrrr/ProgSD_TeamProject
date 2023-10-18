@@ -118,7 +118,7 @@ class Customer:
 
     def topUpBalance(self,topupNumber: float):
         current_time = datetime.datetime.now()
-        time_string = current_time.strftime("%Y%m%d%H%M%S")
+        time_string = current_time.strftime("%Y%m%d%H%_M%S_")
         out_trade_no = time_string + str(self.__id)
         payer = pay(out_trade_no,topupNumber,"15m")
         flag = payer.pay()
