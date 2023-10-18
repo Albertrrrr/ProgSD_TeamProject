@@ -13,8 +13,12 @@ from Customer import Customer
 # newCustomer.add()
 
 #测试更改邮箱 主键
-customer1 = Customer("zhengjunnan@gmail.com")
-customer1.updateEmail("zhengjunan@yahool.com")
+# customer1 = Customer("zhengjunnan@gmail.com")
+# customer1.updateEmail("zhengjunan@yahool.com")
+
+#测试充值
+customer = Customer("zhangyujia@gmail.com")
+customer.topUpBalance(150.5)
 
 
 

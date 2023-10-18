@@ -2,7 +2,8 @@
 Introduction to Customer Class
 """
 import pymysql
-from pymysql import err
+from pay import pay
+import datetime
 
 # mysql configs
 mysql_config = {
@@ -71,7 +72,7 @@ class Customer:
     def password(self, value):
         self.__password = value
 
-    # update to database
+    #增加customer
     def add(self):
         saveSQL = "insert ignore into Customers(customerID,name,password,email,accountBalance)" \
                   "values(%s,%s,%s,%s,%s)"
@@ -79,12 +80,14 @@ class Customer:
         db.commit()
         print("Add a new customer successfully", self.__id, self.name, self.password, self.email, self.balance)
 
+    #删除customer
     def delete(self):
         deleteSQL = "delete from Customers where customerID = %s"
         cursor.execute(deleteSQL, self.__id)
         db.commit()
         print("Delete customer successfully", self.__id)
 
+    #更新名字
     def updateName(self, newName: str):
         self.__name = newName
         updateSQL = "update Customers set name = %s where customerID = %s"
@@ -92,6 +95,7 @@ class Customer:
         db.commit()
         print("Change successfully")
 
+    #更新密码
     def updatePassword(self, newPassword: str):
         self.__password = newPassword
         updateSQL = "update Customers set password = %s where customerID = %s"
@@ -99,6 +103,7 @@ class Customer:
         db.commit()
         print("Change successfully")
 
+    #更新邮件 主键
     def updateEmail(self, newEmail: str):
         deleteSQL = "delete from Customers where customerID = %s"
         cursor.execute(deleteSQL, self.__id)
@@ -110,4 +115,21 @@ class Customer:
         db.commit()
 
         print("Change successfully")
+
+    def topUpBalance(self,topupNumber: float):
+        current_time = datetime.datetime.now()
+        time_string = current_time.strftime("%Y%m%d%H%M%S")
+        out_trade_no = time_string + str(self.__id)
+        payer = pay(out_trade_no,topupNumber,"15m")
+        flag = payer.pay()
+        if flag:
+            self.__balance += topupNumber
+            topUpBalanceSQL = "update Customers set accountBalance = %s where customerID = %s"
+            cursor.execute(topUpBalanceSQL, (self.__balance, self.__id))
+            db.commit()
+            print("successfully top up account balance")
+        else:
+            print("top up account balance failed")
+
+
 
