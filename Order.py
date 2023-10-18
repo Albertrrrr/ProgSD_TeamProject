@@ -60,6 +60,9 @@ class Order:
         else:
             self.__isFlag = isFlag
 
+    def startRent(self):
+        startSQL = ""
+
 
 
 if __name__ == '__main__':
