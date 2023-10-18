@@ -62,6 +62,101 @@ class Order:
         else:
             self.__isFlag = 0
 
+    @property
+    def endTime(self):
+        return self.__endTime
+
+    @endTime.setter
+    def endTime(self, value):
+        self.__endTime = value
+
+    @property
+    def isPaid(self):
+        return self.__isPaid
+
+    @isPaid.setter
+    def isPaid(self, value):
+        self.__isPaid = value
+
+    @property
+    def email(self):
+        return self.__email
+
+    @email.setter
+    def email(self, value):
+        self.__email = value
+
+    @property
+    def isFlag(self):
+        return self.__isFlag
+
+    @isFlag.setter
+    def isFlag(self, value):
+        self.__isFlag = value
+
+    @property
+    def id(self):
+        return self.__id
+
+    @id.setter
+    def id(self, value):
+        self.__id = value
+
+    @property
+    def bikeID(self):
+        return self.__bikeID
+
+    @bikeID.setter
+    def bikeID(self, value):
+        self.__bikeID = value
+
+    @property
+    def cost(self):
+        return self.__cost
+
+    @cost.setter
+    def cost(self, value):
+        self.__cost = value
+
+    @property
+    def renterID(self):
+        return self.__renterID
+
+    @renterID.setter
+    def renterID(self, value):
+        self.__renterID = value
+
+    @property
+    def startTime(self):
+        return self.__startTime
+
+    @startTime.setter
+    def startTime(self, value):
+        self.__startTime = value
+
+    @property
+    def finishTime(self):
+        return self.__finishTime
+
+    @finishTime.setter
+    def finishTime(self, value):
+        self.__finishTime = value
+
+    @property
+    def createTime(self):
+        return self.__createTime
+
+    @createTime.setter
+    def createTime(self, value):
+        self.__createTime = value
+
+    @property
+    def status(self):
+        return self.__status
+
+    @status.setter
+    def status(self, value):
+        self.__status = value
 
     def startRent(self):
         if len(dir(self)) == 36:
@@ -189,13 +284,6 @@ if __name__ == '__main__':
     order1.payTo(11)
     order2 = Order(customer)
     order2.startRent()
-
-
-
-
-
-
-
 
     #order1.cancel()
 
