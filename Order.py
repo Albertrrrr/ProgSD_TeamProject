@@ -159,7 +159,7 @@ class Order:
         self.__status = value
 
     def startRent(self):
-        if len(dir(self)) == 36:
+        if len(dir(self)) == 48:
             raise OrderError("You have a unpaid order, please pay it")
         else:
             startSQL = "insert into `Order`(orderID,renter,bike,startTime,endTime,createTime,finishTime,cost,isPaid,status) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -281,9 +281,8 @@ if __name__ == '__main__':
         print(e)
         pass
 
-    order1.payTo(11)
+    order1.payTo(12)
     order2 = Order(customer)
-    order2.startRent()
 
     #order1.cancel()
 
