@@ -23,8 +23,10 @@ data = cursor.fetchall()
 currentID = data[-1][0]
 
 class Customer:
-    def __init__(self, email, par=None):
-        if par is None:
+    def __init__(self, email=None):
+        if email is None:
+            pass
+        else:
             oneSQL = "SELECT * FROM Customers WHERE email = %s"
             cursor.execute(oneSQL, email)
             oneData = cursor.fetchone()
@@ -33,12 +35,6 @@ class Customer:
             self.__password = oneData[2]
             self.__email = oneData[3]
             self.__balance = oneData[4]
-        else:
-            self.__id = currentID + 1
-            self.__name = par[0]
-            self.__password = par[1]
-            self.__email = par[2]
-            self.__balance = 5.5
 
     @property
     def id(self):
@@ -80,13 +76,26 @@ class Customer:
     def password(self, value):
         self.__password = value
 
-    #增加customer
-    def add(self):
+    #增加customer par=[name,password,email]
+    def add(self, par: list):
+
+        self.__id = currentID + 1
+        self.__name = par[0]
+        self.__password = par[1]
+        self.__email = par[2]
+        self.__balance = 5.5
+
         saveSQL = "insert ignore into Customers(customerID,name,password,email,accountBalance)" \
                   "values(%s,%s,%s,%s,%s)"
-        cursor.execute(saveSQL, (self.__id, self.name, self.password, self.__email, self.__balance))
+        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email, self.__balance))
         db.commit()
-        print("Add a new customer successfully", self.__id, self.name, self.password, self.email, self.balance)
+        if addFlag:
+            print("Add a new customer successfully", self.__id, self.__name, self.__password, self.__email, self.__balance)
+            return True
+        else:
+            print("Change another email")
+            return False
+
 
     #删除customer
     def delete(self):

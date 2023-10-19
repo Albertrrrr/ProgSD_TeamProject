@@ -8,17 +8,18 @@ from Customer import Customer
 
 
 #测试新用户
-# par2 = ["Junan Zheng","oi2313","zhengjunnan@gmail.com"]
-# newCustomer = Customer(email=None, par=par2)
-# newCustomer.add()
+# par2 = ["Junan Zheng","oi2313","zhengjunnan99@gmail.com"]
+# newCustomer = Customer()
+# flag = newCustomer.add(par2)
+# print(flag)
 
 #测试更改邮箱 主键
 # customer1 = Customer("zhengjunnan@gmail.com")
 # customer1.updateEmail("zhengjunan@yahool.com")
 
 #测试充值
-customer = Customer("zhangyujia@gmail.com")
-customer.topUpBalance(150.5)
+# customer = Customer("zhangyujia@gmail.com")
+# customer.topUpBalance(150.5)
 
 
 
