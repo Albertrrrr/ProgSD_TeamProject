@@ -143,7 +143,6 @@ class Report:
         print("Successfully, updates the report id: ", reportID)
 
 
-
 if __name__ == '__main__':
     customer = Customer("zhangruixian@gmail.com")
     rep = Report(customer,None,"")
