@@ -1,6 +1,5 @@
 import pymysql
 from Customer import Customer
-from Operator import Operator
 from vehicleStop import vehicleStop
 from Report import Report
 
@@ -29,12 +28,11 @@ vehicle设计 传入customer时 仅可以进行租用 锁定 解锁 归还
 """
 
 class Vehicle:
-    def __init__(self,customer:Customer,operator:Operator,vehicleID:int = None):
+    def __init__(self,customer:Customer,vehicleID:int = None):
         if id is None:
             pass
-        elif (customer and vehicleID is not None) or (operator and vehicleID is not None):
+        elif customer or vehicleID is not None:
             self.__customer = customer
-            self.__operator = operator
 
             self.__vehicleID = vehicleID
             oneSQL = "SELECT * FROM `Vehicle` WHERE vehicleID = %s"
@@ -48,17 +46,6 @@ class Vehicle:
             self.__isRented = oneData[6]
             self.__isLocked = oneData[7]
             self.__renter = oneData[-1]
-
-        elif operator is None:
-            pass
-
-    @property
-    def operator(self):
-        return self.__operator
-
-    @operator.setter
-    def operator(self, value):
-        self.__operator = value
 
     @property
     def price(self):
@@ -219,10 +206,10 @@ class Vehicle:
         db.commit()
         print("Fixing ...")
 
-    def endFix(self,reportID: int):
+    def endFix(self,reportID: int,operator):
         self.__status = 'normal'
         self.__isLocked = 0
-        report = Report(None,self.__operator,"")
+        report = Report(None,operator,"")
         report.done(reportID)
 
         updateSQL = "update `Vehicle` set status = %s, isLocked=%s where vehicleID = %s"
@@ -262,8 +249,8 @@ if __name__ == '__main__':
     # stop2 = vehicleStop(2)
     # vehicle1.returnBike(stop2)
     #
-    operator1 = Operator("")
-    vehicle = Vehicle(None,operator1,2)
+    # operator1 = Operator("")
+    vehicle = Vehicle(None,2)
     # vehicle.updateLocations(2)
 
     # vehicle2 = Vehicle(None,operator1,None)

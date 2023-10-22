@@ -1,5 +1,4 @@
 from Customer import Customer
-from Operator import Operator
 import pymysql
 import datetime
 # mysql configs
@@ -21,7 +20,7 @@ data = cursor.fetchall()
 currentID = data[-1][0]
 
 class Report:
-    def __init__(self,customer: Customer, operator: Operator,message: str):
+    def __init__(self,customer: Customer, operator ,message: str):
         if operator is None:
             self.__reportID = currentID + 1
             self.__formID = customer.id

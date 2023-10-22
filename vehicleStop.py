@@ -127,10 +127,17 @@ class vehicleStop:
             res.append(list(i))
         return res
 
-    #输出属于该车站的所有车辆
+    #输出属于该车站的所有可用车辆
     def vehicleToList(self):
-        print("未完成")
+        searchSQL = "SELECT * FROM `Vehicle` WHERE locations = %s AND isLocked = 0"
+        cursor.execute(searchSQL,(self.__id))
+        data = cursor.fetchall()
 
+        res = []
+        for i in data:
+            tupleID = (i[0],i[1],i[3],i[5])
+            res.append(tupleID)
+        return res
 
 if __name__ == '__main__':
     #空对象 仅可返回全部的Vehicle Stops
@@ -139,7 +146,8 @@ if __name__ == '__main__':
     # par = ['Test2','(55.869，-5.301)',20,5]
     # stop1.add(par)
     #测试对象
-    stop2 = vehicleStop(2)
+    stop2 = vehicleStop(1)
+    stop2.vehicleToList()
     #测试删除
     #stop2.delete()
 
@@ -148,10 +156,10 @@ if __name__ == '__main__':
     # stop2.updateMaxCapacity(30)
 
     #测试格式化输出
-    details = stop1.stopDetails()
-    res = stop1.detailsFormat(details)
-    for i in res:
-        print(i)
+    # details = stop1.stopDetails()
+    # res = stop1.detailsFormat(details)
+    # for i in res:
+    #     print(i)
 
 
 
