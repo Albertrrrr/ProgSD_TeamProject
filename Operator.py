@@ -1,7 +1,6 @@
 class Operator:
     def __init__(self,mail, par=None):
         self.__id = 0
-        self.__name = par[0]
 
     @property
     def name(self):
