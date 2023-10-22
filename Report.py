@@ -103,7 +103,7 @@ class Report:
         reportSQL = "insert into `Report`(reportID,fromID,message,startTime,endTIme,status,authen) values(%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(reportSQL, (self.__reportID,self.__formID,self.__message,self.__startTime,self.__endTime,self.__status,self.__authen))
         db.commit()
-        print("Add a new order successfully", self.__reportID, self.__message)
+        print("Add a new report successfully", self.__reportID, self.__message)
 
     #done 方法之后要修改为manager修改 传入manager对象才能进行修改
     def done(self,reportID: int):
