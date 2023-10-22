@@ -20,7 +20,10 @@ cursor.execute("SELECT * from `Order`")
 # 使用 fetchone() 方法获取单条数据.
 data = cursor.fetchall()
 # 拿到属于数据库的最后一个id
-currentID = data[-1][0]
+try:
+    currentID = data[-1][0]
+except:
+    currentID = 0
 
 
 class OrderError(Exception):
@@ -53,6 +56,9 @@ class Order:
         self.__isFlag = 1
         self.__status = 0
         self.__isPaid = 0
+
+        self.__startStop = vehicle.locations
+        self.__endStop = None
 
         flagSQL = 'SELECT * FROM `Order` WHERE renter = %s'
         cursor.execute(flagSQL, self.__renterID)
@@ -165,13 +171,14 @@ class Order:
         else:
             self.__vehicle.rent()
             self.__bikeID = vehicle.vehicleID
-            startSQL = "insert into `Order`(orderID,renter,bike,startTime,endTime,createTime,finishTime,cost,isPaid,status) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            startSQL = "insert into `Order`(orderID,renter,bike,startTime,endTime,createTime,finishTime,cost,isPaid,status,startStop,endStop) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(startSQL, (self.__id, self.__renterID, self.__bikeID, self.__startTime, self.__endTime,
-                                      self.__createTime, self.__finishTime, self.__cost, self.__isPaid, self.__status))
+                                      self.__createTime, self.__finishTime, self.__cost, self.__isPaid, self.__status,self.__startStop,self.__endStop))
             db.commit()
             print("Add a new order successfully", self.__email)
 
     def endRent(self, stop: vehicleStop):
+        self.__endStop = stop.id
         current_time = datetime.datetime.now()
         self.__endTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -187,8 +194,8 @@ class Order:
         self.__vehicle.returnBike(stop)
 
 
-        updateSQL = "update `Order` set endTime = %s,cost = %s where orderID = %s"
-        cursor.execute(updateSQL, (self.__endTime, self.__cost, self.__id))
+        updateSQL = "update `Order` set endTime = %s,cost = %s,endStop = %s where orderID = %s"
+        cursor.execute(updateSQL, (self.__endTime, self.__cost, self.__endStop, self.__id))
         db.commit()
 
         return self.__cost
@@ -291,11 +298,17 @@ class Order:
 if __name__ == '__main__':
     import time
     from Customer import Customer
+    zyj = "zhangyujia@gmail.com"
+    zrx = "zhangruixian@gmail.com"
+    zjn = "zhengjunan@yahool.com"
 
-    customer = Customer("zhangyujia@gmail.com")
+    customer = Customer(zjn)
     vehicle = Vehicle(customer, None, 2)
     order1 = Order(customer,vehicle)
     stop = vehicleStop(1)
+
+    print(order1.detailsFormat(order1.orderDetails()))
+
     try:
         order1.startRent()
     except OrderError as e:
@@ -304,7 +317,7 @@ if __name__ == '__main__':
         order1.startRent()
         pass
 
-    time.sleep(5)
+    time.sleep(8)
     order1.endRent(stop)
     order1.pay()
     order1.close()
