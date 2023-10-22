@@ -33,6 +33,7 @@ class Records:
             cursor.execute("SELECT * from Records")
             # 使用 fetchone() 方法获取单条数据.
             data = cursor.fetchall()
+
             try:
                 currentID = data[-1][0]
             except:

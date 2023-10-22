@@ -21,6 +21,16 @@ currentID = data[-1][0]
 
 class Report:
     def __init__(self, customer, operator, message: str,):
+
+        cursor.execute("SELECT * from `Report`")
+        data = cursor.fetchall()
+        # 拿到属于数据库的最后一个id
+
+        try:
+            currentID = data[-1][0]
+        except:
+            currentID = 0
+
         if operator is None:
             self.__reportID = currentID + 1
             self.__formID = customer.id
