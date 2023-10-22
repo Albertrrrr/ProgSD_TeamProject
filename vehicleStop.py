@@ -111,6 +111,7 @@ class vehicleStop:
         db.commit()
         print("Change successfully")
 
+    #更新新的Vechile数量
     def updateCurrentCapacity(self):
         print("未完成")
 
@@ -126,9 +127,13 @@ class vehicleStop:
             res.append(list(i))
         return res
 
+    #输出属于该车站的所有车辆
+    def vehicleToList(self):
+        print("未完成")
 
 
 if __name__ == '__main__':
+    #空对象 仅可返回全部的Vehicle Stops
     stop1 = vehicleStop()
     #测试添加
     # par = ['Test2','(55.869，-5.301)',20,5]
@@ -143,8 +148,8 @@ if __name__ == '__main__':
     # stop2.updateMaxCapacity(30)
 
     #测试格式化输出
-    details = stop2.stopDetails()
-    res = stop2.detailsFormat(details)
+    details = stop1.stopDetails()
+    res = stop1.detailsFormat(details)
     for i in res:
         print(i)
 
