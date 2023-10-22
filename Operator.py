@@ -86,7 +86,6 @@ class Operator:
     def id(self, value):
         self.__id = value
 
-
     def generateCode(self, par: list):
         self.__par = par
 
@@ -169,18 +168,56 @@ class Operator:
 
         print("Change successfully")
 
-    def changeBattery(self,vehicle:Vehicle):
+    def changeBattery(self, vehicle: Vehicle):
         operator = Operator(self.__email)
         vehicle.changeBatteryStatus()
         recordStr = 'change new battery'
-        record = Records(operator,vehicle,recordStr)
+        record = Records(operator, vehicle, recordStr)
+        record.add()
+
+    def addVehicle(self, vehicle: Vehicle, par: list):
+        operator = Operator(self.__email)
+        vehicle.add(par)
+        recordStr = 'Add a new bike'
+        record = Records(operator, vehicle, recordStr)
+        record.add()
+
+    def deleteVehicle(self, vehicle: Vehicle):
+        operator = Operator(self.__email)
+        vehicle.delete()
+        recordStr = 'Delete the bike'
+        record = Records(operator, vehicle, recordStr)
+        record.add()
+
+    def changeLocation(self, vehicle: Vehicle, newLocation: int):
+        operator = Operator(self.__email)
+        oldLocation = vehicle.locations
+        vehicle.updateLocations(newLocation)
+        recordStr = 'Change location: ' + str(oldLocation) + ' to ' + str(newLocation)
+        record = Records(operator, vehicle, recordStr)
+        record.add()
+
+    def getLocation(self, vehicle: Vehicle):
+        return vehicle.vehicleID
+
+    def fixBike(self, vehicle: Vehicle):
+        operator = Operator(self.__email)
+        vehicle.fixing()
+        recordStr = 'Fixing bike: ' + str(vehicle.vehicleID)
+        record = Records(operator, vehicle, recordStr)
+        record.add()
+
+    def endFixBike(self, vehicle: Vehicle, reportID: int):
+        operator = Operator(self.__email)
+        vehicle.endFix(reportID, operator)
+        recordStr = 'Fixing bike is done: ' + str(vehicle.vehicleID)
+        record = Records(operator, vehicle, recordStr)
         record.add()
 
 
-
-
-
 if __name__ == '__main__':
+    from Customer import Customer
+    import time
     # 新用户
     # operator = Operator()
     # par = ['RRR', '3022008a', 'zhangruixian98@gmail.com']
@@ -201,7 +238,6 @@ if __name__ == '__main__':
     #         print(e)
     #         continue
 
-
     # 更改email
     # newEmail = 'zhangruixian@gmail.com'
     # operator.updateEmail(newEmail)
@@ -211,7 +247,41 @@ if __name__ == '__main__':
     # operator.updateName(newP_N[0])
     # operator.updatePassword(newP_N[1])
 
-    #测试修改电池
+    # 测试修改电池
+    # operator = Operator("zhangruixian@gmail.com")
+    # vehicle1 = Vehicle(None,1)
+    # operator.changeBattery(vehicle1)
+
+    # 测试添加车辆
+    # operator = Operator("zhangruixian@gmail.com")
+    # par = ['E-bike',2,'normal']
+    # vehicle1 = Vehicle(None, None)
+    # operator.addVehicle(vehicle1,par)
+
+    # 测试删除车辆
+    # operator = Operator("zhangruixian@gmail.com")
+    # vehicle1 = Vehicle(None, 4)
+    # operator.deleteVehicle(vehicle1)
+
+    # 测试更改车辆位置
+    # operator = Operator("zhangruixian@gmail.com")
+    # vehicle1 = Vehicle(None, 3)
+    # operator.changeLocation(vehicle1,1)
+
+    # 测试修理
+    # operator = Operator("zhangruixian@gmail.com")
+    # vehicle1 = Vehicle(None, 2)
+    # operator.fixBike(vehicle1)
+
+    #测试修理结束 修理全过程
     operator = Operator("zhangruixian@gmail.com")
-    vehicle1 = Vehicle(None,1)
-    operator.changeBattery(vehicle1)
+    customer = Customer("zhangyujia@gmail.com")
+    vehicle1 = Vehicle(customer, 1)
+    idReport = vehicle1.reportFix()
+    time.sleep(5)
+    operator.fixBike(vehicle1)
+    time.sleep(5)
+    operator.endFixBike(vehicle1,idReport)
+
+
+

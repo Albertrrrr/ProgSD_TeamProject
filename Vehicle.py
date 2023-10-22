@@ -22,15 +22,19 @@ data = cursor.fetchall()
 currentID = data[-1][0]
 
 
-"""
-vehicle设计 传入customer时 仅可以进行租用 锁定 解锁 归还 
-           传入manager时候，可以进行维修 更换电池等
-"""
-
 class Vehicle:
     def __init__(self,customer:Customer,vehicleID:int = None):
-        if id is None:
-            pass
+        if vehicleID is None:
+            self.__vehicleID = currentID + 1
+            self.__types = None
+            self.__price = None
+            self.__batteryStatus = None
+            self.__locations = None
+            self.__status = None
+            self.__isRented = None
+            self.__isLocked = None
+            self.__renter = None
+
         elif customer or vehicleID is not None:
             self.__customer = customer
 
@@ -38,6 +42,7 @@ class Vehicle:
             oneSQL = "SELECT * FROM `Vehicle` WHERE vehicleID = %s"
             cursor.execute(oneSQL, vehicleID)
             oneData = cursor.fetchone()
+
             self.__types = oneData[1]
             self.__price = oneData[2]
             self.__batteryStatus = oneData[3]
@@ -150,7 +155,6 @@ class Vehicle:
 
     #type locations status
     def add(self, par:list):
-        self.__vehicleID = currentID +1
         self.__types = par[0]
         if self.__types == 'E-bike':
             self.__price = 0.02
@@ -198,11 +202,13 @@ class Vehicle:
         cursor.execute(updateSQL, (self.__status, self.__isLocked, self.__vehicleID))
         db.commit()
         print("Successfully report")
+        return reportFix.reportID
 
     def fixing(self):
         self.__status = 'fixing'
-        updateSQL = "update `Vehicle` set status = %s where vehicleID = %s"
-        cursor.execute(updateSQL, (self.__status, self.__vehicleID))
+        self.__isLocked = 1
+        updateSQL = "update `Vehicle` set status = %s, isLocked = %s where vehicleID = %s"
+        cursor.execute(updateSQL, (self.__status, self.__isLocked, self.__vehicleID))
         db.commit()
         print("Fixing ...")
 

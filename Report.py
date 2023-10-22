@@ -1,4 +1,4 @@
-from Customer import Customer
+
 import pymysql
 import datetime
 # mysql configs
@@ -20,7 +20,7 @@ data = cursor.fetchall()
 currentID = data[-1][0]
 
 class Report:
-    def __init__(self,customer: Customer, operator ,message: str):
+    def __init__(self, customer, operator, message: str,):
         if operator is None:
             self.__reportID = currentID + 1
             self.__formID = customer.id
@@ -31,6 +31,7 @@ class Report:
             self.__endTime = None
             self.__status = 0
             self.__authen = 0
+
         elif customer is None:
             self.__reportID = currentID + 1
             self.__formID = operator.id
@@ -143,19 +144,23 @@ class Report:
 
 
 if __name__ == '__main__':
+    from Customer import Customer
+    from Vehicle import Vehicle
     customer = Customer("zhangruixian@gmail.com")
+    vehicle1 = Vehicle(None,2)
     rep = Report(customer,None,"")
-    detail = rep.reportDetails()
-    res = rep.detailsFormat(detail)
-    for i in res:
-        print(i)
-
-    rep.update("Update",4)
-
-    detail = rep.reportDetails()
-    res = rep.detailsFormat(detail)
-    for i in res:
-        print(i)
+    rep.report()
+    # detail = rep.reportDetails()
+    # res = rep.detailsFormat(detail)
+    # for i in res:
+    #     print(i)
+    #
+    # rep.update("Update",4)
+    #
+    # detail = rep.reportDetails()
+    # res = rep.detailsFormat(detail)
+    # for i in res:
+    #     print(i)
 
 
 

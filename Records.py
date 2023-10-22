@@ -18,10 +18,7 @@ cursor.execute("SELECT * from Records")
 # 使用 fetchone() 方法获取单条数据.
 data = cursor.fetchall()
 # 拿到属于数据库的最后一个id
-try:
-    currentID = data[-1][0]
-except:
-    currentID = 0
+
 
 class Records:
     def __init__(self,operator,vehicle,status: str):
@@ -33,6 +30,14 @@ class Records:
             self.__status = None
 
         else:
+            cursor.execute("SELECT * from Records")
+            # 使用 fetchone() 方法获取单条数据.
+            data = cursor.fetchall()
+            try:
+                currentID = data[-1][0]
+            except:
+                currentID = 0
+
             self.__id = currentID + 1
             self.__email = operator.email
 
@@ -41,6 +46,7 @@ class Records:
             self.__date = startTime
             self.__bikeID = vehicle.vehicleID
             self.__status = status
+            print("Records:", self.__id)
 
     def add(self):
         saveSQL = "insert ignore into Records(recordID,operator,`date`,bikeID,status)" \
