@@ -1,6 +1,8 @@
 import pymysql
 import datetime
 from Customer import Customer
+from Vehicle import Vehicle
+from vehicleStop import vehicleStop
 
 # mysql configs
 mysql_config = {
@@ -27,40 +29,39 @@ class OrderError(Exception):
 
 class Order:
     # par 格式 email, vehicleID
-    def __init__(self, customer: Customer):
-        self.__email = customer.email
-        renter_id = customer.id
+    def __init__(self, customer: Customer, vehicle:Vehicle):
+        self.__customer = customer
+        self.__email = self.__customer.email
+        self.__vehicle = vehicle
+
+        current_time = datetime.datetime.now()
+        startTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
+
+        self.__id = currentID + 1
+        self.__renterID = self.__customer.id
+        self.__bikeID =vehicle.vehicleID
+        self.__startTime = startTime
+        self.__endTime = None
+
+        current_time = datetime.datetime.now()
+        creatTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
+
+        self.__createTime = creatTime
+        self.__finishTime = None
+
+        self.__cost = 0
+        self.__isFlag = 1
+        self.__status = 0
+        self.__isPaid = 0
 
         flagSQL = 'SELECT * FROM `Order` WHERE renter = %s'
-        cursor.execute(flagSQL,renter_id)
+        cursor.execute(flagSQL, self.__renterID)
         orderList = cursor.fetchall()
 
-        self.__isFlag = True
         for i in orderList:
             if i[9] == '0':
-                self.__isFlag = False
+                self.__isFlag = 0
 
-        if self.__isFlag:
-            current_time = datetime.datetime.now()
-            startTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
-            self.__id = currentID + 1
-            self.__renterID = renter_id
-            self.__bikeID = 1 #之后修改
-            self.__startTime = startTime
-            self.__endTime = None
-
-            current_time = datetime.datetime.now()
-            creatTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
-
-            self.__createTime = creatTime
-            self.__finishTime = None
-            self.__cost = 0
-            self.__isPaid = 0
-            self.__isFlag = 1
-            self.__status = 0
-
-        else:
-            self.__isFlag = 0
 
     @property
     def endTime(self):
@@ -159,27 +160,32 @@ class Order:
         self.__status = value
 
     def startRent(self):
-        if len(dir(self)) == 48:
+        if  self.__isFlag == 0:
             raise OrderError("You have a unpaid order, please pay it")
         else:
+            self.__vehicle.rent()
+            self.__bikeID = vehicle.vehicleID
             startSQL = "insert into `Order`(orderID,renter,bike,startTime,endTime,createTime,finishTime,cost,isPaid,status) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(startSQL, (self.__id, self.__renterID, self.__bikeID, self.__startTime, self.__endTime,
-                                      self.__createTime,self.__finishTime,self.__cost,self.__isPaid,self.__status))
+                                      self.__createTime, self.__finishTime, self.__cost, self.__isPaid, self.__status))
             db.commit()
-            print("Add a new order successfully",self.__email)
+            print("Add a new order successfully", self.__email)
 
-
-    def endRent(self):
+    def endRent(self, stop: vehicleStop):
         current_time = datetime.datetime.now()
         self.__endTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
         stat = datetime.datetime.strptime(self.__startTime, "%Y-%m-%d %H:%M:%S")
         end = datetime.datetime.strptime(self.__endTime, "%Y-%m-%d %H:%M:%S")
 
-        time_difference = end -stat
+        time_difference = end - stat
         seconds = time_difference.total_seconds()
 
-        self.__cost = seconds * 0.05
+        self.__cost = seconds * self.__vehicle.price  # 记得修改
+
+        self.__vehicle.batteryDiscount(seconds)
+        self.__vehicle.returnBike(stop)
+
 
         updateSQL = "update `Order` set endTime = %s,cost = %s where orderID = %s"
         cursor.execute(updateSQL, (self.__endTime, self.__cost, self.__id))
@@ -188,11 +194,10 @@ class Order:
         return self.__cost
 
     def pay(self):
-        customer = Customer(self.__email,par=None)
-        accountBalance = customer.balance
+        accountBalance = self.__customer.balance
         if accountBalance >= self.__cost:
             accountBalance -= self.__cost
-            customer.updateBalance(accountBalance)
+            self.__customer.updateBalance(accountBalance)
             self.__isPaid = 1
             updateSQL = "update `Order` set isPaid = %s where orderID = %s"
             cursor.execute(updateSQL, (self.__isPaid, self.__id))
@@ -212,21 +217,26 @@ class Order:
             cursor.execute(updateSQL, (self.__finishTime, self.__status, self.__id))
             db.commit()
 
+
     def orderDetails(self):
         flagSQL = 'SELECT * FROM `Order` WHERE renter = %s'
         cursor.execute(flagSQL, self.__renterID)
         details = cursor.fetchall()
         return details
 
-    def detailsFormat(self,details: tuple):
+    def detailsFormat(self, details: tuple):
         detailsList = list(details)
         res = []
         for i in detailsList:
-            for j in range(3,7):
+            for j in range(3, 7):
                 i = list(i)
-                i[j] = i[j].strftime("%Y-%m-%d %H:%M:%S")
+                if i[j] is not None:
+                    i[j] = i[j].strftime("%Y-%m-%d %H:%M:%S")
+                else:
+                    i[j] = None
             res.append(i)
         return res
+
     def cancel(self):
         stat = datetime.datetime.strptime(self.__startTime, "%Y-%m-%d %H:%M:%S")
         current_time = datetime.datetime.now()
@@ -237,32 +247,41 @@ class Order:
             self.close()
             print("Cancel Successfully")
 
-    def payTo(self,id: int):
-        customer = Customer(self.__email, par=None)
-        accountBalance = customer.balance
-        idSQL = 'SELECT * FROM `Order` WHERE orderID = %s'
-        cursor.execute(idSQL, id)
+    def toPayOrder(self):
+        toPaySQL = 'SELECT * FROM `Order` WHERE renter = %s AND isPaid = 0'
+        cursor.execute(toPaySQL, self.__renterID)
+        toPayDetail = cursor.fetchall()
+        return toPayDetail
+
+    def payTo(self):
+        accountBalance = self.__customer.balance
+        idSQL = 'SELECT * FROM `Order` WHERE renter = %s AND isPaid = 0'
+        cursor.execute(idSQL, self.__renterID)
         index = cursor.fetchone()
         cost = index[-3]
+        orderID = index[0]
 
         if accountBalance >= cost:
             accountBalance -= cost
-            customer.updateBalance(accountBalance)
+            self.__customer.updateBalance(accountBalance)
             isPaid = 1
             updateSQL = "update `Order` set isPaid = %s where orderID = %s"
-            cursor.execute(updateSQL, (isPaid, id))
+            cursor.execute(updateSQL, (isPaid, orderID))
             db.commit()
-            print("successfully paid: ", id)
+            print("successfully paid: ", orderID)
 
             current_time = datetime.datetime.now()
             finishTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
             status = 1
 
             updateSQL = "update `Order` set finishTime = %s,status = %s where orderID = %s"
-            cursor.execute(updateSQL, (finishTime, status, id))
+            cursor.execute(updateSQL, (finishTime, status, orderID))
             db.commit()
 
-            print("Closed abnormal order: ", id)
+            self.__isFlag = 1
+            self.__isPaid = 1
+            self.close()
+            print("Closed abnormal order: ", orderID)
 
             return True
         else:
@@ -273,18 +292,24 @@ if __name__ == '__main__':
     import time
     from Customer import Customer
 
-    customer = Customer("zhangruixian@gmail.com")
-    order1 = Order(customer)
+    customer = Customer("zhangyujia@gmail.com")
+    vehicle = Vehicle(customer, None, 2)
+    order1 = Order(customer,vehicle)
+    stop = vehicleStop(1)
     try:
         order1.startRent()
     except OrderError as e:
-        print(e)
+        print(order1.detailsFormat(order1.toPayOrder()))
+        order1.payTo()
+        order1.startRent()
         pass
 
-    order1.payTo(12)
-    order2 = Order(customer)
+    time.sleep(5)
+    order1.endRent(stop)
+    order1.pay()
+    order1.close()
 
-    #order1.cancel()
+    # order1.cancel()
 
     # time.sleep(10)
     # order1.endRent()
@@ -296,11 +321,3 @@ if __name__ == '__main__':
     # dList = order1.detailsFormat(details)
     # for i in dList:
     #     print(i)
-
-
-
-
-
-
-
-
