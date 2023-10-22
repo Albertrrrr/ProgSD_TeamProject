@@ -1,60 +1,65 @@
 from tkinter import *
-import tkinter.messagebox as msgbox
-from modules import
-from GUI import CustomerIndex
+# import tkinter.messagebox as msgbox
+from tkinter import font
+from . import Registration
+from . import MapPage
+
 
 class LoginPage(object):
-    def __init__(self):
+    def __init__(self, master = None):
         self.root = master
-        self.root.geometry("1300x800")
-        self.username = StringVar()
-        self.password = StringVar()
+        self.root.geometry("1000x600")
         self.CreatePage()
 
     def CreatePage(self):
-        self.page = Frame(self.root)
-        self.page.pack()
 
-        Label(self.page).grid(row=0, stick=W)
-        Button(self.page, text='Customers')
-        Button(self.page, text='Operators')
-        Button(self.page, text='Managers')
-        Label(self.page, text='Username: ').grid(row=2, stick=W, pady=10)
-        Entry(self.page, textvariable=self.username).grid(row=1, column=1, stick=E)
-        Label(self.page, text='Password: ').grid(row=3, stick=W, pady=10)
-        Entry(self.page, textvariable=self.password, show='*').grid(row=2, column=1, stick=E)
-        Button(self.page, text='Log in', command=self.loginCheck).grid(row=3, stick=W, pady=10)
-        Button(self.page, text='Register', command=self.register).grid(row=3, column=1)
+        #self.page = Frame(self.root)
+        #self.page.pack()
 
-    def wrongPassword(self):
-        self.username.initialize("")
-        self.password.initialize("")
-        msgbox.showwarning("WARNING","The username or password you entered in incorrect! Please try again!")
-    def loginCheck(self):
-        username = self.username.get()
-        password = self.password.get()
+        # Define fonts
+        l1_font = font.Font(family="Helvetica", size=32, weight='bold')
+        l2_font = font.Font(family="Helvetica", size=14)
+        c_font = font.Font(family="Helvetica", size=14)
+        b_font = font.Font(family="Helvetica", size=14)
 
-        if username == "":
-            msgbox.showwarning("WARNING", "Please Enter your Username to Log in!")
-        elif password == "":
-            msgbox.showwarning("WARNING","Please Enter your Password to Log in")
-        else:
-            user = User.User(username)
-            role = user.login(password)
-            if role:
-                self.page.destroy()
-                if role == 'C':
-                    customer = Customer.Customer(username)
-                    CustomerPage.CustomerPage(customer, self.root)
-                elif role == 'M'
-                    manager = Manager.Manager(username)
-                    ManagerPage.ManagerPage(manager, self.root)
-                else:
-                    operator = Operator.Operator(username)
-                    OperatorPage.OperatorPage(operator, self.root)
-            else:
-                self.wrongPassowrd()
+        # Label 1
+        label1 = Label(text="Bike-sharing", font=l1_font)
+        label1.place(x=320, y=50)
+
+        check_var1 = IntVar()
+        check1 = Checkbutton(text="Customer", font=c_font, variable=check_var1)
+        check1.place(x=250, y=160)
+        check_var2 = IntVar()
+        check2 = Checkbutton(text="Operator", font=c_font, variable=check_var2)
+        check2.place(x=450, y=160)
+        check_var3 = IntVar()
+        check3 = Checkbutton(text="Manager", font=c_font, variable=check_var3)
+        check3.place(x=650, y=160)
+
+        # Labels for Username, Password, and Repeat Password
+        label2 = Label(text="Username:", font=l2_font)
+        label2.place(x=280, y=250)
+        label3 = Label(text="Password:", font=l2_font)
+        label3.place(x=280, y=330)
+
+        # Entry Widgets
+        textbox1 = Entry(font=l2_font)
+        textbox1.place(x=380, y=250, width=300, height=30)
+        textbox2 = Entry(font=l2_font, show="*")  # Show asterisks for password
+        textbox2.place(x=380, y=330, width=300, height=30)
+
+
+        # Buttons
+        button1 = Button(text="Login", font=b_font)
+        button1.place(x=380, y=420, width=100, height=40)
+        button2 = Button(text="Register", command = self.register, font=b_font)
+        button2.place(x=380, y=500, width=100, height=40)
+        button3 = Button(text="Map", command = self.map, font = b_font)
+        button3.place(x = 600, y = 500)
     def register(self):
-        RegisterPage.RegisterPage(self.root)
+        Registration.RegisterPage(self.root)
+
+    def map(self):
+        MapPage.MapPage(self.root)
 
 

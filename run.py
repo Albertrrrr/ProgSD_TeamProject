@@ -2,9 +2,9 @@ from tkinter import *
 from GUI import LoginPage
 
 def main():
-    tk = Tk()
+    root = Tk()
     root.title("Vehicle Sharing System")
-    loginPage.LoginPage(root)
+    LoginPage.LoginPage(root)
     root.mainloop()
 
 if __name__ == "__main__":
