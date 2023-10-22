@@ -23,9 +23,9 @@ label3.place(x=150, y=250)
 
 # Comboboxes
 options = ["Option 1", "Option 2", "Option 3", "Option 4"]
-combo_var1 = StringVar(value=options[0])
-combobox1 = ttk.Combobox(textvariable=combo_var1, values=options)
-combobox1.place(x=300, y=200)
+# combo_var1 = StringVar(value=options[0])
+# combobox1 = ttk.Combobox(textvariable=combo_var1, values=options)
+# combobox1.place(x=300, y=200)
 combo_var2 = StringVar(value=options[0])
 combobox2 = ttk.Combobox(textvariable=combo_var2, values=options)
 combobox2.place(x=300, y=250)
@@ -39,5 +39,7 @@ button2.place(x=700, y=250, width=100, height=40)
 # Text Box
 text_box = Text(window, wrap=WORD, height=10, width=40, font=l2_font)
 text_box.place(x=300, y=350, height=200, width=400)
+textbox3 = Entry(font=l2_font)
+textbox3.place(x=300, y=200, width=162, height=23)
 
 window.mainloop()
