@@ -16,15 +16,6 @@ mysql_config = {
 # connect to mysql
 db = pymysql.connect(**mysql_config)
 cursor = db.cursor()
-cursor.execute("SELECT * from Customers")
-# 使用 fetchone() 方法获取单条数据.
-data = cursor.fetchall()
-
-try:
-    currentID = data[-1][0]
-except:
-    currentID = 0
-
 
 class CustomerError(Exception):
     pass
@@ -32,12 +23,22 @@ class CustomerError(Exception):
 
 class Customer:
     def __init__(self, email=None):
+        cursor.execute("SELECT * from Customers")
+        # 使用 fetchone() 方法获取单条数据.
+        data = cursor.fetchall()
+
+        try:
+            currentID = data[-1][0]
+        except:
+            currentID = 0
+
         if email is None:
             self.__id = None
             self.__name = None
             self.__password = None
             self.__email = None
             self.__balance = None
+            self.__out_trade_no = None
             pass
         else:
 
@@ -53,7 +54,16 @@ class Customer:
                 self.__password = oneData[2]
                 self.__email = oneData[3]
                 self.__balance = oneData[4]
+                self.__out_trade_no = None
                 print("Login successfully")
+
+    @property
+    def out_trade_no(self):
+        return self.__out_trade_no
+
+    @out_trade_no.setter
+    def out_trade_no(self, value):
+        self.__out_trade_no = value
 
     @property
     def id(self):
@@ -94,6 +104,7 @@ class Customer:
     @password.setter
     def password(self, value):
         self.__password = value
+
 
     # 增加customer par=[name,password,email]
     def add(self, par: list):
@@ -159,11 +170,15 @@ class Customer:
         db.commit()
         print("Change successfully")
 
-    def topUpBalance(self, topupNumber: float):
+
+    def generate_order_no(self):
         current_time = datetime.datetime.now()
         time_string = current_time.strftime("%Y%m%d%H%_M%S_")
-        out_trade_no = time_string + str(self.__id)
-        payer = pay(out_trade_no, topupNumber, "15m")
+        self.__out_trade_no = time_string + str(self.__id)
+        return self.__out_trade_no
+
+    def topUpBalance(self, topupNumber: float):
+        payer = pay(self.__out_trade_no, topupNumber, "15m")
         flag = payer.pay()
         if flag:
             self.__balance += topupNumber
@@ -171,5 +186,7 @@ class Customer:
             cursor.execute(topUpBalanceSQL, (self.__balance, self.__id))
             db.commit()
             print("successfully top up account balance")
+            return True
         else:
             print("top up account balance failed")
+            return False
