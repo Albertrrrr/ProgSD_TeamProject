@@ -17,6 +17,7 @@ mysql_config = {
 db = pymysql.connect(**mysql_config)
 cursor = db.cursor()
 
+
 class CustomerError(Exception):
     pass
 
@@ -32,8 +33,9 @@ class Customer:
         except:
             currentID = 0
 
+
         if email is None:
-            self.__id = None
+            self.__id = currentID+ 1
             self.__name = None
             self.__password = None
             self.__email = None
@@ -108,8 +110,6 @@ class Customer:
 
     # 增加customer par=[name,password,email]
     def add(self, par: list):
-
-        self.__id = currentID + 1
         self.__name = par[0]
         self.__password = par[1]
         self.__email = par[2]
