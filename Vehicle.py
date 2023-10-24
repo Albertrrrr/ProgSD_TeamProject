@@ -158,9 +158,11 @@ class Vehicle:
         self.__types = par[0]
         if self.__types == 'E-bike':
             self.__price = 0.02
+            self.__batteryStatus = 100
         else:
             self.__price = 0.005
-        self.__batteryStatus = 100
+            self.__batteryStatus = None
+
         self.__locations = par[1]
         self.__status = par[2]
         self.__isRented = 0
