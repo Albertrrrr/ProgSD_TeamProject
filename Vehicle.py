@@ -141,6 +141,9 @@ class Vehicle:
             cursor.execute(updateSQL, (self.__renter, self.__isRented,self.__isLocked,self.__vehicleID))
             db.commit()
             print("Successfully rent")
+            return True
+        else:
+            return False
 
     def returnBike(self,stop:vehicleStop):
         if self.__isRented == 1:
