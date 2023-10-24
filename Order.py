@@ -170,12 +170,13 @@ class Order:
             raise OrderError("You have a unpaid order, please pay it")
         else:
             self.__vehicle.rent()
-            self.__bikeID = vehicle.vehicleID
+            self.__bikeID = self.__vehicle.vehicleID
             startSQL = "insert into `Order`(orderID,renter,bike,startTime,endTime,createTime,finishTime,cost,isPaid,status,startStop,endStop) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(startSQL, (self.__id, self.__renterID, self.__bikeID, self.__startTime, self.__endTime,
                                       self.__createTime, self.__finishTime, self.__cost, self.__isPaid, self.__status,self.__startStop,self.__endStop))
             db.commit()
-            print("Add a new order successfully", self.__email)
+            print("Add a new order id : " + str(self.__id) + " successfully from: " + self.__email)
+            return True
 
     def endRent(self, stop: vehicleStop):
         self.__endStop = stop.id
@@ -197,10 +198,13 @@ class Order:
 
 
         updateSQL = "update `Order` set endTime = %s,cost = %s,endStop = %s where orderID = %s"
-        cursor.execute(updateSQL, (self.__endTime, self.__cost, self.__endStop, self.__id))
+        flag = cursor.execute(updateSQL, (self.__endTime, self.__cost, self.__endStop, self.__id))
         db.commit()
 
-        return self.__cost
+        if flag == 1:
+            return True
+        else:
+            return False
 
     def pay(self):
         accountBalance = self.__customer.balance
@@ -225,6 +229,9 @@ class Order:
             updateSQL = "update `Order` set finishTime = %s,status = %s where orderID = %s"
             cursor.execute(updateSQL, (self.__finishTime, self.__status, self.__id))
             db.commit()
+            return True
+        else:
+            return False
 
 
     def orderDetails(self):
@@ -255,6 +262,9 @@ class Order:
             self.pay()
             self.close()
             print("Cancel Successfully")
+            return True
+        else:
+            return False
 
     def toPayOrder(self):
         toPaySQL = 'SELECT * FROM `Order` WHERE renter = %s AND isPaid = 0'
@@ -267,7 +277,7 @@ class Order:
         idSQL = 'SELECT * FROM `Order` WHERE renter = %s AND isPaid = 0'
         cursor.execute(idSQL, self.__renterID)
         index = cursor.fetchone()
-        cost = index[-3]
+        cost = index[-5]
         orderID = index[0]
 
         if accountBalance >= cost:
@@ -305,7 +315,7 @@ if __name__ == '__main__':
     zjn = "zhengjunan@yahool.com"
 
     customer = Customer(zjn)
-    vehicle = Vehicle(customer, None, 2)
+    vehicle = Vehicle(customer, 2)
     order1 = Order(customer,vehicle)
     stop = vehicleStop(1)
 

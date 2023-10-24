@@ -14,10 +14,11 @@ class pay:
         self.total_amount = total_amount
         self.subject = "Top up Balance for Biking Share"
         self.timeout_express = timeout_express
+        self.__alipay = None
 
 
-    def pay(self):
-        alipay = AliPay(
+    def generateQRcode(self):
+        self.__alipay = AliPay(
             appid=APPID,
             app_notify_url=None,  # 默认回调 url
             app_private_key_string=app_private_key_string,
@@ -29,7 +30,7 @@ class pay:
             config=AliPayConfig(timeout=15)  # 可选，请求超时时间
         )
 
-        data = alipay.api_alipay_trade_precreate(
+        data = self.__alipay.api_alipay_trade_precreate(
             subject= self.subject,
             out_trade_no=self.out_trade_no,
             total_amount= float(self.total_amount))
@@ -47,12 +48,13 @@ class pay:
             img.save('qrcode_image/qr_test_ali' + '_' + self.out_trade_no +'.png')
             print('二维码保存成功！')
 
+    def pay(self):
         paid = False
-        for i in range(100):
+        for i in range(1000):
             # check every 3s, and 10 times in all
-            print("now sleep 3s")
-            time.sleep(3)
-            result = alipay.api_alipay_trade_query(out_trade_no=self.out_trade_no)
+            print("now sleep 1s")
+            time.sleep(1)
+            result = self.__alipay.api_alipay_trade_query(out_trade_no=self.out_trade_no)
             if result.get("trade_status", "") == "TRADE_SUCCESS":
                 paid = True
                 break
@@ -60,7 +62,7 @@ class pay:
 
         # order is not paid in 30s , cancel this order
         if paid is False:
-            alipay.api_alipay_trade_cancel(out_trade_no= self.out_trade_no)
+            self.__alipay.api_alipay_trade_cancel(out_trade_no= self.out_trade_no)
 
         return paid
 

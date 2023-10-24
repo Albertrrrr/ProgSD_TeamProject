@@ -33,14 +33,14 @@ class Customer:
         except:
             currentID = 0
 
-
         if email is None:
-            self.__id = currentID+ 1
+            self.__id = currentID + 1
             self.__name = None
             self.__password = None
             self.__email = None
             self.__balance = None
             self.__out_trade_no = None
+            self.__topUpNUmber = None
             pass
         else:
 
@@ -57,7 +57,10 @@ class Customer:
                 self.__email = oneData[3]
                 self.__balance = oneData[4]
                 self.__out_trade_no = None
-                print("Login successfully")
+                self.__topUpNUmber = None
+                self.__payer = None
+
+                print("Login '" + self.__email + "' successfully")
 
     @property
     def out_trade_no(self):
@@ -107,7 +110,6 @@ class Customer:
     def password(self, value):
         self.__password = value
 
-
     # 增加customer par=[name,password,email]
     def add(self, par: list):
         self.__name = par[0]
@@ -138,17 +140,28 @@ class Customer:
     def updateName(self, newName: str):
         self.__name = newName
         updateSQL = "update Customers set name = %s where customerID = %s"
-        cursor.execute(updateSQL, (self.__name, self.__id))
+        flag = cursor.execute(updateSQL, (self.__name, self.__id))
         db.commit()
-        print("Change successfully")
+        if flag:
+            print("Change successfully")
+            return True
+        else:
+            print("Change unsuccessfully")
+            return False
+
 
     # 更新密码
     def updatePassword(self, newPassword: str):
         self.__password = newPassword
         updateSQL = "update Customers set password = %s where customerID = %s"
-        cursor.execute(updateSQL, (self.__password, self.__id))
+        flag = cursor.execute(updateSQL, (self.__password, self.__id))
         db.commit()
-        print("Change successfully")
+        if flag:
+            print("Change successfully")
+            return True
+        else:
+            print("Change unsuccessfully")
+            return False
 
     # 更新邮件 主键
     def updateEmail(self, newEmail: str):
@@ -158,30 +171,37 @@ class Customer:
 
         saveSQL = "insert ignore into Customers(customerID,name,password,email,accountBalance)" \
                   "values(%s,%s,%s,%s,%s)"
-        cursor.execute(saveSQL, (self.__id, self.name, self.password, newEmail, self.__balance))
+        flag = cursor.execute(saveSQL, (self.__id, self.name, self.password, newEmail, self.__balance))
         db.commit()
 
-        print("Change successfully")
+        if flag:
+            print("Change successfully")
+            return True
+        else:
+            print("Change unsuccessfully")
+            return False
 
     def updateBalance(self, newBalance: str):
         self.__balance = newBalance
         updateSQL = "update Customers set accountBalance = %s where customerID = %s"
         cursor.execute(updateSQL, (self.__balance, self.__id))
         db.commit()
-        print("Change successfully")
+        print("Change balance successfully")
 
-
-    def generate_order_no(self):
+    def generateQRCode(self, topUpNumber: float):
         current_time = datetime.datetime.now()
-        time_string = current_time.strftime("%Y%m%d%H%_M%S_")
+        time_string = current_time.strftime("%Y%m%d%H%M%S_")
         self.__out_trade_no = time_string + str(self.__id)
-        return self.__out_trade_no
+        self.__topUpNUmber = topUpNumber
+        self.__payer = pay(self.__out_trade_no, self.__topUpNUmber, "15m")
+        self.__payer.generateQRcode()
+        QRcodeURL = 'qrcode_image/qr_test_ali' + '_' + self.out_trade_no + '.png'
+        return QRcodeURL
 
-    def topUpBalance(self, topupNumber: float):
-        payer = pay(self.__out_trade_no, topupNumber, "15m")
-        flag = payer.pay()
+    def topUpBalance(self):
+        flag = self.__payer.pay()
         if flag:
-            self.__balance += topupNumber
+            self.__balance += self.__topUpNUmber
             topUpBalanceSQL = "update Customers set accountBalance = %s where customerID = %s"
             cursor.execute(topUpBalanceSQL, (self.__balance, self.__id))
             db.commit()
