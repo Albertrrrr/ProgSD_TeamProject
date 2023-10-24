@@ -188,9 +188,11 @@ class Order:
         time_difference = end - stat
         seconds = time_difference.total_seconds()
 
-        self.__cost = seconds * self.__vehicle.price  # 记得修改
+        self.__cost = seconds * self.__vehicle.price  # 已修改
 
-        self.__vehicle.batteryDiscount(seconds)
+        if self.__vehicle.types == "E-bike":
+            self.__vehicle.batteryDiscount(seconds)
+
         self.__vehicle.returnBike(stop)
 
 
