@@ -111,9 +111,7 @@ class vehicleStop:
         db.commit()
         print("Change successfully")
 
-    #更新新的Vechile数量
-    def updateCurrentCapacity(self):
-        print("未完成")
+    #更新新的Vechile数量 已经设置了Mysql触发器
 
     def stopDetails(self):
         cursor.execute("SELECT * from `VehicleStop`")

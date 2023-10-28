@@ -1,7 +1,8 @@
 import pymysql
 
 from Records import Records
-from Vehicle import Vehicle
+from Vehicle import Vehicle, VehicleCapacityError
+from vehicleStop import vehicleStop
 
 # mysql configs
 mysql_config = {
@@ -28,6 +29,13 @@ class OperatorError(Exception):
     pass
 
 
+def deleteVehicle(vehicle: Vehicle, operator):
+    vehicle.delete()
+    recordStr = 'Delete the bike'
+    record = Records(operator, vehicle, recordStr)
+    record.add()
+
+
 class Operator:
     def __init__(self, email=None):
         if email is None:
@@ -38,7 +46,6 @@ class Operator:
             self.__par = []
             pass
         else:
-
             oneSQL = "SELECT * FROM Operators WHERE email = %s"
             cursor.execute(oneSQL, email)
             oneData = cursor.fetchone()
@@ -168,51 +175,61 @@ class Operator:
 
         print("Change successfully")
 
-    def changeBattery(self, vehicle: Vehicle):
-        operator = Operator(self.__email)
-        vehicle.changeBatteryStatus()
+    def changeBattery(self, vehicle: Vehicle,operator):
+        flag = vehicle.changeBatteryStatus()
         recordStr = 'change new battery'
         record = Records(operator, vehicle, recordStr)
         record.add()
+        return flag
 
-    def addVehicle(self, vehicle: Vehicle, par: list):
-        operator = Operator(self.__email)
-        vehicle.add(par)
-        recordStr = 'Add a new bike'
+    def addVehicle(self, vehicle: Vehicle, par: list, operator):
+        try:
+            flag = vehicle.add(par)
+            recordStr = 'Add a new bike'
+            record = Records(operator, vehicle, recordStr)
+            record.add()
+            return flag
+        except VehicleCapacityError:
+            return False
+
+    def deleteVehicle(self, vehicle: Vehicle, operator):
+        flag = vehicle.delete()
+        recordStr = 'Delete bike id is: ' + str(vehicle.vehicleID)
         record = Records(operator, vehicle, recordStr)
         record.add()
+        return flag
 
-    def deleteVehicle(self, vehicle: Vehicle):
-        operator = Operator(self.__email)
-        vehicle.delete()
-        recordStr = 'Delete the bike'
-        record = Records(operator, vehicle, recordStr)
-        record.add()
 
-    def changeLocation(self, vehicle: Vehicle, newLocation: int):
-        operator = Operator(self.__email)
+    def changeLocation(self, vehicle: Vehicle, newLocation: int,operator):
         oldLocation = vehicle.locations
-        vehicle.updateLocations(newLocation)
+        flag = vehicle.updateLocations(newLocation)
         recordStr = 'Change location: ' + str(oldLocation) + ' to ' + str(newLocation)
         record = Records(operator, vehicle, recordStr)
         record.add()
+        return flag
 
     def getLocation(self, vehicle: Vehicle):
-        return vehicle.vehicleID
+        return vehicle.locations
 
-    def fixBike(self, vehicle: Vehicle):
-        operator = Operator(self.__email)
-        vehicle.fixing()
+    def fixBike(self, vehicle: Vehicle,operator):
+        flag = vehicle.fixing()
         recordStr = 'Fixing bike: ' + str(vehicle.vehicleID)
         record = Records(operator, vehicle, recordStr)
         record.add()
+        return flag
 
-    def endFixBike(self, vehicle: Vehicle, reportID: int):
-        operator = Operator(self.__email)
-        vehicle.endFix(reportID, operator)
+    def endFixBike(self, vehicle: Vehicle, reportID: int, operator):
+        flag = vehicle.endFix(reportID, operator)
         recordStr = 'Fixing bike is done: ' + str(vehicle.vehicleID)
         record = Records(operator, vehicle, recordStr)
         record.add()
+        return flag
+
+    # 车站相关
+
+
+
+    # 增加车站
 
 
 if __name__ == '__main__':

@@ -22,8 +22,12 @@ data = cursor.fetchall()
 currentID = data[-1][0]
 
 
+class VehicleCapacityError(Exception):
+    pass
+
+
 class Vehicle:
-    def __init__(self,customer:Customer,vehicleID:int = None):
+    def __init__(self, customer: Customer, vehicleID: int = None):
         if vehicleID is None:
             self.__vehicleID = currentID + 1
             self.__types = None
@@ -138,33 +142,34 @@ class Vehicle:
             self.__isRented = 1
             self.__isLocked = 1
             updateSQL = "update `Vehicle` set renter = %s,isRented = %s,isLocked = %s where vehicleID = %s"
-            cursor.execute(updateSQL, (self.__renter, self.__isRented,self.__isLocked,self.__vehicleID))
+            cursor.execute(updateSQL, (self.__renter, self.__isRented, self.__isLocked, self.__vehicleID))
             db.commit()
             print("Successfully rent")
             return True
         else:
             return False
 
-    def returnBike(self,stop:vehicleStop):
+    def returnBike(self, stop: vehicleStop):
         if self.__isRented == 1:
             self.__renter = None
             self.__isRented = 0
             self.__isLocked = 0
             self.__locations = stop.id
             updateSQL = "update `Vehicle` set locations = %s,renter = %s,isRented = %s,isLocked = %s where vehicleID = %s"
-            cursor.execute(updateSQL, (self.__locations,self.__renter, self.__isRented, self.__isLocked, self.__vehicleID))
+            cursor.execute(updateSQL,
+                           (self.__locations, self.__renter, self.__isRented, self.__isLocked, self.__vehicleID))
             db.commit()
             print("Successfully return")
 
-    #type locations status
-    def add(self, par:list):
+    # type locations status
+    def add(self, par: list):
         self.__types = par[0]
         if self.__types == 'E-bike':
             self.__price = 0.02
             self.__batteryStatus = 100
         else:
             self.__price = 0.005
-            self.__batteryStatus = None
+            self.__batteryStatus = 0
 
         self.__locations = par[1]
         self.__status = par[2]
@@ -176,78 +181,121 @@ class Vehicle:
             self.__isLocked = 1
         self.__renter = None
 
-        saveSQL = "insert ignore into Vehicle(vehicleID,types,price,batteryStatus,locations,status,isRented,isLocked,renter)" \
-                  "values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        currentCapacity = 0
+        maxCapacity = 0
+        searchSQL = "SELECT `maxCapacity`,`currentCapacity` FROM `VehicleStop` WHERE locationID = %s"
+        cursor.execute(searchSQL, self.__locations)
+        capacityList = cursor.fetchall()
+        for row in capacityList:
+            currentCapacity = row[1]
+            maxCapacity = row[0]
 
-        addFlag = cursor.execute(saveSQL,
-                                 (self.__vehicleID, self.__types, self.__price, self.__batteryStatus, self.__locations,
-                                  self.__status,self.__isRented,self.__isLocked,self.__renter))
-        db.commit()
-        if addFlag:
-            print("Add a new vehicle successfully: ", self.__vehicleID, self.__types)
-            return True
+        if currentCapacity <= maxCapacity:
+            saveSQL = "insert ignore into Vehicle(vehicleID,types,price,batteryStatus,locations,status,isRented,isLocked,renter)" \
+                      "values(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+
+            addFlag = cursor.execute(saveSQL,
+                                     (self.__vehicleID, self.__types, self.__price, self.__batteryStatus,
+                                      self.__locations,
+                                      self.__status, self.__isRented, self.__isLocked, self.__renter))
+            db.commit()
+
+            if addFlag:
+                print("Add a new vehicle successfully: ", self.__vehicleID, self.__types)
+                return True
+            else:
+                print("Unsuccessfully add")
+                return False
         else:
-            print("Unsuccessfully")
-            return False
+            raise VehicleCapacityError
 
     def delete(self):
         deleteSQL = "delete from Vehicle where vehicleID = %s"
-        cursor.execute(deleteSQL, self.__vehicleID)
+        flag = cursor.execute(deleteSQL, self.__vehicleID)
         db.commit()
-        print("Delete vehicle successfully", self.__vehicleID)
-
+        if flag == 0:
+            return False
+        else:
+            print("Delete the vehicle successfully: ", self.__vehicleID)
+            return True
 
     def reportFix(self):
         message = "The Bike needs to fix, id is : " + str(self.__vehicleID)
-        reportFix = Report(self.__customer,None, message)
+        reportFix = Report(self.__customer, None, message)
         reportFix.report()
         self.__status = 'reporting'
         self.__isLocked = 1
         updateSQL = "update `Vehicle` set status = %s,isLocked = %s where vehicleID = %s"
-        cursor.execute(updateSQL, (self.__status, self.__isLocked, self.__vehicleID))
+        flag = cursor.execute(updateSQL, (self.__status, self.__isLocked, self.__vehicleID))
         db.commit()
-        print("Successfully report")
-        return reportFix.reportID
+        if flag == 0:
+            return False
+        else:
+            print("Successfully report")
+            return True
 
     def fixing(self):
-        self.__status = 'fixing'
-        self.__isLocked = 1
-        updateSQL = "update `Vehicle` set status = %s, isLocked = %s where vehicleID = %s"
-        cursor.execute(updateSQL, (self.__status, self.__isLocked, self.__vehicleID))
-        db.commit()
-        print("Fixing ...")
+        if self.__status == 'reporting':
+            self.__status = 'fixing'
+            self.__isLocked = 1
+            updateSQL = "update `Vehicle` set status = %s, isLocked = %s where vehicleID = %s"
+            flag = cursor.execute(updateSQL, (self.__status, self.__isLocked, self.__vehicleID))
+            db.commit()
+            if flag == 0:
+                return False
+            else:
+                print("Fixing ...")
+                return True
+        else:
+            return False
 
-    def endFix(self,reportID: int,operator):
-        self.__status = 'normal'
-        self.__isLocked = 0
-        report = Report(None,operator,"")
-        report.done(reportID)
+    def endFix(self, reportID: int, operator):
+        if self.__status == "fixing":
+            self.__status = 'normal'
+            self.__isLocked = 0
+            report = Report(None, operator, "")
+            report.done(reportID)
 
-        updateSQL = "update `Vehicle` set status = %s, isLocked=%s where vehicleID = %s"
-        cursor.execute(updateSQL, (self.__status,self.__isLocked, self.__vehicleID))
-        db.commit()
-        print("Report id: " + str(reportID) + " is done")
+            updateSQL = "update `Vehicle` set status = %s, isLocked=%s where vehicleID = %s"
+            flag = cursor.execute(updateSQL, (self.__status, self.__isLocked, self.__vehicleID))
+            db.commit()
+            if flag == 0:
+                return False
+            else:
+                print("Report id: " + str(reportID) + " is done")
+                return True
+        else:
+            return False
 
     def changeBatteryStatus(self):
         self.__batteryStatus = 100
-        updateSQL = "update `Vehicle` set batteryStatus=%s where vehicleID = %s"
+        flag = updateSQL = "update `Vehicle` set batteryStatus=%s where vehicleID = %s"
         cursor.execute(updateSQL, (self.__batteryStatus, self.__vehicleID))
         db.commit()
-        print("Successfully change")
+        if flag == 0:
+            return False
+        else:
+            print("Successfully change battery of bike")
+            return True
 
-    def updateLocations(self,newLocations:int):
+
+    def updateLocations(self, newLocations: int):
         self.__locations = newLocations
-        updateSQL = "update `Vehicle` set locations=%s where vehicleID = %s"
+        flag = updateSQL = "update `Vehicle` set locations=%s where vehicleID = %s"
         cursor.execute(updateSQL, (self.__locations, self.__vehicleID))
         db.commit()
-        print("Successfully change location of bike")
+        if flag == 0:
+            return False
+        else:
+            print("Successfully change location of bike")
+            return True
 
     def updateBatteryStatus(self):
         updateSQL = "update `Vehicle` set batteryStatus=%s where vehicleID = %s"
         cursor.execute(updateSQL, (self.__batteryStatus, self.__vehicleID))
         db.commit()
 
-    def batteryDiscount(self,second:float):
+    def batteryDiscount(self, second: float):
         secondBattery = 0.01
         self.__batteryStatus -= secondBattery * second
         self.updateBatteryStatus()
@@ -261,7 +309,7 @@ if __name__ == '__main__':
     # vehicle1.returnBike(stop2)
     #
     # operator1 = Operator("")
-    vehicle = Vehicle(None,2)
+    vehicle = Vehicle(None, 2)
     # vehicle.updateLocations(2)
 
     # vehicle2 = Vehicle(None,operator1,None)
@@ -273,17 +321,3 @@ if __name__ == '__main__':
     #
     # vehicle2 = Vehicle(None,operator1,1)
     # vehicle2.endFix(6)
-
-
-
-
-
-
-
-
-
-
-
-
-
-

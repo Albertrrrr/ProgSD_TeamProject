@@ -129,12 +129,18 @@ class Customer:
             print("Change another email")
             return False
 
-    # 删除customer
+    # 删除customer 在manager中补充
     def delete(self):
         deleteSQL = "delete from Customers where customerID = %s"
-        cursor.execute(deleteSQL, self.__id)
+        flag = cursor.execute(deleteSQL, self.__id)
         db.commit()
-        print("Delete customer successfully", self.__id)
+        if flag == 0:
+            print("Change unsuccessfully")
+            return False
+        else:
+            print("Delete customer successfully", self.__id)
+            return True
+
 
     # 更新名字
     def updateName(self, newName: str):
