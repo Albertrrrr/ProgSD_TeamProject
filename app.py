@@ -28,9 +28,80 @@ class app:
         self.__cost = None
         self.__error = None
         self.__QRcodeURL = None
+        self.__stop = None
         print("app running")
 
-    # mysql configs
+    @property
+    def manager(self):
+        return self.__manager
+
+    @manager.setter
+    def manager(self, value):
+        self.__manager = value
+
+    @property
+    def order(self):
+        return self.__order
+
+    @order.setter
+    def order(self, value):
+        self.__order = value
+
+    @property
+    def operator(self):
+        return self.__operator
+
+    @operator.setter
+    def operator(self, value):
+        self.__operator = value
+
+    @property
+    def bike(self):
+        return self.__bike
+
+    @bike.setter
+    def bike(self, value):
+        self.__bike = value
+
+    @property
+    def cost(self):
+        return self.__cost
+
+    @cost.setter
+    def cost(self, value):
+        self.__cost = value
+
+    @property
+    def customer(self):
+        return self.__customer
+
+    @customer.setter
+    def customer(self, value):
+        self.__customer = value
+
+    @property
+    def error(self):
+        return self.__error
+
+    @error.setter
+    def error(self, value):
+        self.__error = value
+
+    @property
+    def QRcodeURL(self):
+        return self.__QRcodeURL
+
+    @QRcodeURL.setter
+    def QRcodeURL(self, value):
+        self.__QRcodeURL = value
+
+    @property
+    def stop(self):
+        return self.__stop
+
+    @stop.setter
+    def stop(self, value):
+        self.__stop = value
 
     # Customer Operator Manager 登陆
     def login(self, par: list):
@@ -118,8 +189,8 @@ class app:
     # 还车
     def returnVehicle(self, stopID: int):
         if self.__order is not None:
-            stop = vehicleStop(stopID)
-            flag = self.__order.endRent(stop)
+            self.__stop = vehicleStop(stopID)
+            flag = self.__order.endRent(self.__stop)
             return flag
         else:
             return False
@@ -210,39 +281,79 @@ class app:
     # 删除车辆 数据类型 bikeID
     def deleteVehicleOP(self, bikeID: int):
         self.__bike = Vehicle(None, bikeID)
-        flag = self.__operator.deleteVehicle(self.__bike,self.__operator)
+        flag = self.__operator.deleteVehicle(self.__bike, self.__operator)
         return flag
 
     # 车辆充电
-    def changeBatteryOP(self, bikeID:int):
+    def changeBatteryOP(self, bikeID: int):
         self.__bike = Vehicle(None, bikeID)
-        flag = self.__operator.changeBattery(self.__bike,self.__operator)
+        flag = self.__operator.changeBattery(self.__bike, self.__operator)
         return flag
 
     # 更改车辆位置
-    def changeLocationOP(self, bikeID:int,newLocation:int):
+    def changeLocationOP(self, bikeID: int, newLocation: int):
         self.__bike = Vehicle(None, bikeID)
-        flag = self.__operator.changeLocation(self.__bike,newLocation,self.__operator)
+        flag = self.__operator.changeLocation(self.__bike, newLocation, self.__operator)
         return flag
 
     # 追踪车辆
-    def track(self, bikeID:int):
+    def track(self, bikeID: int):
         self.__bike = Vehicle(None, bikeID)
         location = self.__operator.getLocation(self.__bike)
         return location
 
     # 开始维修车辆
-    def fixBikeOP(self, bikeID:int):
+    def fixBikeOP(self, bikeID: int):
         self.__bike = Vehicle(None, bikeID)
-        flag = self.__operator.fixBike(self.__bike,self.__operator)
+        flag = self.__operator.fixBike(self.__bike, self.__operator)
         return flag
 
     # 结束维修车辆
-    def endFixBikeOP(self, bikeID:int, reportID:int):
+    def endFixBikeOP(self, bikeID: int, reportID: int):
         self.__bike = Vehicle(None, bikeID)
-        flag = self.__operator.endFixBike(self.__bike,reportID,self.__operator)
+        flag = self.__operator.endFixBike(self.__bike, reportID, self.__operator)
         return flag
 
+    # 增加车站
+    def addVehicleStopOP(self, par: list):
+        self.__stop = vehicleStop()
+        flag = self.__operator.addVehicleStop(par, self.__stop)
+        return flag
+
+    # 删除车站
+    def deleteVehicleStopOP(self, stopID: int):
+        self.__stop = vehicleStop(stopID)
+        flag = self.__operator.deleteVehicleStop(self.__stop)
+        return flag
+
+    # 更新车站方法
+    def updateVehicleStopAxisOP(self, stopID: int, newAxis: str):
+        self.__stop = vehicleStop(stopID)
+        flag = self.__operator.updateVehicleStopAxis(newAxis, self.__stop)
+        return flag
+
+    def updateVehicleStopNameOP(self, stopID: int, newName: str):
+        self.__stop = vehicleStop(stopID)
+        flag = self.__operator.updateVehicleStopName(newName, self.__stop)
+        return flag
+
+    def updateVehicleStopMaxCapacityOP(self, stopID: int, newMaxCapacity: int):
+        self.__stop = vehicleStop(stopID)
+        flag = self.__operator.updateVehicleStopMaxCapacity(newMaxCapacity, self.__stop)
+        return flag
+
+    # 更新 Operator 姓名 邮箱 密码
+    def updateNameOP(self, newName: str):
+        flag = self.__operator.updateName(newName)
+        return flag
+
+    def updateEmailOP(self, newEmail: str):
+        flag = self.__operator.updateEmail(newEmail)
+        return flag
+
+    def updatePasswordOP(self, newPassword: str):
+        flag = self.__operator.updatePassword(newPassword)
+        return flag
 
 
     """
@@ -250,7 +361,6 @@ class app:
               Operator 1、全部车站 2、全部车辆 3、全部报告 
               Manager 1、全部用户表 2、全部操作员表 3、全部订单 4、全部报告 5、全部维修记录
     """
-
 
 
 
@@ -467,11 +577,30 @@ if __name__ == '__main__':
     Report id: 13 is done
     Records: 18
     Add a new log successfully 18 zhangruixian@gmail.com 2023-10-28 11:58:22 2 Fixing bike is done: 2
-    
     """
 
+    # 测试Operator 新建车站 删除车站 更新车站
+    # app = app()
+    # par = ["zhangruixian@gmail.com", "3022008", '2']
+    # app.login(par)
+    # parStop = ['Test3', '(55.869，-3.31)', 20]
+    # app.addVehicleStopOP(parStop)
+    # time.sleep(5)
+    # app.updateVehicleStopAxisOP(3,"(55.869，-7.31)")
+    # time.sleep(5)
+    # app.updateVehicleStopNameOP(3,"Testing")
+    # time.sleep(5)
+    # app.updateVehicleStopMaxCapacityOP(3,25)
+    # app.deleteVehicleStopOP(3)
 
-
-
+    """
+    app running
+    Login successfully
+    Add a new vehicle stop successfully 3 Test3 (55.869，-8.31) 20
+    Change successfully
+    Change successfully
+    Change successfully
+    Delete customer successfully 3
+    """
 
 
