@@ -77,15 +77,19 @@ class vehicleStop:
         self.__name = par[0]
         self.__axis = par[1]
         self.__maxCapacity = par[2]
-        self.__currentCapacity = par[3]
+
+        searchSQL = "SELECT COUNT(*) FROM Vehicle WHERE locations = %s AND isLocked = 0 AND isRented = 0"
+        cursor.execute(searchSQL,self.__id)
+        data = cursor.fetchone()
+        self.__currentCapacity = data[0]
 
         saveSQL = "insert ignore into VehicleStop(locationID,name,axis,maxCapacity,currentCapacity)" \
                   "values(%s,%s,%s,%s,%s)"
 
-        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__axis, self.__maxCapacity, self.__currentCapacity))
+        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__axis, self.__maxCapacity,self.__currentCapacity))
         db.commit()
         if addFlag:
-            print("Add a new vehicle stop successfully", self.__id, self.__name, self.__axis, self.__maxCapacity, self.__currentCapacity)
+            print("Add a new vehicle stop successfully", self.__id, self.__name, self.__axis, self.__maxCapacity,self.__currentCapacity)
             return True
         else:
             print("Change another axis")
@@ -93,23 +97,63 @@ class vehicleStop:
 
     def delete(self):
         deleteSQL = "delete from VehicleStop where locationID = %s"
-        cursor.execute(deleteSQL, self.__id)
+        flag = cursor.execute(deleteSQL, self.__id)
         db.commit()
-        print("Delete customer successfully", self.__id)
+        if flag == 0:
+            return False
+        else:
+            print("Delete customer successfully", self.__id)
+            return True
 
     def updateName(self, newName: str):
         self.__name = newName
         updateSQL = "update VehicleStop set name = %s where locationID = %s"
-        cursor.execute(updateSQL, (self.__name, self.__id))
+        flag = cursor.execute(updateSQL, (self.__name, self.__id))
         db.commit()
-        print("Change successfully")
+        if flag == 0:
+            print("Change unsuccessfully")
+            return False
+        else:
+            print("Change successfully")
+            return True
 
     def updateMaxCapacity(self, newMaxCapacity: int):
         self.__maxCapacity = newMaxCapacity
         updateSQL = "update VehicleStop set maxCapacity = %s where locationID = %s"
-        cursor.execute(updateSQL, (self.__maxCapacity, self.__id))
+        flag = cursor.execute(updateSQL, (self.__maxCapacity, self.__id))
         db.commit()
-        print("Change successfully")
+        if flag == 0:
+            print("Change unsuccessfully")
+            return False
+        else:
+            print("Change successfully")
+            return True
+    """
+        BEGIN
+        UPDATE VehicleStop
+        SET currentCapacity = (
+            SELECT COUNT(*)
+            FROM Vehicle
+            WHERE locations = NEW.locations AND isLocked = 0 ANd isRented = 0
+        )
+        WHERE locationID = NEW.locations;
+    END
+    """
+    def updateAxis(self, newAxis:str):
+        self.__axis = newAxis
+        deleteSQL = "delete from `VehicleStop` where locationID = %s"
+        cursor.execute(deleteSQL, self.__id)
+        db.commit()
+        par = [self.__name, self.__axis, self.__maxCapacity]
+        flag = self.add(par)
+        db.commit()
+
+        if flag == 0:
+            print("Change unsuccessfully")
+            return False
+        else:
+            print("Change successfully")
+            return True
 
     #更新新的Vechile数量 已经设置了Mysql触发器
 
@@ -128,7 +172,7 @@ class vehicleStop:
     #输出属于该车站的所有可用车辆
     def vehicleToList(self):
         searchSQL = "SELECT * FROM `Vehicle` WHERE locations = %s AND isLocked = 0"
-        cursor.execute(searchSQL,(self.__id))
+        cursor.execute(searchSQL, self.__id)
         data = cursor.fetchall()
 
         res = []

@@ -214,6 +214,7 @@ class Vehicle:
         flag = cursor.execute(deleteSQL, self.__vehicleID)
         db.commit()
         if flag == 0:
+            print("Delete the vehicle unsuccessfully: ", self.__vehicleID)
             return False
         else:
             print("Delete the vehicle successfully: ", self.__vehicleID)
@@ -229,6 +230,7 @@ class Vehicle:
         flag = cursor.execute(updateSQL, (self.__status, self.__isLocked, self.__vehicleID))
         db.commit()
         if flag == 0:
+            print("UnSuccessfully report")
             return False
         else:
             print("Successfully report")
@@ -273,6 +275,7 @@ class Vehicle:
         cursor.execute(updateSQL, (self.__batteryStatus, self.__vehicleID))
         db.commit()
         if flag == 0:
+            print("Unuccessfully change battery of bike")
             return False
         else:
             print("Successfully change battery of bike")
@@ -285,6 +288,7 @@ class Vehicle:
         cursor.execute(updateSQL, (self.__locations, self.__vehicleID))
         db.commit()
         if flag == 0:
+            print("Unsuccessfully change location of bike")
             return False
         else:
             print("Successfully change location of bike")

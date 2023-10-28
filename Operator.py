@@ -2,7 +2,7 @@ import pymysql
 
 from Records import Records
 from Vehicle import Vehicle, VehicleCapacityError
-from vehicleStop import vehicleStop
+
 
 # mysql configs
 mysql_config = {
@@ -149,17 +149,28 @@ class Operator:
     def updateName(self, newName: str):
         self.__name = newName
         updateSQL = "update Operators set name = %s where operatorID = %s"
-        cursor.execute(updateSQL, (self.__name, self.__id))
+        flag = cursor.execute(updateSQL, (self.__name, self.__id))
         db.commit()
-        print("Change successfully")
+        if flag == 0:
+            print("Change unsuccessfully")
+            return False
+        else:
+            print("Change successfully")
+            return True
+
 
     # 更新密码
     def updatePassword(self, newPassword: str):
         self.__password = newPassword
         updateSQL = "update Operators set password = %s where operatorID = %s"
-        cursor.execute(updateSQL, (self.__password, self.__id))
+        flag = cursor.execute(updateSQL, (self.__password, self.__id))
         db.commit()
-        print("Change successfully")
+        if flag == 0:
+            print("Change unsuccessfully")
+            return False
+        else:
+            print("Change successfully")
+            return True
 
     # 更新邮件 主键
     def updateEmail(self, newEmail: str):
@@ -170,12 +181,17 @@ class Operator:
 
         saveSQL = "insert ignore into Operators(operatorID,name,password,email)" \
                   "values(%s,%s,%s,%s)"
-        cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
+        flag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
         db.commit()
 
-        print("Change successfully")
+        if flag == 0:
+            print("Change unsuccessfully")
+            return False
+        else:
+            print("Change successfully")
+            return True
 
-    def changeBattery(self, vehicle: Vehicle,operator):
+    def changeBattery(self, vehicle: Vehicle, operator):
         flag = vehicle.changeBatteryStatus()
         recordStr = 'change new battery'
         record = Records(operator, vehicle, recordStr)
@@ -199,8 +215,7 @@ class Operator:
         record.add()
         return flag
 
-
-    def changeLocation(self, vehicle: Vehicle, newLocation: int,operator):
+    def changeLocation(self, vehicle: Vehicle, newLocation: int, operator):
         oldLocation = vehicle.locations
         flag = vehicle.updateLocations(newLocation)
         recordStr = 'Change location: ' + str(oldLocation) + ' to ' + str(newLocation)
@@ -211,7 +226,7 @@ class Operator:
     def getLocation(self, vehicle: Vehicle):
         return vehicle.locations
 
-    def fixBike(self, vehicle: Vehicle,operator):
+    def fixBike(self, vehicle: Vehicle, operator):
         flag = vehicle.fixing()
         recordStr = 'Fixing bike: ' + str(vehicle.vehicleID)
         record = Records(operator, vehicle, recordStr)
@@ -226,15 +241,33 @@ class Operator:
         return flag
 
     # 车站相关
+    # 增加车站 数据格式 par = ['Test2','(55.869，-5.301)',20,5]
+    def addVehicleStop(self, par: list, stop):
+        flag = stop.add(par)
+        return flag
 
+    # 删除车站
+    def deleteVehicleStop(self, stop):
+        flag = stop.delete()
+        return flag
 
+    def updateVehicleStopAxis(self,newAxis:str, stop):
+        flag = stop.updateAxis(newAxis)
+        return flag
 
-    # 增加车站
+    def updateVehicleStopName(self, newName: str, stop):
+        flag = stop.updateName(newName)
+        return flag
+
+    def updateVehicleStopMaxCapacity(self, newMaxCapacity: int, stop):
+        flag = stop.updateMaxCapacity(newMaxCapacity)
+        return flag
 
 
 if __name__ == '__main__':
     from Customer import Customer
     import time
+
     # 新用户
     # operator = Operator()
     # par = ['RRR', '3022008a', 'zhangruixian98@gmail.com']
@@ -290,7 +323,7 @@ if __name__ == '__main__':
     # vehicle1 = Vehicle(None, 2)
     # operator.fixBike(vehicle1)
 
-    #测试修理结束 修理全过程
+    # 测试修理结束 修理全过程
     operator = Operator("zhangruixian@gmail.com")
     customer = Customer("zhangyujia@gmail.com")
     vehicle1 = Vehicle(customer, 1)
@@ -298,7 +331,4 @@ if __name__ == '__main__':
     time.sleep(5)
     operator.fixBike(vehicle1)
     time.sleep(5)
-    operator.endFixBike(vehicle1,idReport)
-
-
-
+    operator.endFixBike(vehicle1, idReport)
