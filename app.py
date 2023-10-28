@@ -355,17 +355,119 @@ class app:
         flag = self.__operator.updatePassword(newPassword)
         return flag
 
-
     """
     格式化输出：Customer 1、全部车站  2.全部可用车辆 3.全部关于自己的订单 4.自己所提交的所有报告
               Operator 1、全部车站 2、全部车辆 3、全部报告 
               Manager 1、全部用户表 2、全部操作员表 3、全部订单 4、全部报告 5、全部维修记录
     """
+    """ Customer 1、全部车站  2.全部可用车辆 3.全部关于自己的订单 4.自己所提交的所有报告 """
+
+    # 格式化输出 全部车站
+    def getAllStopsCU(self):
+        self.__stop = vehicleStop()
+        res = self.tableFormat(self.__stop.detailsFormat(self.__stop.stopDetails()))
+        tableHead = "{:<5} {:<20} {:<25} {:<25}".format("ID", "NAME", "MAX_CAPACITY", "CURRENT_CAPACITY")
+        res.insert(0, tableHead)
+        return res
+
+    # 格式化输出 全部可用车辆（选定车站）
+    def getAvailableVehicle(self, stopID: int):
+        self.__stop = vehicleStop(stopID)
+        res = self.tableFormat(self.__stop.vehicleToList())
+        tableHead = "{:<5} {:<20} {:<25} {:<25}".format("ID", "TYPE", "BATTERYSTATUS", "STATUS")
+        res.insert(0, tableHead)
+        return res
+
+    def tableFormat(self, details: list):
+        res = []
+        for i in details:
+            finalString = "{:<5} {:<20} {:<25} {:<25}".format(*i)
+            res.append(finalString)
+        return res
+
+    # 全部关于自己的订单
+    def getOrderList(self):
+        res = self.tableFormatOrder(self.__customer.orderDetails())
+        tableHead = "{:<4} {:<4} {:<3} {:<3} {:<20} {:<20} {:<20} {:<24} {:<5} {:<6} {:<6}".format(
+            "ID", "BIKE", "S-S", "E-S", "START_TIME", "END_TIME", "CREATE_TIME", "FINISH_TIME", "COST", "ISPAID",
+            "STATUS")
+        res.insert(0, tableHead)
+        return res
+
+    def tableFormatOrder(self, details: list):
+        res = []
+        for i in details:
+            finalString = "{:<4} {:<4} {:<3} {:<3} {:<20} {:<20} {:<20} {:<24} {:<5} {:<6} {:<6}".format(*i)
+            res.append(finalString)
+        return res
+
+    # 自己所提交的所有报告
+    def tableFormatReport(self, details: list):
+        res = []
+        for i in details:
+            finalString = "{:<4} {:<40} {:<20} {:<20} {:<6}".format(*i)
+            res.append(finalString)
+        return res
+
+    def getReportList(self):
+        res = self.tableFormatReport(self.__customer.reportDetails())
+        tableHead = "{:<4} {:<40} {:<20} {:<20} {:<6}".format(
+            "ID", "MESSAGE", "START_TIME", "END_TIME", "STATUS")
+        res.insert(0, tableHead)
+        return res
+
+    """ Operator 1、全部车站 2、全部车辆 3、全部报告 """
+    # 全部车站
+    def getAllStopsOP(self):
+        self.__stop = vehicleStop()
+        res = self.tableFormatOP(self.__stop.detailsFormat(self.__stop.stopDetailsOP()))
+        tableHead = "{:<5} {:<20} {:<25} {:<25} {:<25}".format("ID", "NAME", "AXIS", "MAX_CAPACITY", "CURRENT_CAPACITY")
+        res.insert(0, tableHead)
+        return res
+
+    def tableFormatOP(self, details: list):
+        res = []
+        for i in details:
+            finalString = "{:<5} {:<20} {:<25} {:<25} {:<25}".format(*i)
+            res.append(finalString)
+        return res
+
+    # 全部车辆
+    def getAllVehicleOP(self):
+        self.__stop = vehicleStop()
+        res = self.tableFormatAllVehicle(self.__stop.vehicleAllList())
+        tableHead = "{:<5} {:<10} {:<10} {:<15} {:<15} {:<10} {:<10} {:<10} {:<10}".format(
+            "ID", "TYPES", "PRICE", "BATTERYSTATUS", "LOCATIONS", "STATUS", "ISRENTED","ISLOCKED", "RENTER")
+        res.insert(0, tableHead)
+        return res
+
+    def tableFormatAllVehicle(self, details: list):
+        res = []
+        for i in details:
+            finalString = "{:<5} {:<10} {:<10} {:<15} {:<15} {:<10} {:<10} {:<10} {:<10} ".format(*i)
+            res.append(finalString)
+        return res
+
+    # 全部报告
+    def tableFormatReportOP(self, details: list):
+        res = []
+        for i in details:
+            finalString = "{:<5} {:<10} {:<40} {:<25} {:<25} {:<10} {:<10}".format(*i)
+            res.append(finalString)
+        return res
+
+    def getALLReportOP(self):
+        res = self.tableFormatReportOP(self.__operator.reportAllDetails())
+        tableHead = "{:<5} {:<10} {:<40} {:<25} {:<25} {:<10} {:<10}".format(
+            "ID","FROM_ID","MESSAGE", "START_TIME", "END_TIME", "STATUS", "AUTHEN")
+        res.insert(0, tableHead)
+        return res
 
 
 
 if __name__ == '__main__':
     import time
+
 
     # 用户测试
     # app = app()
@@ -603,4 +705,114 @@ if __name__ == '__main__':
     Delete customer successfully 3
     """
 
+    # 格式化输出测试 Customer
+    app = app()
+    par = ["zhangruixian@gmail.com", "3022008a", '1']
+    app.login(par)
+    for i in app.getAllStopsCU():
+        print(i)
 
+    print(" ")
+
+    for i in app.getAvailableVehicle(1):
+        print(i)
+
+    print(" ")
+
+    for i in app.getOrderList():
+        print(i)
+
+    print(" ")
+
+    for i in app.getReportList():
+        print(i)
+    """
+    app running
+    Login 'zhangruixian@gmail.com' successfully
+    ID    NAME                 MAX_CAPACITY              CURRENT_CAPACITY         
+    1     TestNameIng          30                        2                        
+    2     Test                 30                        1                        
+    3     Test3                20                        1                        
+     
+    ID    TYPE                 BATTERYSTATUS             STATUS                   
+    2     E-bike               100.0                     normal                   
+    3     E-bike               99.3                      normal                   
+     
+    ID   BIKE S-S E-S START_TIME           END_TIME             CREATE_TIME          FINISH_TIME              COST  ISPAID STATUS
+    5    1    5   3   2023-10-17 15:50:49  2023-10-17 15:50:59  2023-10-22 15:50:49  2023-10-22 15:51:00      0.2   True   True  
+    6    2    1   5   2023-10-17 15:51:20  2023-10-17 15:51:30  2023-10-22 15:51:20  2023-10-22 15:51:31      0.2   True   True  
+    7    2    2   4   2023-10-17 16:18:32  2023-10-17 16:18:42  2023-10-22 16:18:32  2023-10-22 16:18:42      0.2   True   True  
+    8    2    3   3   2023-10-18 16:19:01  2023-10-18 16:19:10  2023-10-22 16:19:01  2023-10-22 16:19:10      0.18  True   True  
+    15   1    5   3   2023-10-19 15:50:49  2023-10-19 15:50:59  2023-10-22 15:50:49  2023-10-22 15:51:00      0.2   True   True  
+    16   2    1   3   2023-10-19 15:51:20  2023-10-19 15:51:30  2023-10-22 15:51:20  2023-10-22 15:51:31      0.2   True   True  
+    17   2    2   3   2023-10-19 16:18:32  2023-10-19 16:18:42  2023-10-22 16:18:32  2023-10-22 16:18:42      0.2   True   True  
+    18   2    3   3   2023-10-20 16:19:01  2023-10-20 16:19:10  2023-10-22 16:19:01  2023-10-22 16:19:10      0.18  True   True  
+    25   1    5   2   2023-10-21 15:50:49  2023-10-21 15:50:59  2023-10-22 15:50:49  2023-10-22 15:51:00      0.2   True   True  
+    26   2    1   1   2023-10-22 15:51:20  2023-10-22 15:51:30  2023-10-22 15:51:20  2023-10-22 15:51:31      0.2   True   True  
+    27   2    2   1   2023-10-22 16:18:32  2023-10-22 16:18:42  2023-10-22 16:18:32  2023-10-22 16:18:42      0.2   True   True  
+    28   2    3   1   2023-10-22 16:19:01  2023-10-22 16:19:10  2023-10-22 16:19:01  2023-10-22 16:19:10      0.18  True   True  
+    31   3    2   2   2023-10-24 16:47:48  2023-10-24 16:47:53  2023-10-24 16:47:48  2023-10-24 16:47:53      0.1   True   True  
+    32   3    2   2   2023-10-24 16:53:11  2023-10-24 16:53:21  2023-10-24 16:53:11  2023-10-24 16:53:21      0.2   True   True  
+    33   3    2   2   2023-10-24 19:16:57  2023-10-24 19:17:07  2023-10-24 19:16:57  2023-10-24 19:30:39      0.2   True   True  
+    34   2    1   1   2023-10-24 19:30:40  2023-10-24 19:30:40  2023-10-24 19:30:40  2023-10-24 19:30:40      0.0   True   True  
+    35   1    2   2   2023-10-24 19:37:42  2023-10-24 19:37:42  2023-10-24 19:37:42  2023-10-24 19:38:17      0.0   True   True  
+    36   2    1   1   2023-10-24 19:38:17  2023-10-24 19:38:18  2023-10-24 19:38:17  2023-10-24 19:38:18      0.02  True   True  
+    37   3    2   2   2023-10-24 20:52:14  2023-10-24 20:52:24  2023-10-24 20:52:14  2023-10-24 20:52:25      0.2   True   True  
+     
+    ID   MESSAGE                                  START_TIME           END_TIME             STATUS
+    1    The 1 bike is broken                     2023-10-18 14:50:45  2023-10-19 07:51:42  1     
+    2    The id of bike 2 is broken               2023-10-19 07:42:45  2023-10-19 07:52:18  1     
+    3    The id of bike 2 is broken               2023-10-19 07:46:56  2023-10-19 07:52:21  1     
+    4    Update                                   2023-10-19 08:06:23  2023-10-19 07:57:54  1     
+    5    The Bike needs to fix, id is : 1         2023-10-22 10:38:19  2023-10-22 11:02:49  1     
+    6    The Bike needs to fix, id is : 1         2023-10-22 11:06:01  2023-10-22 11:06:01  1     
+    13   The Bike needs to fix, id is : 2         2023-10-28 11:55:28  2023-10-28 11:58:21  1   
+    
+    """
+
+    # 格式化输出测试 Operator
+    # app = app()
+    # par = ["zhangruixian@gmail.com", "3022008", '2']
+    # app.login(par)
+    # for i in app.getAllStopsOP():
+    #     print(i)
+    #
+    # print(" ")
+    #
+    # for i in app.getAllVehicleOP():
+    #     print(i)
+    #
+    # print(" ")
+    #
+    # for i in app.getALLReportOP():
+    #     print(i)
+
+    """
+    app running
+    Login successfully
+    ID    NAME                 AXIS                      MAX_CAPACITY              CURRENT_CAPACITY         
+    1     TestNameIng          (55.869，-5.301)           30                        2                        
+    2     Test                 (55.869，-6.21)            30                        1                        
+    3     Test3                (55.869，-7.31)            20                        1                        
+
+    ID    TYPES      PRICE      BATTERYSTATUS   LOCATIONS       STATUS     ISRENTED   ISLOCKED   RENTER    
+    1     E-bike     0.02       100.0           2               normal     0          0          None       
+    2     E-bike     0.02       100.0           1               normal     0          0          None       
+    3     E-bike     0.02       99.3            1               normal     0          0          None       
+    4     Bike       0.005      0.0             3               normal     0          0          None       
+
+    ID    FROM_ID    MESSAGE                                  START_TIME                END_TIME                  STATUS     AUTHEN    
+    1     1          The 1 bike is broken                     2023-10-18 14:50:45       2023-10-19 07:51:42       1          0         
+    2     1          The id of bike 2 is broken               2023-10-19 07:42:45       2023-10-19 07:52:18       1          0         
+    3     1          The id of bike 2 is broken               2023-10-19 07:46:56       2023-10-19 07:52:21       1          0         
+    4     1          Update                                   2023-10-19 08:06:23       2023-10-19 07:57:54       1          0         
+    5     1          The Bike needs to fix, id is : 1         2023-10-22 10:38:19       2023-10-22 11:02:49       1          0         
+    6     1          The Bike needs to fix, id is : 1         2023-10-22 11:06:01       2023-10-22 11:06:01       1          0         
+    7     2          The Bike needs to fix, id is : 2         2023-10-22 22:46:21       2023-10-22 22:46:21       1          0         
+    8     2          The Bike needs to fix, id is : 1         2023-10-22 22:47:30       2023-10-22 22:48:10       1          0         
+    9     2          The Bike needs to fix, id is : 2         2023-10-22 22:50:35       2023-10-22 22:50:55       1          0         
+    10    2          The Bike needs to fix, id is : 1         2023-10-22 22:52:52       2023-10-22 22:53:12       1          0         
+    11    2          The Bike needs to fix, id is : 3         2023-10-22 22:55:48       2023-10-22 22:55:58       1          0         
+    12    2          The Bike needs to fix, id is : 1         2023-10-22 22:56:40       2023-10-22 22:56:50       1          0         
+    13    1          The Bike needs to fix, id is : 2         2023-10-28 11:55:28       2023-10-28 11:58:21       1          0        
+    """
