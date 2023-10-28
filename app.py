@@ -4,7 +4,7 @@ from Customer import Customer
 import pymysql
 from Operator import Operator
 from Order import Order
-from Vehicle import Vehicle
+from Vehicle import Vehicle, VehicleCapacityError
 from vehicleStop import vehicleStop
 
 mysql_config = {
@@ -27,7 +27,6 @@ class app:
         self.__order = None
         self.__cost = None
         self.__error = None
-        self.__reportCustomerID = None
         self.__QRcodeURL = None
         print("app running")
 
@@ -67,7 +66,11 @@ class app:
         if currentPassword == rightPassword:
             if option == '1':
                 self.__customer = Customer(currentEmail)
-            return True
+                return 1  # 返回1 说明是Customer 根据1的值 生成相对应的页面
+            if option == '2':
+                self.__operator = Operator(currentEmail)
+                return 2  # 返回2 说明是Operator 根据2的值 生成相对应的页面
+
         else:
             return False
 
@@ -92,6 +95,10 @@ class app:
         flag = operator.add(userCode)
         return flag
 
+    """
+    Customer接口方法  包括 租车 还车 支付 单独支付 报告维修 充值余额（内置生成QR码） 更改姓名 邮箱 密码 
+    """
+
     # 租车
     def rentVehicle(self, bikeID: int):
         self.__bike = Vehicle(self.__customer, bikeID)
@@ -113,10 +120,7 @@ class app:
         if self.__order is not None:
             stop = vehicleStop(stopID)
             flag = self.__order.endRent(stop)
-            if flag is not None:
-                return True
-            else:
-                return False
+            return flag
         else:
             return False
 
@@ -152,12 +156,9 @@ class app:
     # 客户报告
     def reportCustomer(self, bikeID: int):
         self.__bike = Vehicle(self.__customer, bikeID)
-        self.__reportCustomerID = self.__bike.reportFix()
+        flag = self.__bike.reportFix()
         # self.__reportCustomerID 存入到是 生成报告的id
-        if self.__reportCustomerID is not None:
-            return True
-        else:
-            return False
+        return flag
 
     # 生成QRCODE
     def generateQRcodeString(self, total: float):
@@ -170,7 +171,7 @@ class app:
 
     # 充值
     def topUp(self, total: float):
-        QRcode = self.generateQRcodeString(total)
+        QRcode = self.generateQRcodeString(total)  # 可以在集成的时候把它单独拿出来 先生成QRcode再支付 或者刷新按钮
         if QRcode is not None:
             flag = self.__customer.topUpBalance()
             return flag
@@ -178,30 +179,86 @@ class app:
             return False
 
     # 更改Customer邮箱
-    def updateCustomerEmail(self,newEmail:str):
+    def updateCustomerEmail(self, newEmail: str):
         pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-        if bool(re.match(pattern,newEmail)):
+        if bool(re.match(pattern, newEmail)):
             flag = self.__customer.updateEmail(newEmail)
             return flag
         else:
-            return False #修改邮箱 不是一个邮箱
+            return False  # 修改邮箱 不是一个邮箱
 
     # 更改Customer名字
-    def updateCustomerName(self,newName:str):
+    def updateCustomerName(self, newName: str):
         flag = self.__customer.updateName(newName)
         return flag
 
     # 更改Customer密码
-    def updateCustomerPassword(self,newPassword:str):
+    def updateCustomerPassword(self, newPassword: str):
         flag = self.__customer.updatePassword(newPassword)
         return flag
+
+    """
+    Operator接口方法   
+    """
+
+    # 添加车辆 数据类型 par = ['E-bike',1,'normal']
+    def addVehicleOP(self, par: list):
+        self.__bike = Vehicle(None, None)
+        flag = self.__operator.addVehicle(self.__bike, par, self.__operator)
+        return flag
+
+    # 删除车辆 数据类型 bikeID
+    def deleteVehicleOP(self, bikeID: int):
+        self.__bike = Vehicle(None, bikeID)
+        flag = self.__operator.deleteVehicle(self.__bike,self.__operator)
+        return flag
+
+    # 车辆充电
+    def changeBatteryOP(self, bikeID:int):
+        self.__bike = Vehicle(None, bikeID)
+        flag = self.__operator.changeBattery(self.__bike,self.__operator)
+        return flag
+
+    # 更改车辆位置
+    def changeLocationOP(self, bikeID:int,newLocation:int):
+        self.__bike = Vehicle(None, bikeID)
+        flag = self.__operator.changeLocation(self.__bike,newLocation,self.__operator)
+        return flag
+
+    # 追踪车辆
+    def track(self, bikeID:int):
+        self.__bike = Vehicle(None, bikeID)
+        location = self.__operator.getLocation(self.__bike)
+        return location
+
+    # 开始维修车辆
+    def fixBikeOP(self, bikeID:int):
+        self.__bike = Vehicle(None, bikeID)
+        flag = self.__operator.fixBike(self.__bike,self.__operator)
+        return flag
+
+    # 结束维修车辆
+    def endFixBikeOP(self, bikeID:int, reportID:int):
+        self.__bike = Vehicle(None, bikeID)
+        flag = self.__operator.endFixBike(self.__bike,reportID,self.__operator)
+        return flag
+
+
+
+    """
+    格式化输出：Customer 1、全部车站  2.全部可用车辆 3.全部关于自己的订单 4.自己所提交的所有报告
+              Operator 1、全部车站 2、全部车辆 3、全部报告 
+              Manager 1、全部用户表 2、全部操作员表 3、全部订单 4、全部报告 5、全部维修记录
+    """
+
+
 
 
 if __name__ == '__main__':
     import time
 
     # 用户测试
-    app = app()
+    # app = app()
     # par1 = ["Yuqing Ren", "9988", "renyuqing@gmail.com"]
     #
     # par2 = ["zhangruixian@gmail.com", "3022008a", '1']
@@ -325,5 +382,96 @@ if __name__ == '__main__':
     app running
     Login 'renyuqing5588@gmail.com' successfully
     """
+    # 测试Operator 增加车辆
+    # app = app()
+    # par = ["zhangruixian@gmail.com", "3022008", '2']
+    # app.login(par)
+    # app.addVehicleOP(['Bike',2,'normal'])
+
+    """
+    app running
+    Login successfully
+    Add a new vehicle successfully:  4 Bike
+    Records: 13
+    Add a new log successfully 13 zhangruixian@gmail.com 2023-10-28 08:51:19 4 Add a new bike
+    """
+    # 测试Operator 删除车辆
+    # app = app()
+    # par = ["zhangruixian@gmail.com", "3022008", '2']
+    # app.login(par)
+    # app.deleteVehicleOP(4)
+
+    """
+    app running
+    Login successfully
+    Delete the vehicle successfully:  4
+    Records: 14
+    Add a new log successfully 14 zhangruixian@gmail.com 2023-10-28 09:07:07 4 Delete bike id is: 4
+    """
+
+    # 测试Operator 测试充电
+    # app = app()
+    # par = ["zhangruixian@gmail.com", "3022008", '2']
+    # app.login(par)
+    # app.changeBatteryOP(2)
+
+    """
+    app running
+    Login successfully
+    Successfully change battery of bike
+    Records: 15
+    Add a new log successfully 15 zhangruixian@gmail.com 2023-10-28 11:27:53 2 change new battery
+    """
+
+    # 测试Operator 更改单车车站
+    # app = app()
+    # par = ["zhangruixian@gmail.com", "3022008", '2']
+    # app.login(par)
+    # app.changeLocationOP(3,1)
+
+    """
+    app running
+    Login successfully
+    Successfully change location of bike
+    Records: 16
+    Add a new log successfully 16 zhangruixian@gmail.com 2023-10-28 11:34:23 3 Change location: 2 to 1
+    """
+
+    # 测试Operator 维修 维修结束
+    # app = app()
+    # par = ["zhangruixian@gmail.com", "3022008a", '1']
+    # app.login(par)
+    # app.reportCustomer(2)
+
+    # app = app()
+    # par = ["zhangruixian@gmail.com", "3022008", '2']
+    # app.login(par)
+    # #app.fixBikeOP(2)
+    # app.endFixBikeOP(2,13)
+
+    """
+    app running
+    Login 'zhangruixian@gmail.com' successfully
+    Add a new report successfully 13 The Bike needs to fix, id is : 2
+    Successfully report
+    
+    app running
+    Login successfully
+    Fixing ...
+    Records: 17
+    Add a new log successfully 17 zhangruixian@gmail.com 2023-10-28 11:57:36 2 Fixing bike: 2
+    
+    app running
+    Login successfully
+    Successfully, processed the report id:  13
+    Report id: 13 is done
+    Records: 18
+    Add a new log successfully 18 zhangruixian@gmail.com 2023-10-28 11:58:22 2 Fixing bike is done: 2
+    
+    """
+
+
+
+
 
 
