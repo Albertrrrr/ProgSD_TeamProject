@@ -143,6 +143,7 @@ class Report:
             res.append(i)
         return res
 
+
     def update(self,message:str,reportID:int):
         self.__message = message
         current_time = datetime.datetime.now()

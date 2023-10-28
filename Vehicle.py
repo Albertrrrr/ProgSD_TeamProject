@@ -305,6 +305,8 @@ class Vehicle:
         self.updateBatteryStatus()
 
 
+
+
 if __name__ == '__main__':
     # customer = Customer("zhangruixian@gmail.com")
     # vehicle1 = Vehicle(customer,None,1)
