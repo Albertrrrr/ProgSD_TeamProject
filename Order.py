@@ -309,30 +309,30 @@ class Order:
 
 if __name__ == '__main__':
     import time
-    # from Customer import Customer
-    # zyj = "zhangyujia@gmail.com"
-    # zrx = "zhangruixian@gmail.com"
-    # zjn = "zhengjunan@yahool.com"
-    #
-    # customer = Customer(zjn)
-    # vehicle = Vehicle(customer, 2)
-    # order1 = Order(customer,vehicle)
-    # stop = vehicleStop(1)
-    #
-    # print(order1.detailsFormat(order1.orderDetails()))
-    #
-    # try:
-    #     order1.startRent()
-    # except OrderError as e:
-    #     print(order1.detailsFormat(order1.toPayOrder()))
-    #     order1.payTo()
-    #     order1.startRent()
-    #     pass
-    #
-    # time.sleep(8)
-    # order1.endRent(stop)
-    # order1.pay()
-    # order1.close()
+    from Customer import Customer
+    zyj = "zhangyujia@gmail.com"
+    zrx = "zhangruixian@gmail.com"
+    zjn = "zhengjunan@yahool.com"
+
+    customer = Customer(zjn)
+    vehicle = Vehicle(customer, 2)
+    order1 = Order(customer,vehicle)
+    stop = vehicleStop(1)
+
+    print(order1.detailsFormat(order1.orderDetails()))
+
+    try:
+        order1.startRent()
+    except OrderError as e:
+        print(order1.detailsFormat(order1.toPayOrder()))
+        order1.payTo()
+        order1.startRent()
+        pass
+
+    time.sleep(8)
+    order1.endRent(stop)
+    order1.pay()
+    order1.close()
 
     # order1.cancel()
 

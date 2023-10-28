@@ -216,38 +216,3 @@ class Customer:
         else:
             print("top up account balance failed")
             return False
-    def detailsFormat(self, details: tuple):
-        detailsList = list(details)
-        res = []
-        for i in detailsList:
-            res.append(list(i))
-        return res
-
-    def orderDetails(self):
-        flagSQL = 'SELECT orderID,bike,startStop,endStop,startTime,endTime,createTime,finishTime,cost,isPaid,status FROM `Order` WHERE renter = %s'
-        cursor.execute(flagSQL, self.__id)
-        details = cursor.fetchall()
-        res = self.detailsFormat(details)
-        for i in res:
-            for k in range(4,8):
-                i[k] = i[k].strftime("%Y-%m-%d %H:%M:%S")
-
-            for j in range(9,11):
-                if i[j] == 1 or i[j] == '1':
-                    i[j] = "True"
-        return res
-
-    def reportDetails(self):
-        flagSQL = 'SELECT reportID,message,startTime,endTime,status FROM `Report` WHERE fromID = %s'
-        cursor.execute(flagSQL, self.__id)
-        details = cursor.fetchall()
-        res = self.detailsFormat(details)
-        for i in res:
-            for k in range(2, 4):
-                i[k] = i[k].strftime("%Y-%m-%d %H:%M:%S")
-
-            if i[-2] == 1 or i[-2] == '1':
-                    i[-2] = "True"
-        return res
-
-

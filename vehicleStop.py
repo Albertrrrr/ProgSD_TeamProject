@@ -128,7 +128,17 @@ class vehicleStop:
         else:
             print("Change successfully")
             return True
-
+    """
+        BEGIN
+        UPDATE VehicleStop
+        SET currentCapacity = (
+            SELECT COUNT(*)
+            FROM Vehicle
+            WHERE locations = NEW.locations AND isLocked = 0 ANd isRented = 0
+        )
+        WHERE locationID = NEW.locations;
+    END
+    """
     def updateAxis(self, newAxis:str):
         self.__axis = newAxis
         deleteSQL = "delete from `VehicleStop` where locationID = %s"
@@ -148,11 +158,6 @@ class vehicleStop:
     #更新新的Vechile数量 已经设置了Mysql触发器
 
     def stopDetails(self):
-        cursor.execute("SELECT locationID,name,maxCapacity,currentCapacity from `VehicleStop`")
-        details = cursor.fetchall()
-        return details
-
-    def stopDetailsOP(self):
         cursor.execute("SELECT * from `VehicleStop`")
         details = cursor.fetchall()
         return details
@@ -169,26 +174,12 @@ class vehicleStop:
         searchSQL = "SELECT * FROM `Vehicle` WHERE locations = %s AND isLocked = 0"
         cursor.execute(searchSQL, self.__id)
         data = cursor.fetchall()
+
         res = []
         for i in data:
             tupleID = (i[0],i[1],i[3],i[5])
             res.append(tupleID)
         return res
-
-    def vehicleAllList(self):
-        searchSQL = "SELECT * FROM `Vehicle`"
-        cursor.execute(searchSQL)
-        data = cursor.fetchall()
-        res = self.detailsFormat(data)
-        for i in res:
-            for j in range(6,8):
-                if i[j] == 1 or i[j] == '1':
-                    i[j] = "False"
-            if i[-1] is None:
-                i[-1] = "None"
-        return res
-
-
 
 if __name__ == '__main__':
     #空对象 仅可返回全部的Vehicle Stops
