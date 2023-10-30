@@ -263,6 +263,23 @@ class Operator:
         flag = stop.updateMaxCapacity(newMaxCapacity)
         return flag
 
+    def reportAllDetails(self):
+        flagSQL = 'SELECT * FROM `Report` '
+        cursor.execute(flagSQL)
+        details = cursor.fetchall()
+        res = self.detailsFormat(details)
+        return res
+
+    def detailsFormat(self, details: tuple):
+        detailsList = list(details)
+        res = []
+        for i in detailsList:
+            for j in range(3, 5):
+                i = list(i)
+                i[j] = i[j].strftime("%Y-%m-%d %H:%M:%S")
+            res.append(i)
+        return res
+
 
 if __name__ == '__main__':
     from Customer import Customer
