@@ -20,7 +20,7 @@ db = pymysql.connect(**mysql_config)
 
 class app:
     def __init__(self):
-        self.__customer = Customer()
+        self.__customer = None
         self.__operator = None
         self.__manager = None
         self.__bike = None

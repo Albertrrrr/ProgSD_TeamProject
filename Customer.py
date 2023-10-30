@@ -24,9 +24,23 @@ class CustomerError(Exception):
 
 class Customer:
     def __init__(self, email=None):
-        cursor.execute("SELECT * from Customers")
+
+        # mysql configs
+        mysql_config = {
+            'host': '35.246.24.203',
+            'port': 3306,
+            'user': 'root',
+            'passwd': '3022008a',
+            'database': 'progSDTeamProject',
+        }
+        # connect to mysql
+        db = pymysql.connect(**mysql_config)
+        cursor = db.cursor()
+
+        cursor.execute("SELECT * from Customers ORDER BY customerID")
         # 使用 fetchone() 方法获取单条数据.
         data = cursor.fetchall()
+
 
         try:
             currentID = data[-1][0]

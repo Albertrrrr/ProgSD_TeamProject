@@ -19,11 +19,11 @@ class MapPage(object):
         map_widget.set_position(55.86847776160628, -4.274376402130314)
         map_widget.set_zoom(15)
 
-        vehicle_loca_list = self.user.get_locations()
-        for row in vehicle_loca_list:
+        vehicle_local_list = self.user.get_locations()
+        for row in vehicle_local_list:
             position = row[2]
-            str_loca_info = "Location_ID:" + row[0] + "  \nLocation_Name:" + row[1]
+            str_local_info = "Location_ID:" + row[0] + "  \nLocation_Name:" + row[1]
             xx = float(position.split(', ')[0])
             yy = float(position.split(', ')[1])
-            map_widget.set_marker(xx, yy, text=str_loca_info)
+            map_widget.set_marker(xx, yy, text=str_local_info)
 
