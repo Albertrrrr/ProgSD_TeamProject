@@ -1,7 +1,11 @@
 import pymysql
 import pandas as pd
 import mysql.connector
-# pip install mysql-connector-python
+# pip install mysql
+# pip install scikit-learn
+# pip install pandas
+# pip install pymysql
+# pip install tensorflow==2.14.0
 
 from sqlalchemy import create_engine
 # pip install sqlalchemy
