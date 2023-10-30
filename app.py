@@ -358,7 +358,7 @@ class app:
     """
     格式化输出：Customer 1、全部车站  2.全部可用车辆 3.全部关于自己的订单 4.自己所提交的所有报告
               Operator 1、全部车站 2、全部车辆 3、全部报告 
-              Manager 1、全部用户表 2、全部操作员表 3、全部订单 4、全部报告 5、全部维修记录
+              Manager 1、全部用户表 2、全部操作员表 3、全部订单  4、全部维修记录
     """
     """ Customer 1、全部车站  2.全部可用车辆 3.全部关于自己的订单 4.自己所提交的所有报告 """
 
@@ -463,11 +463,90 @@ class app:
         res.insert(0, tableHead)
         return res
 
+    """ Manager 1、全部用户表 2、全部操作员表 3、全部订单 4、全部维修记录 """
+
+    # 全部用户表
+    def tableFormatCustomerOM(self, details: list):
+        res = []
+        for i in details:
+            # 不要密码
+            finalString = "{:<5} {:<20} {:<25} {:<25}".format(*i)
+            res.append(finalString)
+        return res
+
+    def getALLCustomerOM(self):
+        res = self.tableFormatCustomerOM(self.__operator.getAllCustomer())
+        tableHead = "{:<5} {:<20} {:<25} {:<25}".format(
+            "ID","NAME","EMAIL", "ACCOUNT_BALANCE")
+        res.insert(0, tableHead)
+        return res
+
+    # 全部操作者
+    def tableFormatOperatorOM(self, details: list):
+        res = []
+        for i in details:
+            # 不要密码
+            finalString = "{:<5} {:<15} {:<25}".format(*i)
+            res.append(finalString)
+        return res
+
+    def getALLOperatorOM(self):
+        res = self.tableFormatOperatorOM(self.__operator.getAllOperator())
+        tableHead = "{:<5} {:<15} {:<25} ".format(
+            "ID","NAME","EMAIL")
+        res.insert(0, tableHead)
+        return res
+
+    # 全部订单
+    def getOrderListOM(self):
+        res = self.tableFormatOrderOM(self.__operator.getAllOrder())
+        tableHead = "{:<4} {:<5} {:<6} {:<3} {:<3} {:<20} {:<20} {:<20} {:<24} {:<6} {:<6} {:<6}".format(
+            "ID", "BIKE", "RENTER", "S-S", "E-S", "START_TIME", "END_TIME", "CREATE_TIME", "FINISH_TIME", "COST", "ISPAID",
+            "STATUS")
+        res.insert(0, tableHead)
+        return res
+
+    def tableFormatOrderOM(self, details: list):
+        res = []
+        for i in details:
+            finalString = "{:<4} {:<5} {:<6} {:<3} {:<3} {:<20} {:<20} {:<20} {:<24} {:<6} {:<6} {:<6}".format(*i)
+            res.append(finalString)
+        return res
+
+    # 全部维修记录
+    def tableFormatRecordsOM(self, details: list):
+        res = []
+        for i in details:
+            finalString = "{:<5} {:<25} {:<25} {:<10} {:<25}".format(*i)
+            res.append(finalString)
+        return res
+
+    def getALLRecordOM(self):
+        res = self.tableFormatRecordsOM(self.__operator.getAllRecord())
+        tableHead = "{:<5} {:<25} {:<25} {:<10} {:<25}".format(
+            "ID","OPERATOR_EMAIL","DATA","BIKE_ID","STATUS")
+        res.insert(0, tableHead)
+        return res
+
+    # 全部报告
+    def tableFormatReportOM(self, details: list):
+        res = []
+        for i in details:
+            finalString = "{:<5} {:<10} {:<40} {:<25} {:<25} {:<10} {:<10}".format(*i)
+            res.append(finalString)
+        return res
+
+    def getALLReportOM(self):
+        res = self.tableFormatReportOM(self.__operator.reportAllDetailsOM())
+        tableHead = "{:<5} {:<10} {:<40} {:<25} {:<25} {:<10} {:<10}".format(
+            "ID","FROM_ID","MESSAGE", "START_TIME", "END_TIME", "STATUS", "AUTHEN")
+        res.insert(0, tableHead)
+        return res
 
 
 if __name__ == '__main__':
     import time
-
+    app = app()
 
     # 用户测试
     # app = app()
@@ -706,26 +785,26 @@ if __name__ == '__main__':
     """
 
     # 格式化输出测试 Customer
-    app = app()
-    par = ["zhangruixian@gmail.com", "3022008a", '1']
-    app.login(par)
-    for i in app.getAllStopsCU():
-        print(i)
-
-    print(" ")
-
-    for i in app.getAvailableVehicle(1):
-        print(i)
-
-    print(" ")
-
-    for i in app.getOrderList():
-        print(i)
-
-    print(" ")
-
-    for i in app.getReportList():
-        print(i)
+    # app = app()
+    # par = ["zhangruixian@gmail.com", "3022008a", '1']
+    # app.login(par)
+    # for i in app.getAllStopsCU():
+    #     print(i)
+    #
+    # print(" ")
+    #
+    # for i in app.getAvailableVehicle(1):
+    #     print(i)
+    #
+    # print(" ")
+    #
+    # for i in app.getOrderList():
+    #     print(i)
+    #
+    # print(" ")
+    #
+    # for i in app.getReportList():
+    #     print(i)
     """
     app running
     Login 'zhangruixian@gmail.com' successfully
@@ -815,4 +894,120 @@ if __name__ == '__main__':
     11    2          The Bike needs to fix, id is : 3         2023-10-22 22:55:48       2023-10-22 22:55:58       1          0         
     12    2          The Bike needs to fix, id is : 1         2023-10-22 22:56:40       2023-10-22 22:56:50       1          0         
     13    1          The Bike needs to fix, id is : 2         2023-10-28 11:55:28       2023-10-28 11:58:21       1          0        
+    """
+
+    # 格式化输出测试 Manager
+    # app = app()
+    # par = ["zhangruixian@gmail.com", "3022008", '2']
+    # app.login(par)
+    # for i in app.getALLCustomerOM():
+    #     print(i)
+    #
+    # print(" ")
+    #
+    # for i in app.getALLOperatorOM():
+    #     print(i)
+    #
+    # print(" ")
+    #
+    # for i in app.getOrderListOM():
+    #     print(i)
+    #
+    # print(" ")
+    #
+    # for i in app.getALLRecordOM():
+    #     print(i)
+    #
+    # print(" ")
+    #
+    # for i in app.getALLReportOM():
+    #     print(i)
+    """
+    app running
+    Login successfully
+    ID    NAME                 EMAIL                     ACCOUNT_BALANCE          
+    5     Yuqing Ren           renyuqing@gmail.com       5.5                      
+    1     Zhang,Ruixian        zhangruixian@gmail.com    590.14                   
+    2     Yujia Ye             zhangyujia@gmail.com      152.19                   
+    3     Junan Zheng          zhengjunan@yahool.com     4.39                     
+    4     Junan Zheng          zhengjunnan99@gmail.com   5.5                      
+     
+    ID    NAME            EMAIL                     
+    1     ZZZ             zhangruixian@gmail.com   
+    2     Yuqing Ren      renyuqing@gmail.com      
+     
+    ID   BIKE  RENTER S-S E-S START_TIME           END_TIME             CREATE_TIME          FINISH_TIME              COST   ISPAID STATUS
+    1    2     2      1   3   2023-10-16 15:47:04  2023-10-16 15:47:09  2023-10-22 15:47:04  2023-10-22 15:47:09      0.1    True   True  
+    2    2     2      2   3   2023-10-16 15:48:01  2023-10-16 15:48:06  2023-10-22 15:48:01  2023-10-22 15:48:06      0.1    True   True  
+    3    2     3      3   3   2023-10-17 15:49:14  2023-10-17 15:49:19  2023-10-22 15:49:14  2023-10-22 15:49:20      0.1    True   True  
+    4    2     3      4   3   2023-10-17 15:49:57  2023-10-17 15:50:07  2023-10-22 15:49:57  2023-10-22 15:50:08      0.2    True   True  
+    5    1     1      5   3   2023-10-17 15:50:49  2023-10-17 15:50:59  2023-10-22 15:50:49  2023-10-22 15:51:00      0.2    True   True  
+    6    2     1      1   5   2023-10-17 15:51:20  2023-10-17 15:51:30  2023-10-22 15:51:20  2023-10-22 15:51:31      0.2    True   True  
+    7    2     1      2   4   2023-10-17 16:18:32  2023-10-17 16:18:42  2023-10-22 16:18:32  2023-10-22 16:18:42      0.2    True   True  
+    8    2     1      3   3   2023-10-18 16:19:01  2023-10-18 16:19:10  2023-10-22 16:19:01  2023-10-22 16:19:10      0.18   True   True  
+    9    2     3      4   2   2023-10-18 16:19:34  2023-10-18 16:19:42  2023-10-22 16:19:34  2023-10-22 16:19:42      0.16   True   True  
+    10   2     2      5   3   2023-10-18 15:47:04  2023-10-18 15:47:09  2023-10-22 15:47:04  2023-10-22 15:47:09      0.1    True   True  
+    11   2     2      1   4   2023-10-18 15:47:04  2023-10-18 15:47:09  2023-10-22 15:47:04  2023-10-22 15:47:09      0.1    True   True  
+    12   2     2      2   2   2023-10-18 15:48:01  2023-10-18 15:48:06  2023-10-22 15:48:01  2023-10-22 15:48:06      0.1    True   True  
+    13   2     3      3   4   2023-10-18 15:49:14  2023-10-18 15:49:19  2023-10-22 15:49:14  2023-10-22 15:49:20      0.1    True   True  
+    14   2     3      4   5   2023-10-19 15:49:57  2023-10-19 15:50:07  2023-10-22 15:49:57  2023-10-22 15:50:08      0.2    True   True  
+    15   1     1      5   3   2023-10-19 15:50:49  2023-10-19 15:50:59  2023-10-22 15:50:49  2023-10-22 15:51:00      0.2    True   True  
+    16   2     1      1   3   2023-10-19 15:51:20  2023-10-19 15:51:30  2023-10-22 15:51:20  2023-10-22 15:51:31      0.2    True   True  
+    17   2     1      2   3   2023-10-19 16:18:32  2023-10-19 16:18:42  2023-10-22 16:18:32  2023-10-22 16:18:42      0.2    True   True  
+    18   2     1      3   3   2023-10-20 16:19:01  2023-10-20 16:19:10  2023-10-22 16:19:01  2023-10-22 16:19:10      0.18   True   True  
+    19   2     3      4   2   2023-10-20 16:19:34  2023-10-20 16:19:42  2023-10-22 16:19:34  2023-10-22 16:19:42      0.16   True   True  
+    20   2     2      5   1   2023-10-20 15:47:04  2023-10-20 15:47:09  2023-10-22 15:47:04  2023-10-22 15:47:09      0.1    True   True  
+    21   2     2      1   3   2023-10-21 15:47:04  2023-10-21 15:47:09  2023-10-22 15:47:04  2023-10-22 15:47:09      0.1    True   True  
+    22   2     2      2   4   2023-10-21 15:48:01  2023-10-21 15:48:06  2023-10-22 15:48:01  2023-10-22 15:48:06      0.1    True   True  
+    23   2     3      3   5   2023-10-21 15:49:14  2023-10-21 15:49:19  2023-10-22 15:49:14  2023-10-22 15:49:20      0.1    True   True  
+    24   2     3      4   3   2023-10-21 15:49:57  2023-10-21 15:50:07  2023-10-22 15:49:57  2023-10-22 15:50:08      0.2    True   True  
+    25   1     1      5   2   2023-10-21 15:50:49  2023-10-21 15:50:59  2023-10-22 15:50:49  2023-10-22 15:51:00      0.2    True   True  
+    26   2     1      1   1   2023-10-22 15:51:20  2023-10-22 15:51:30  2023-10-22 15:51:20  2023-10-22 15:51:31      0.2    True   True  
+    27   2     1      2   1   2023-10-22 16:18:32  2023-10-22 16:18:42  2023-10-22 16:18:32  2023-10-22 16:18:42      0.2    True   True  
+    28   2     1      3   1   2023-10-22 16:19:01  2023-10-22 16:19:10  2023-10-22 16:19:01  2023-10-22 16:19:10      0.18   True   True  
+    29   2     3      4   5   2023-10-22 16:19:34  2023-10-22 16:19:42  2023-10-22 16:19:34  2023-10-22 16:19:42      0.16   True   True  
+    30   2     2      5   3   2023-10-22 15:47:04  2023-10-22 15:47:09  2023-10-22 15:47:04  2023-10-22 15:47:09      0.1    True   True  
+    31   3     1      2   2   2023-10-24 16:47:48  2023-10-24 16:47:53  2023-10-24 16:47:48  2023-10-24 16:47:53      0.1    True   True  
+    32   3     1      2   2   2023-10-24 16:53:11  2023-10-24 16:53:21  2023-10-24 16:53:11  2023-10-24 16:53:21      0.2    True   True  
+    33   3     1      2   2   2023-10-24 19:16:57  2023-10-24 19:17:07  2023-10-24 19:16:57  2023-10-24 19:30:39      0.2    True   True  
+    34   2     1      1   1   2023-10-24 19:30:40  2023-10-24 19:30:40  2023-10-24 19:30:40  2023-10-24 19:30:40      0.0    True   True  
+    35   1     1      2   2   2023-10-24 19:37:42  2023-10-24 19:37:42  2023-10-24 19:37:42  2023-10-24 19:38:17      0.0    True   True  
+    36   2     1      1   1   2023-10-24 19:38:17  2023-10-24 19:38:18  2023-10-24 19:38:17  2023-10-24 19:38:18      0.02   True   True  
+    37   3     1      2   2   2023-10-24 20:52:14  2023-10-24 20:52:24  2023-10-24 20:52:14  2023-10-24 20:52:25      0.2    True   True  
+     
+    ID    OPERATOR_EMAIL            DATA                      BIKE_ID    STATUS                   
+    1     zhangruixian@gmail.com    2023-10-22 21:42:24       1          change new battery       
+    2     zhangruixian@gmail.com    2023-10-22 22:10:19       4          Add a new bike           
+    3     zhangruixian@gmail.com    2023-10-22 22:12:35       4          Delete the bike          
+    4     zhangruixian@gmail.com    2023-10-22 22:21:26       3          Change location: 2 to 1  
+    5     zhangruixian@gmail.com    2023-10-22 22:24:21       3          Fixing bike: 3           
+    6     zhangruixian@gmail.com    2023-10-22 22:46:22       2          Fixing bike is done: 2   
+    7     zhangruixian@gmail.com    2023-10-22 22:47:50       1          Fixing bike: 1           
+    8     zhangruixian@gmail.com    2023-10-22 22:50:45       2          Fixing bike: 2           
+    9     zhangruixian@gmail.com    2023-10-22 22:53:02       1          Fixing bike: 1           
+    10    zhangruixian@gmail.com    2023-10-22 22:55:53       3          Fixing bike: 3           
+    11    zhangruixian@gmail.com    2023-10-22 22:56:45       1          Fixing bike: 1           
+    12    zhangruixian@gmail.com    2023-10-22 22:56:50       1          Fixing bike is done: 1   
+    13    zhangruixian@gmail.com    2023-10-28 08:51:19       4          Add a new bike           
+    14    zhangruixian@gmail.com    2023-10-28 09:07:07       4          Delete bike id is: 4     
+    15    zhangruixian@gmail.com    2023-10-28 11:27:53       2          change new battery       
+    16    zhangruixian@gmail.com    2023-10-28 11:34:23       3          Change location: 2 to 1  
+    17    zhangruixian@gmail.com    2023-10-28 11:57:36       2          Fixing bike: 2           
+    18    zhangruixian@gmail.com    2023-10-28 11:58:22       2          Fixing bike is done: 2   
+    19    zhangruixian@gmail.com    2023-10-28 14:02:21       4          Add a new bike           
+     
+    ID    FROM_ID    MESSAGE                                  START_TIME                END_TIME                  STATUS     AUTHEN    
+    1     1          The 1 bike is broken                     2023-10-18 14:50:45       2023-10-19 07:51:42       1          0         
+    2     1          The id of bike 2 is broken               2023-10-19 07:42:45       2023-10-19 07:52:18       1          0         
+    3     1          The id of bike 2 is broken               2023-10-19 07:46:56       2023-10-19 07:52:21       1          0         
+    4     1          Update                                   2023-10-19 08:06:23       2023-10-19 07:57:54       1          0         
+    5     1          The Bike needs to fix, id is : 1         2023-10-22 10:38:19       2023-10-22 11:02:49       1          0         
+    6     1          The Bike needs to fix, id is : 1         2023-10-22 11:06:01       2023-10-22 11:06:01       1          0         
+    7     2          The Bike needs to fix, id is : 2         2023-10-22 22:46:21       2023-10-22 22:46:21       1          0         
+    8     2          The Bike needs to fix, id is : 1         2023-10-22 22:47:30       2023-10-22 22:48:10       1          0         
+    9     2          The Bike needs to fix, id is : 2         2023-10-22 22:50:35       2023-10-22 22:50:55       1          0         
+    10    2          The Bike needs to fix, id is : 1         2023-10-22 22:52:52       2023-10-22 22:53:12       1          0         
+    11    2          The Bike needs to fix, id is : 3         2023-10-22 22:55:48       2023-10-22 22:55:58       1          0         
+    12    2          The Bike needs to fix, id is : 1         2023-10-22 22:56:40       2023-10-22 22:56:50       1          0         
+    13    1          The Bike needs to fix, id is : 2         2023-10-28 11:55:28       2023-10-28 11:58:21       1          0    
     """
