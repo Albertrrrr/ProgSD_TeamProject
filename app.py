@@ -6,6 +6,7 @@ from Operator import Operator
 from Order import Order
 from Vehicle import Vehicle, VehicleCapacityError
 from vehicleStop import vehicleStop
+from Manager import Manager
 
 mysql_config = {
     'host': '35.246.24.203',
@@ -122,7 +123,7 @@ class app:
             db.commit()
 
         elif option == '3':
-            oneSQL = "SELECT * FROM Manager WHERE email = %s"
+            oneSQL = "SELECT * FROM Managers WHERE email = %s"
             cursor.execute(oneSQL, currentEmail)
             db.commit()
 
@@ -141,6 +142,9 @@ class app:
             if option == '2':
                 self.__operator = Operator(currentEmail)
                 return 2  # 返回2 说明是Operator 根据2的值 生成相对应的页面
+            if option == '3':
+                self.__manager = Manager(currentEmail)
+                return 3  # 返回2 说明是Operator 根据2的值 生成相对应的页面
 
         else:
             return False
@@ -356,6 +360,22 @@ class app:
         return flag
 
     """
+       Manager接口方法   
+    """
+    def managerViewPdf(self):
+        # export csv
+        table_name = '`Order`'
+        output_csv_file = 'visualizationOrder.csv'
+        self.__manager.exportToCSV(table_name, output_csv_file)
+
+        # generate pdf
+        data = self.__manager.load_data('visualizationOrder.csv')
+        self.__manager.visualizePlotting(data)
+        filename = "multi_plot_image.pdf"
+        # manager.saveToPdf(filename)
+        self.__manager.openPdfInBrowser(filename)
+
+    """
     格式化输出：Customer 1、全部车站  2.全部可用车辆 3.全部关于自己的订单 4.自己所提交的所有报告
               Operator 1、全部车站 2、全部车辆 3、全部报告 
               Manager 1、全部用户表 2、全部操作员表 3、全部订单  4、全部维修记录
@@ -475,7 +495,7 @@ class app:
         return res
 
     def getALLCustomerOM(self):
-        res = self.tableFormatCustomerOM(self.__operator.getAllCustomer())
+        res = self.tableFormatCustomerOM(self.__manager.getAllCustomer())
         tableHead = "{:<5} {:<20} {:<25} {:<25}".format(
             "ID","NAME","EMAIL", "ACCOUNT_BALANCE")
         res.insert(0, tableHead)
@@ -491,7 +511,7 @@ class app:
         return res
 
     def getALLOperatorOM(self):
-        res = self.tableFormatOperatorOM(self.__operator.getAllOperator())
+        res = self.tableFormatOperatorOM(self.__manager.getAllOperator())
         tableHead = "{:<5} {:<15} {:<25} ".format(
             "ID","NAME","EMAIL")
         res.insert(0, tableHead)
@@ -499,7 +519,7 @@ class app:
 
     # 全部订单
     def getOrderListOM(self):
-        res = self.tableFormatOrderOM(self.__operator.getAllOrder())
+        res = self.tableFormatOrderOM(self.__manager.getAllOrder())
         tableHead = "{:<4} {:<5} {:<6} {:<3} {:<3} {:<20} {:<20} {:<20} {:<24} {:<6} {:<6} {:<6}".format(
             "ID", "BIKE", "RENTER", "S-S", "E-S", "START_TIME", "END_TIME", "CREATE_TIME", "FINISH_TIME", "COST", "ISPAID",
             "STATUS")
@@ -522,7 +542,7 @@ class app:
         return res
 
     def getALLRecordOM(self):
-        res = self.tableFormatRecordsOM(self.__operator.getAllRecord())
+        res = self.tableFormatRecordsOM(self.__manager.getAllRecord())
         tableHead = "{:<5} {:<25} {:<25} {:<10} {:<25}".format(
             "ID","OPERATOR_EMAIL","DATA","BIKE_ID","STATUS")
         res.insert(0, tableHead)
@@ -537,7 +557,7 @@ class app:
         return res
 
     def getALLReportOM(self):
-        res = self.tableFormatReportOM(self.__operator.reportAllDetailsOM())
+        res = self.tableFormatReportOM(self.__manager.reportAllDetailsOM())
         tableHead = "{:<5} {:<10} {:<40} {:<25} {:<25} {:<10} {:<10}".format(
             "ID","FROM_ID","MESSAGE", "START_TIME", "END_TIME", "STATUS", "AUTHEN")
         res.insert(0, tableHead)
@@ -548,6 +568,9 @@ if __name__ == '__main__':
     import time
     app = app()
 
+    par1 = ["manager123@gmail.com", "manager123", "3"]
+    app.login(par1)
+    app.managerViewPdf()
     # 用户测试
     # app = app()
     # par1 = ["Yuqing Ren", "9988", "renyuqing@gmail.com"]

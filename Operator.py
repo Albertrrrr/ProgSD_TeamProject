@@ -273,72 +273,7 @@ class Operator:
             res.append(i)
         return res
 
-    # Manager方法
-    def getAllCustomer(self):
-        flagSQL = 'SELECT customerID,name,email,accountBalance FROM `Customers`'
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
-        res = self.detailsFormatOM(details)
-        return res
 
-
-    # 获得全部Operator
-    def getAllOperator(self):
-        flagSQL = 'SELECT operatorID,name,email FROM `Operators`'
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
-        res = self.detailsFormatOM(details)
-        return res
-
-    def detailsFormatOM(self, details: tuple):
-        detailsList = list(details)
-        res = []
-        for i in detailsList:
-            res.append(list(i))
-        return res
-
-    # 获得全部的Order
-    def getAllOrder(self):
-        flagSQL = 'SELECT orderID,bike,renter,startStop,endStop,startTime,endTime,createTime,finishTime,cost,isPaid,status FROM `Order`'
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
-        res = self.detailsFormatOM(details)
-        for i in res:
-            for k in range(5, 9):
-                i[k] = i[k].strftime("%Y-%m-%d %H:%M:%S")
-
-            for j in range(10, 12):
-                if i[j] == 1 or i[j] == '1':
-                    i[j] = "True"
-        return res
-
-    # 获得全部的Records
-    def getAllRecord(self):
-        flagSQL = 'SELECT * FROM `Records`'
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
-        res = self.detailsFormatOM(details)
-        for i in res:
-            i[2] = i[2].strftime("%Y-%m-%d %H:%M:%S")
-
-        return res
-
-    def reportAllDetailsOM(self):
-        flagSQL = 'SELECT * FROM `Report`'
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
-        res = self.detailsFormatReportOM(details)
-        return res
-
-    def detailsFormatReportOM(self, details: tuple):
-        detailsList = list(details)
-        res = []
-        for i in detailsList:
-            for j in range(3, 5):
-                i = list(i)
-                i[j] = i[j].strftime("%Y-%m-%d %H:%M:%S")
-            res.append(i)
-        return res
 
 
 
