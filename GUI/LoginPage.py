@@ -26,7 +26,7 @@ class LoginPage(object):
         b_font = font.Font(family="Helvetica", size=14)
 
         # Label 1
-        label1 = Label(text="Bike-sharing", font=l1_font)
+        label1 = Label(text="Bike-sharing system", font=l1_font)
         label1.place(x=320, y=50)
 
         # Radio_button
@@ -50,9 +50,9 @@ class LoginPage(object):
         self.__password.place(x=380, y=330, width=300, height=30)
 
         # Buttons
-        button1 = Button(text="Login", command = self.loginCheck, font=b_font)
+        button1 = Button(text="Login", command = self.loginCheck, font=b_font,bg='green', fg='white')
         button1.place(x=450, y=420, width=100, height=40)
-        button2 = Button(text="Register", command = self.register, font=b_font)
+        button2 = Button(text="Register", command = self.register, font=b_font,bg='orange', fg='white')
         button2.place(x=450, y=500, width=100, height=40)
 
     def register(self):

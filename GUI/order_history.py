@@ -18,18 +18,18 @@ class HistoryPage(object):
         # window.config(bg='lightcyan')
 
         # Oder history information
-        label1 = Label(self.page, text="Order history information", bg="lightcyan", font=("Arial", 14))
-        label1.place(x=50, y=50)
+        label1 = Label(self.page, text="Order history information", bg="lightcyan", font=("Arial", 18))
+        label1.place(x=20, y=40)
 
-        back_button = Button(self.page, text="Back", command = self.quit, bg='#4CAF50', fg='white')
+        back_button = Button(self.page, text="Back", command = self.quit, bg='#000000', fg='white')
         back_button.place(x=50, y=150, width = 80, height = 30)
 
         # Oder information
-        label2 = Label(self.page, text="Order information", font=("Arial", 14))
-        label2.place(x=400, y=20)
+        label2 = Label(self.page, text="Order information", font=("Arial", 16))
+        label2.place(x=600, y=20)
 
 
-        refresh_button = Button(self.page, text="Refresh history", command = self.refresh)
+        refresh_button = Button(self.page, text="Refresh",bg='#4CAF50', fg='white', command = self.refresh)
         refresh_button.place(x = 50, y = 200, width = 100, height = 30)
 
         self.__info_list = Listbox(self.page)
@@ -44,14 +44,14 @@ class HistoryPage(object):
 
 
         # You have successfully paid order
-        label4 = Label(self.page, text="You have successfully paid order", font=("Arial", 14))
-        label4.place(x=50, y=450)
+        label4 = Label(self.page, text="You have successfully paid order", font=("Arial", 12))
+        label4.place(x=40, y=450)
 
         pay_button = Button(self.page, command = self.pay, text="Pay", bg='#4CAF50', fg='white')
-        pay_button.place(x=50, y=550)
+        pay_button.place(x=130, y=530)
 
         entry3 = Entry(self.page)
-        entry3.place(x=70, y=550, width=200, height=30)
+        entry3.place(x=100, y=480, width=100, height=30)
 
     def pay(self):
         flag = self.__app.payToOrder()

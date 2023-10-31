@@ -21,32 +21,32 @@ class UserCenterPage():
         title_label.pack(pady=20)
 
         # Back button
-        back_button = Button(self.page, text="Back", command = self.quit, bg="#4CAF50", fg="white", font=("Arial", 14))
+        back_button = Button(self.page, text="Back", command = self.quit, bg="#000000", fg="white", font=("Arial", 14))
         back_button.place(x=30, y=30)
 
         # Change password
         password_lbl = Label(self.page, text="Change password", bg="#add8e6", font=("Arial", 16))
-        password_lbl.place(x=150, y=100)
+        password_lbl.place(x=300, y=160)
         self.__newpassword = Entry(self.page, width=25)
-        self.__newpassword.place(x=320, y=103)
+        self.__newpassword.place(x=480, y=163)
         password_btn = Button(self.page, text="OK", command = self.changepassword, bg="#4CAF50", fg="white", font=("Arial", 12))
-        password_btn.place(x=520, y=100)
+        password_btn.place(x=670, y=160)
 
         # Modify email
         email_lbl = Label(self.page, text="Modify email", bg="#add8e6", font=("Arial", 16))
-        email_lbl.place(x=150, y=160)
+        email_lbl.place(x=300, y=250)
         self.__newemail = Entry(self.page, width=25)
-        self.__newemail.place(x=320, y=163)
+        self.__newemail.place(x=480, y=253)
         email_btn = Button(self.page, text="OK", command = self.changeemail, bg="#4CAF50", fg="white", font=("Arial", 12))
-        email_btn.place(x=520, y=160)
+        email_btn.place(x=670, y=250)
 
         # Change name
         name_lbl = Label(self.page, text="Change name", bg="#add8e6", font=("Arial", 16))
-        name_lbl.place(x=150, y=220)
+        name_lbl.place(x=300, y=340)
         self.__newusername = Entry(self.page, width=25)
-        self.__newusername.place(x=320, y=223)
+        self.__newusername.place(x=480, y=343)
         name_btn = Button(self.page, text="OK", command = self.changename, bg="#4CAF50", fg="white", font=("Arial", 12))
-        name_btn.place(x=520, y=220)
+        name_btn.place(x=670, y=340)
 
     def quit(self):
         self.page.destroy()
