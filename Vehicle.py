@@ -47,7 +47,10 @@ class Vehicle:
             cursor.execute(oneSQL, vehicleID)
             oneData = cursor.fetchone()
 
+            print(oneData)
+
             self.__types = oneData[1]
+
             self.__price = oneData[2]
             self.__batteryStatus = oneData[3]
             self.__locations = oneData[4]

@@ -178,8 +178,12 @@ class vehicleStop:
     def vehicleAllList(self):
         searchSQL = "SELECT * FROM `Vehicle`"
         cursor.execute(searchSQL)
+
+        db.commit()
+
         data = cursor.fetchall()
         res = self.detailsFormat(data)
+
         for i in res:
             for j in range(6,8):
                 if i[j] == 1 or i[j] == '1':

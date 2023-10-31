@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter.messagebox as msgbox
 from tkinter import font
-from GUI import Registration, customer_homapage, Operator, Manager_homepage
+from GUI import Registration, customer_homapage, Operator, Manager_homepage,MapPage
 from app import app
 
 
@@ -13,7 +13,6 @@ class LoginPage(object):
         self.__selected_value = IntVar()
         self.__root.geometry("1000x600")
         self.__app = app()
-
 
     def CreatePage(self):
 
@@ -56,15 +55,15 @@ class LoginPage(object):
         button2 = Button(text="Register", command = self.register, font=b_font)
         button2.place(x=450, y=500, width=100, height=40)
 
-
-
     def register(self):
         Registration.RegisterPage(self.__root).CreatePage()
 
     def loginCustomer(self):
+        self.page.destroy()
         customer_homapage.CustomerPage(self.__app,self.__root).CreatePage()
 
     def loginOperator(self):
+        self.page.destroy()
         Operator.OperatorPage(self.__app,self.__root).CreatePage()
 
     def loginManager(self):

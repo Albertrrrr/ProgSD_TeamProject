@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import font
 from app import app
+from GUI import MapPage, UserCenter, LoginPage, order_history, StopPage
 
 class CustomerPage():
     def __init__(self, app:app, master=None):
@@ -26,16 +27,32 @@ class CustomerPage():
         button1.place(x=900, y=150, width=90, height=40)
 
         # Operator Buttons
-        button2 = Button(text="View map", font=b2_font, bg='blue', fg='white')
+        button2 = Button(text="View Map", command = self.map, font=b2_font, bg='blue', fg='white')
         button2.place(x=200, y=250, width=260, height=50)
-        button3 = Button(text="Rent", font=b2_font, bg='green', fg='white')
+        button3 = Button(text="Rent", command = self.rent, font=b2_font, bg='green', fg='white')
         button3.place(x=620, y=250, width=260, height=50)
-        button4 = Button(text="Oder history", font=b2_font, bg='orange', fg='white')
+        button4 = Button(text="Order history", command = self.history_order, font=b2_font, bg='orange', fg='white')
         button4.place(x=200, y=350, width=260, height=50)
-        button5 = Button(text="User center", font=b2_font, bg='purple', fg='white')
+        button5 = Button(text="User center",  command = self.user_center, font=b2_font, bg='purple', fg='white')
         button5.place(x=620, y=350, width=260, height=50)
-        button6 = Button(text="Back", font=b2_font, bg='red', fg='white')
+        button6 = Button(text="Back", command = self.login, font=b2_font, bg='red', fg='white')
         button6.place(x=200, y=450, width=260, height=50)
+
+    def rent(self):
+        StopPage.StopPage(self.__app,self.__root).CreatePage()
+
+    def login(self):
+        for widget in self.page.winfo_children():
+            widget.destroy()
+        LoginPage.LoginPage(self.__root).CreatePage()
+    def history_order(self):
+        order_history.HistoryPage(self.__app, self.__root).CreatePage()
+
+    def user_center(self):
+        UserCenter.UserCenterPage(self.__app,self.__root).CreatePage()
+
+    def map(self):
+        MapPage.MapPage(self.__root).CreatePage()
 
 
 

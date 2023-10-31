@@ -33,40 +33,59 @@ class OrderError(Exception):
 class Order:
     # par 格式 email, vehicleID
     def __init__(self, customer: Customer, vehicle:Vehicle):
-        self.__customer = customer
-        self.__email = self.__customer.email
-        self.__vehicle = vehicle
+        if vehicle is None:
+            self.__customer = customer
+            self.__renterID = self.__customer.id
+            self.__email = self.__customer.email
+            self.__vehicle = None
+            self.__id = None
+            self.__bikeID = None
+            self.__startTime = None
+            self.__endTime = None
+            self.__createTime = None
+            self.__finishTime = None
+            self.__cost = 0
+            self.__isFlag = 1
+            self.__status = 0
+            self.__isPaid = 0
+            self.__startStop = None
+            self.__endStop = None
 
-        current_time = datetime.datetime.now()
-        startTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            self.__customer = customer
+            self.__email = self.__customer.email
+            self.__vehicle = vehicle
 
-        self.__id = currentID + 1
-        self.__renterID = self.__customer.id
-        self.__bikeID =vehicle.vehicleID
-        self.__startTime = startTime
-        self.__endTime = None
+            current_time = datetime.datetime.now()
+            startTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
-        current_time = datetime.datetime.now()
-        creatTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
+            self.__id = currentID + 1
+            self.__renterID = self.__customer.id
+            self.__bikeID = vehicle.vehicleID
+            self.__startTime = startTime
+            self.__endTime = None
 
-        self.__createTime = creatTime
-        self.__finishTime = None
+            current_time = datetime.datetime.now()
+            creatTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
-        self.__cost = 0
-        self.__isFlag = 1
-        self.__status = 0
-        self.__isPaid = 0
+            self.__createTime = creatTime
+            self.__finishTime = None
 
-        self.__startStop = vehicle.locations
-        self.__endStop = None
+            self.__cost = 0
+            self.__isFlag = 1
+            self.__status = 0
+            self.__isPaid = 0
 
-        flagSQL = 'SELECT * FROM `Order` WHERE renter = %s'
-        cursor.execute(flagSQL, self.__renterID)
-        orderList = cursor.fetchall()
+            self.__startStop = vehicle.locations
+            self.__endStop = None
 
-        for i in orderList:
-            if i[9] == '0':
-                self.__isFlag = 0
+            flagSQL = 'SELECT * FROM `Order` WHERE renter = %s'
+            cursor.execute(flagSQL, self.__renterID)
+            orderList = cursor.fetchall()
+
+            for i in orderList:
+                if i[9] == '0':
+                    self.__isFlag = 0
 
 
     @property
@@ -267,40 +286,59 @@ class Order:
             return False
 
     def toPayOrder(self):
-        toPaySQL = 'SELECT * FROM `Order` WHERE renter = %s AND isPaid = 0'
+        toPaySQL = 'SELECT orderID,startTime,cost,isPaid FROM `Order` WHERE renter = %s AND isPaid = 0'
         cursor.execute(toPaySQL, self.__renterID)
         toPayDetail = cursor.fetchall()
-        return toPayDetail
+        res = self.topayFormat(toPayDetail)
+        return res
+    def topayFormat(self, details:tuple):
+        details = list(details)
+        res = []
+        tableHead = "{:<5} {:<20} {:<5} {:<5}".format("ID", "START_TIME", "COST", "STATUS")
+        res.append(tableHead)
+        for i in details:
+            i = list(i)
+            i[1] = i[1].strftime("%Y-%m-%d %H:%M:%S")
+            if i[3] == 0:
+                i[3] = "not paid"
+            finalString = "{:<5} {:<20} {:<5} {:<5}".format(*i)
+            res.append(finalString)
+        return res
+
 
     def payTo(self):
         accountBalance = self.__customer.balance
         idSQL = 'SELECT * FROM `Order` WHERE renter = %s AND isPaid = 0'
         cursor.execute(idSQL, self.__renterID)
         index = cursor.fetchone()
-        cost = index[-5]
-        orderID = index[0]
+        print(index)
+        try:
+            self.__cost = index[-5]
+            self.__id = index[0]
+        except TypeError:
+            return False
 
-        if accountBalance >= cost:
-            accountBalance -= cost
+        if accountBalance >= self.__cost:
+            accountBalance -= self.__cost
             self.__customer.updateBalance(accountBalance)
-            isPaid = 1
+            self.__isPaid = 1
             updateSQL = "update `Order` set isPaid = %s where orderID = %s"
-            cursor.execute(updateSQL, (isPaid, orderID))
+            cursor.execute(updateSQL, (self.__isPaid, self.__id))
             db.commit()
-            print("successfully paid: ", orderID)
+            print("successfully paid: ", self.__id)
 
             current_time = datetime.datetime.now()
-            finishTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
-            status = 1
+            self.__finishTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
+            self.__status = 1
 
             updateSQL = "update `Order` set finishTime = %s,status = %s where orderID = %s"
-            cursor.execute(updateSQL, (finishTime, status, orderID))
+            cursor.execute(updateSQL, (self.__finishTime, self.__status, self.__id))
             db.commit()
 
             self.__isFlag = 1
             self.__isPaid = 1
             self.close()
-            print("Closed abnormal order: ", orderID)
+            print("Closed abnormal order: ", self.__id)
 
             return True
         else:

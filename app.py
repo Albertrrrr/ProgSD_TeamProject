@@ -12,7 +12,7 @@ mysql_config = {
     'host': '35.246.24.203',
     'port': 3306,
     'user': 'root',
-    'passwd': '3022008a',
+    'password': '3022008a',
     'database': 'progSDTeamProject',
 }
 # connect to mysql
@@ -30,6 +30,8 @@ class app:
         self.__error = None
         self.__QRcodeURL = None
         self.__stop = None
+        self.__bikeID = None
+        self.__unpaidOrder = None
         print("app running")
 
     @property
@@ -176,15 +178,16 @@ class app:
 
     # 租车
     def rentVehicle(self, bikeID: int):
-        self.__bike = Vehicle(self.__customer, bikeID)
+        self.__bikeID = bikeID
+        self.__bike = Vehicle(self.__customer, self.__bikeID)
         self.__order = Order(self.__customer, self.__bike)
         try:
             flag = self.__order.startRent()
         except Exception as e:
-            unpaidOrder = self.__order.detailsFormat(self.__order.toPayOrder())
-            id = str(unpaidOrder[0][0])
-            startTime = unpaidOrder[0][3]
-            cost = str(unpaidOrder[0][-5])
+            self.__unpaidOrder = self.__order.detailsFormat(self.__order.toPayOrder())
+            id = str(self.__unpaidOrder[0][0])
+            startTime = self.__unpaidOrder[0][3]
+            cost = str(self.__unpaidOrder[0][-5])
             self.__error = "You will need to pay id:" + id + " for a total of £" + cost + " for orders timed from: " + startTime  # get属性 可以拿到该值
             print(self.__error)
             return False

@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import font
 from app import app
+from GUI import VehicleManagement
 
 
 class OperatorPage():
@@ -29,7 +30,7 @@ class OperatorPage():
         button1.place(x=900, y=150, width=90, height=40)
 
         # Operator Buttons
-        button2 = Button(text="Track Vehicle", font=b2_font, bg='blue', fg='white')
+        button2 = Button(text="Vehicle Management", command = self.vehicle_management, font=b2_font, bg='blue', fg='white')
         button2.place(x=200, y=250, width=260, height=50)
         button3 = Button(text="Move Vehicle", font=b2_font, bg='green', fg='white')
         button3.place(x=620, y=250, width=260, height=50)
@@ -39,4 +40,8 @@ class OperatorPage():
         button5.place(x=620, y=350, width=260, height=50)
         button6 = Button(text="Repair All", font=b2_font, bg='red', fg='white')
         button6.place(x=200, y=450, width=260, height=50)
+
+    def vehicle_management(self):
+        VehicleManagement.VehicleManagementPage(self.__app,self.__root).CreatePage()
+
 

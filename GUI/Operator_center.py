@@ -20,8 +20,7 @@ class OperatorPage():
 
         # Back button
         Button(text="Back", bg="#2ECC71", fg="white", font=("Arial", 18)).place(x=70, y=130, width=120,
-                                                                                         height=50)  # Green button
-
+                                                                                         height=50)
         # Functions to create sections
         def create_section(y_position, title):
             Label(text=title, bg="#4A90E2", fg="white", font=("Arial", 18)).place(x=250, y=y_position)

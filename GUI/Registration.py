@@ -89,23 +89,23 @@ class RegisterPage():
         if selected == 1:
             flag = self.__app.register(par=par)
             if(flag):
-                msgbox.showinfo("Success","Successfully Register!")
+                msgbox.showinfo("Success","Successfully Register!",parent = self.page)
             else:
-                msgbox.showwarning("Warning","Check your email and password!")
+                msgbox.showwarning("Warning","Check your email and password!",parent = self.page)
 
         elif selected == 2:
             flag = self.__app.registerOM(par=par)
             if (flag):
-                msgbox.showinfo("Success","Successfully Register!")
+                msgbox.showinfo("Success","Successfully Register!",parent = self.page)
             else:
-                msgbox.showwarning("Warning", "Check your email and password!")
+                msgbox.showwarning("Warning", "Check your email and password!",parent = self.page)
 
         elif selected == 3:
             flag = self.__app.registerOM(par=par)
             if (flag):
-                msgbox.showinfo("Successfully Register!")
+                msgbox.showinfo("Successfully Register!",parent = self.page)
             else:
-                msgbox.showwarning("Warning", "Check your email and password!")
+                msgbox.showwarning("Warning", "Check your email and password!",parent = self.page)
 
 
 
