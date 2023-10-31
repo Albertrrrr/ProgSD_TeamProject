@@ -1,3 +1,4 @@
+import matplotlib.dates
 import pymysql
 import pandas as pd
 import mysql.connector
@@ -302,25 +303,7 @@ class Manager:
 
     def visualizeStartStopDistribution(self, data):
         start_stop_counts = data['startStop'].value_counts()
-        # end_stop_counts = data['endStop'].value_counts()
-
         return start_stop_counts
-
-        # plt.rcParams["figure.figsize"] = [7.00, 3.50]
-        # plt.rcParams["figure.autolayout"] = True
-        # fig, ax = plt.subplots(1, 2)
-        #
-        # ax[0].bar(start_stop_counts.index, start_stop_counts.values, color='coral')
-        # ax[0].set_title("Start Stop Distribution")
-        # ax[0].set_xlabel("Start Stop")
-        # ax[0].set_ylabel("Count")
-
-        # ax[1].bar(end_stop_counts.index, end_stop_counts.values, color='lightskyblue')
-        # ax[1].set_title("End Stop Distribution")
-        # ax[1].set_xlabel("End Stop")
-        # ax[1].set_ylabel("Count")
-        #
-        # plt.show()
 
     def visualizeEndStopDistribution(self, data):
         end_stop_counts = data['endStop'].value_counts()
@@ -330,16 +313,6 @@ class Manager:
         daily_rental_counts = data.groupby(data['startTime'].dt.date)['orderID'].count()
 
         return daily_rental_counts
-
-        # fig = plt.figure()
-        # plt.bar(daily_rental_counts.index, daily_rental_counts.values)
-        # plt.title('Number of Rentals Each Day')
-        # plt.xlabel('Date')
-        # plt.ylabel('Number of Rentals')
-        # plt.xticks(rotation=45)
-        # plt.tight_layout()
-        #
-        # plt.show()
 
     def visualizeTimeIntervals(self, data):
         data['startTime'] = pd.to_datetime(data['startTime'], format='%d/%m/%Y %H:%M')
@@ -361,29 +334,17 @@ class Manager:
 
         return order_counts
 
-        # fig = plt.figure()
-        # plt.bar(range(1, 9), order_counts,
-        #         tick_label=['00:00-03:00', '03:00-06:00', '06:00-09:00', '09:00-12:00', '12:00-15:00', '15:00-18:00',
-        #                     '18:00-21:00', '21:00-00:00'])
-        # plt.xlabel('Time Intervals')
-        # plt.xticks(rotation=45)
-        # plt.ylabel('Order Count')
-        # plt.title('Order Count in 8 Time Intervals')
-        #
-        # plt.show()
-
-    def visualizeCapacityPrediction(self, data, sequence_length=3):
+    def visualizeCapacityPrediction(self, data, stationStopNo, sequence_length=3):
         data.set_index('startTime', inplace=True)
 
-        end_stop_3_data = data[data['endStop'] == 3]
-        start_stop_3_data = data[data['startStop'] == 3]
-
-        daily_rentals = end_stop_3_data['orderID'].resample('D').count() - start_stop_3_data['orderID'].resample(
+        endStopData = data[data['endStop'] == stationStopNo]
+        startStopData = data[data['startStop'] == stationStopNo]
+        dailyRentals = endStopData['orderID'].resample('D').count() - startStopData['orderID'].resample(
             'D').count()
-        daily_rentals[np.isnan(daily_rentals)] = 0
+        dailyRentals[np.isnan(dailyRentals)] = 0
 
         scaler = MinMaxScaler()
-        scaled_data = scaler.fit_transform(daily_rentals.values.reshape(-1, 1))
+        scaled_data = scaler.fit_transform(dailyRentals.values.reshape(-1, 1))
 
         X, y = [], []
 
@@ -404,9 +365,9 @@ class Manager:
         model.fit(X_train, y_train, epochs=68, batch_size=32)
 
         y_pred = model.predict(X_test)
-        rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-        mae = mean_absolute_error(y_test, y_pred)
-
+        # rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+        # mae = mean_absolute_error(y_test, y_pred)
+        #
         # print(f'RMSE: {rmse}')
         # print(f'MAE: {mae}')
 
@@ -420,21 +381,55 @@ class Manager:
             last_sequence[-1] = next_day[0][0]
 
         predictions = scaler.inverse_transform(np.array(predictions).reshape(-1, 1))
+        return dailyRentals, predictions
+    def visualizeCapacityPrediction2(self, data, stationStopNo,sequence_length=3):
+        # data.set_index('startTime', inplace=True)
 
-        return daily_rentals, predictions
+        endStopData = data[data['endStop'] == stationStopNo]
+        startStopData = data[data['startStop'] == stationStopNo]
+        dailyRentals = endStopData['orderID'].resample('D').count() - startStopData['orderID'].resample(
+            'D').count()
+        dailyRentals[np.isnan(dailyRentals)] = 0
 
-        # fig = plt.figure()
-        # plt.plot(daily_rentals.index, daily_rentals.values, label='Actual Rentals')
-        # plt.plot(pd.date_range(start=daily_rentals.index[-1] + timedelta(days=1), periods=7), predictions,
-        #          label='Predicted Rentals')
-        # plt.xlabel('Date')
-        # plt.xticks(rotation=30)
-        # plt.ylabel('Rental Count')
-        # plt.title('Predicted Rentals for the Next 7 Days for Rental Stop 3')
-        # plt.legend()
+        scaler = MinMaxScaler()
+        scaled_data = scaler.fit_transform(dailyRentals.values.reshape(-1, 1))
+
+        X, y = [], []
+
+        for i in range(len(scaled_data) - sequence_length):
+            X.append(scaled_data[i:i + sequence_length])
+            y.append(scaled_data[i + sequence_length])
+
+        X = np.array(X)
+        y = np.array(y)
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        model = Sequential()
+        model.add(LSTM(units=50, activation='relu', input_shape=(sequence_length, 1)))
+        model.add(Dense(1))
+        model.compile(optimizer='adam', loss='mse')
+
+        model.fit(X_train, y_train, epochs=68, batch_size=32)
+
+        y_pred = model.predict(X_test)
+        # rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+        # mae = mean_absolute_error(y_test, y_pred)
         #
-        # plt.show()
+        # print(f'RMSE: {rmse}')
+        # print(f'MAE: {mae}')
 
+        last_sequence = scaled_data[-sequence_length:]
+        predictions = []
+
+        for i in range(7):
+            next_day = model.predict(last_sequence.reshape(1, sequence_length, 1))
+            predictions.append(next_day[0][0])
+            last_sequence = np.roll(last_sequence, -1)
+            last_sequence[-1] = next_day[0][0]
+
+        predictions = scaler.inverse_transform(np.array(predictions).reshape(-1, 1))
+        return dailyRentals, predictions
     def saveToPdf(self,filename):
         p = PdfPages(filename)
         fig_nums = plt.get_fignums()
@@ -445,68 +440,160 @@ class Manager:
 
     def visualizePlotting(self, data):
         # End-Start-Stop Distribution
-        plt.rcParams["figure.figsize"] = [7.00, 3.50]
+        plt.rcParams["figure.figsize"] = [12.00, 8.00]
         plt.rcParams["figure.autolayout"] = True
-        fig, ax = plt.subplots(2, 2)
-        ax[0, 0].bar(self.visualizeStartStopDistribution(data).index, self.visualizeStartStopDistribution(data).values, color='coral')
-        ax[0, 0].set_title("Start Stop Distribution")
-        ax[0, 0].set_xlabel("Start Stop")
-        ax[0, 0].set_ylabel("Count")
-        ax[0, 1].bar(self.visualizeEndStopDistribution(data).index, self.visualizeEndStopDistribution(data).values, color='lightskyblue')
-        ax[0, 1].set_title("End Stop Distribution")
-        ax[0, 1].set_xlabel("End Stop")
-        ax[0, 1].set_ylabel("Count")
+        fig, ax1 = plt.subplots(3, 2)
+        ax1[0, 0].bar(self.visualizeStartStopDistribution(data).index, self.visualizeStartStopDistribution(data).values, color='coral')
+        ax1[0, 0].set_title("Start Stop Distribution")
+        ax1[0, 0].set_xlabel("Start Stop")
+        ax1[0, 0].set_ylabel("Count")
+        ax1[0, 1].bar(self.visualizeEndStopDistribution(data).index, self.visualizeEndStopDistribution(data).values, color='lightskyblue')
+        ax1[0, 1].set_title("End Stop Distribution")
+        ax1[0, 1].set_xlabel("End Stop")
+        ax1[0, 1].set_ylabel("Count")
 
         # Count Rentals
-        ax[1, 0].bar(self.visualizeCountRentals(data).index, self.visualizeCountRentals(data).values)
-        ax[1, 0].set_title('Number of Rentals Each Day')
-        ax[1, 0].set_xlabel('Date')
-        ax[1, 0].set_ylabel('Number of Rentals')
-        # ax[1, 0].xticks(rotation=45)
-        # ax[2].tight_layout()
+        ax1[1, 0].bar(self.visualizeCountRentals(data).index, self.visualizeCountRentals(data).values)
+        ax1[1, 0].set_xticklabels(self.visualizeCountRentals(data).index, rotation=30)
+        ax1[1, 0].set_title('Number of Rentals Each Day')
+        ax1[1, 0].set_xlabel('Date')
+        ax1[1, 0].set_ylabel('Number of Rentals')
 
         # Time Intervals
-        ax[1, 1].bar(range(1, 9), self.visualizeTimeIntervals(data),
+        ax1[1, 1].bar(range(1, 9), self.visualizeTimeIntervals(data),
                 tick_label=['00:00-03:00', '03:00-06:00', '06:00-09:00', '09:00-12:00', '12:00-15:00', '15:00-18:00',
                             '18:00-21:00', '21:00-00:00'])
-        ax[1, 1].set_xlabel('Time Intervals')
-        # ax[1, 1].set_xticks(rotation=45)
-        ax[1, 1].set_ylabel('Order Count')
-        ax[1, 1].set_title('Order Count in 8 Time Intervals')
+        ax1[1, 1].set_xticklabels(['00:00-03:00', '03:00-06:00', '06:00-09:00', '09:00-12:00', '12:00-15:00', '15:00-18:00',
+                            '18:00-21:00', '21:00-00:00'], rotation=30)
+        ax1[1, 1].set_xlabel('Time Intervals')
+        ax1[1, 1].set_ylabel('Order Count')
+        ax1[1, 1].set_title('Order Count in 8 Time Intervals')
+
+        actualRental1, predictedRental1 = self.visualizeCapacityPrediction(data, 1)
+
+        # Prediction
+        ax1[2, 0].plot(pd.to_datetime(actualRental1.index), np.array(actualRental1), label='Actual Rentals')
+        ax1[2, 0].plot(pd.date_range(start = pd.to_datetime(actualRental1.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental1,
+                 label='Predicted Rentals')
+        ax1[2, 0].tick_params(axis='x', labelrotation=30)
+        ax1[2, 0].set_xlabel('Date')
+        ax1[2, 0].set_ylabel('Rental Count')
+        ax1[2, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 1')
+
+        actualRental2, predictedRental2 = self.visualizeCapacityPrediction2(data,2)
+
+        # Prediction
+        ax1[2, 1].plot(pd.to_datetime(actualRental2.index), np.array(actualRental2), label='Actual Rentals')
+        ax1[2, 1].plot(pd.date_range(start = pd.to_datetime(actualRental2.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental2,
+                 label='Predicted Rentals')
+        ax1[2, 1].tick_params(axis='x', labelrotation=30)
+        ax1[2, 1].set_xlabel('Date')
+        ax1[2, 1].set_ylabel('Rental Count')
+        ax1[2, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 2')
+
+        plt.rcParams["figure.figsize"] = [12.00, 8.00]
+        plt.rcParams["figure.autolayout"] = True
+        fig, ax2 = plt.subplots(3, 2)
+
+        actualRental3, predictedRental3 = self.visualizeCapacityPrediction2(data,3)
+
+        # Prediction
+        ax2[0, 0].plot(pd.to_datetime(actualRental3.index), np.array(actualRental3), label='Actual Rentals')
+        ax2[0, 0].plot(pd.date_range(start = pd.to_datetime(actualRental3.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental3,
+                 label='Predicted Rentals')
+        ax2[0, 0].tick_params(axis='x', labelrotation=30)
+        ax2[0, 0].set_xlabel('Date')
+        ax2[0, 0].set_ylabel('Rental Count')
+        ax2[0, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 3')
+
+        actualRental4, predictedRental4 = self.visualizeCapacityPrediction2(data,4)
+
+        # Prediction
+        ax2[0, 1].plot(pd.to_datetime(actualRental4.index), np.array(actualRental4), label='Actual Rentals')
+        ax2[0, 1].plot(pd.date_range(start = pd.to_datetime(actualRental4.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental4,
+                 label='Predicted Rentals')
+        ax2[0, 1].tick_params(axis='x', labelrotation=30)
+        ax2[0, 1].set_xlabel('Date')
+        ax2[0, 1].set_ylabel('Rental Count')
+        ax2[0, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 4')
+
+        actualRental5, predictedRental5 = self.visualizeCapacityPrediction2(data,5)
+
+        # Prediction
+        ax2[1, 0].plot(pd.to_datetime(actualRental5.index), np.array(actualRental5), label='Actual Rentals')
+        ax2[1, 0].plot(pd.date_range(start = pd.to_datetime(actualRental5.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental5,
+                 label='Predicted Rentals')
+        ax2[1, 0].tick_params(axis='x', labelrotation=30)
+        ax2[1, 0].set_xlabel('Date')
+        ax2[1, 0].set_ylabel('Rental Count')
+        ax2[1, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 5')
+
+        actualRental6, predictedRental6 = self.visualizeCapacityPrediction2(data,1)
+
+        # Prediction
+        ax2[1, 1].plot(pd.to_datetime(actualRental6.index), np.array(actualRental6), label='Actual Rentals')
+        ax2[1, 1].plot(pd.date_range(start = pd.to_datetime(actualRental6.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental6,
+                 label='Predicted Rentals')
+        ax2[1, 1].tick_params(axis='x', labelrotation=30)
+        ax2[1, 1].set_xlabel('Date')
+        ax2[1, 1].set_ylabel('Rental Count')
+        ax2[1, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 6')
+
+        actualRental7, predictedRental7 = self.visualizeCapacityPrediction2(data,2)
+
+        # Prediction
+        ax2[2, 0].plot(pd.to_datetime(actualRental7.index), np.array(actualRental7), label='Actual Rentals')
+        ax2[2, 0].plot(pd.date_range(start = pd.to_datetime(actualRental7.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental7,
+                 label='Predicted Rentals')
+        ax2[2, 0].tick_params(axis='x', labelrotation=30)
+        ax2[2, 0].set_xlabel('Date')
+        ax2[2, 0].set_ylabel('Rental Count')
+        ax2[2, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 7')
+
+        actualRental8, predictedRental8 = self.visualizeCapacityPrediction2(data,3)
+
+        # Prediction
+        ax2[2, 1].plot(pd.to_datetime(actualRental8.index), np.array(actualRental8), label='Actual Rentals')
+        ax2[2, 1].plot(pd.date_range(start = pd.to_datetime(actualRental8.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental8,
+                 label='Predicted Rentals')
+        ax2[2, 1].tick_params(axis='x', labelrotation=30)
+        ax2[2, 1].set_xlabel('Date')
+        ax2[2, 1].set_ylabel('Rental Count')
+        ax2[2, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 8')
 
         plt.savefig('multi_plot_image.pdf')
-        # plt.show()
-        # actualRental, predictedRental = self.visualizeCapacityPrediction(data)
-        # # Prediction
-        # ax[2, 1].plot(actualRental.index, actualRental.values, label='Actual Rentals')
-        # ax[2, 1].plot(pd.date_range(start=actualRental.index[-1] + timedelta(days=1), periods=7), predictedRental,
-        #          label='Predicted Rentals')
-        # ax[2, 1].set_xlabel('Date')
-        # # ax[1, 1].xticks(rotation=30)
-        # ax[2, 1].set_ylabel('Rental Count')
-        # ax[2, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 3')
-        # plt.legend()
-
         plt.show()
+
+        # filename = ('multi_plot_image')
+        # p = PdfPages(filename)
+        # fig_nums = plt.get_fignums()
+        # figs = [plt.figure(n) for n in fig_nums]
+        # for fig in figs:
+        #     fig.savefig(p, format='pdf')
+        # p.close()
 
     def openPdfInBrowser(self, filename):
         webbrowser.open(filename)
 
 if __name__ == '__main__':
-    print("1")
+    manager = Manager()
+    # data = manager.load_data("visualizationOrder.csv")
+    # print(data.head())
+    # print(data.columns)
+
     # manager = Manager()
     #
     # # export csv
     # table_name = '`Order`'
     # output_csv_file = 'visualizationOrder.csv'
     # manager.exportToCSV(table_name, output_csv_file)
-    #
-    # # generate pdf
-    # data = manager.load_data('visualizationOrder.csv')
-    # manager.visualizePlotting(data)
-    # filename = "multi_plot_image.pdf"
-    # # manager.saveToPdf(filename)
-    # manager.openPdfInBrowser(filename)
+
+    # generate pdf
+    data = manager.load_data('visualizationOrder.csv')
+    manager.visualizePlotting(data)
+    filename = "multi_plot_image.pdf"
+    # manager.saveToPdf(filename)
+    manager.openPdfInBrowser(filename)
 
     # 新用户
     # manager = Manager()
