@@ -162,7 +162,6 @@ class Manager:
             print("Change another email")
             return False
 
-
     def delete(self):
         deleteSQL = "delete from Managers where managerID = %s"
         cursor.execute(deleteSQL, self.__id)
@@ -221,16 +220,14 @@ class Manager:
             db_uri = "mysql+pymysql://root:3022008a@35.246.24.203:3306/progSDTeamProject"
             engine = create_engine(db_uri)
 
-            # mysql_config = mysql.connector.connect (
-            #     host = '35.246.24.203',
-            #     port = '3306',
-            #     user = 'root',
-            #     password = "3022008a",
-            #     database = "progSDTeamProject"
-            # )
+            endDatetime = datetime.now()
+            startingDatetime = endDatetime - timedelta(days=7)
 
-            query = f"SELECT * FROM {table_name}"
-            df = pd.read_sql_query(query, engine)
+            print(endDatetime)
+            print(startingDatetime)
+
+            query = f"SELECT * FROM {table_name} WHERE startTime >= %s AND endTime <= %s"
+            df = pd.read_sql_query(query, engine, params=[startingDatetime,endDatetime])
 
             # Save the data to a CSV file
             df.to_csv(output_csv_file, index=False)
@@ -244,7 +241,6 @@ class Manager:
         details = cursor.fetchall()
         res = self.detailsFormatOM(details)
         return res
-
 
     # 获得全部Operator
     def getAllOperator(self):
@@ -286,14 +282,12 @@ class Manager:
             i[2] = i[2].strftime("%Y-%m-%d %H:%M:%S")
 
         return res
-
     def reportAllDetailsOM(self):
         flagSQL = 'SELECT * FROM `Report`'
         cursor.execute(flagSQL)
         details = cursor.fetchall()
         res = self.detailsFormatReportOM(details)
         return res
-
     def detailsFormatReportOM(self, details: tuple):
         detailsList = list(details)
         res = []
@@ -303,34 +297,28 @@ class Manager:
                 i[j] = i[j].strftime("%Y-%m-%d %H:%M:%S")
             res.append(i)
         return res
-
-
     def load_data(self, filename):
         data = pd.read_csv(filename)
         data['startTime'] = pd.to_datetime(data['startTime'])
         data['endTime'] = pd.to_datetime(data['endTime'])
         return data
-
     def visualizeStartStopDistribution(self, data):
         start_stop_counts = data['startStop'].value_counts()
         return start_stop_counts
-
     def visualizeEndStopDistribution(self, data):
         end_stop_counts = data['endStop'].value_counts()
         return end_stop_counts
-
     def visualizeCountRentals(self, data):
         daily_rental_counts = data.groupby(data['startTime'].dt.date)['orderID'].count()
 
         return daily_rental_counts
-
     def visualizeTimeIntervals(self, data):
         data['startTime'] = pd.to_datetime(data['startTime'], format='%d/%m/%Y %H:%M')
         data['endTime'] = pd.to_datetime(data['endTime'], format='%d/%m/%Y %H:%M')
 
         time_intervals = []
-        start_time = datetime(2023, 10, 16, 0, 0)
-        end_time = datetime(2023, 10, 22, 0, 0)
+        start_time = datetime.now() - timedelta(days=7)
+        end_time = datetime.now()
         interval = (end_time - start_time) / 8
 
         for i in range(8):
@@ -343,7 +331,6 @@ class Manager:
             order_counts.append(count)
 
         return order_counts
-
     def visualizeCapacityPrediction(self, data, stationStopNo, sequence_length=3):
         data.set_index('startTime', inplace=True)
 
@@ -447,7 +434,6 @@ class Manager:
         for fig in figs:
             fig.savefig(p, format='pdf')
         p.close()
-
     def visualizePlotting(self, data):
 
         # End-Start-Stop Distribution
@@ -543,7 +529,7 @@ class Manager:
         ax[2, 0].set_ylabel('Rental Count')
         ax[2, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 5')
 
-        actualRental6, predictedRental6 = self.visualizeCapacityPrediction2(data,1)
+        actualRental6, predictedRental6 = self.visualizeCapacityPrediction2(data,6)
 
         # Prediction
         ax[2, 1].plot(pd.to_datetime(actualRental6.index), np.array(actualRental6), label='Actual Rentals')
@@ -554,7 +540,7 @@ class Manager:
         ax[2, 1].set_ylabel('Rental Count')
         ax[2, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 6')
 
-        actualRental7, predictedRental7 = self.visualizeCapacityPrediction2(data,2)
+        actualRental7, predictedRental7 = self.visualizeCapacityPrediction2(data,7)
 
         # Prediction
         ax[3, 0].plot(pd.to_datetime(actualRental7.index), np.array(actualRental7), label='Actual Rentals')
@@ -565,7 +551,7 @@ class Manager:
         ax[3, 0].set_ylabel('Rental Count')
         ax[3, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 7')
 
-        actualRental8, predictedRental8 = self.visualizeCapacityPrediction2(data,3)
+        actualRental8, predictedRental8 = self.visualizeCapacityPrediction2(data,8)
 
         # Prediction
         ax[3, 1].plot(pd.to_datetime(actualRental8.index), np.array(actualRental8), label='Actual Rentals')
@@ -586,19 +572,18 @@ class Manager:
         # for fig in figs:
         #     fig.savefig(p, format='pdf')
         # p.close()
-
     def openPdfInBrowser(self, filename):
         webbrowser.open(filename)
 
 if __name__ == '__main__':
     manager = Manager()
-    #
-    # # export csv
-    # table_name = '`Order`'
-    # output_csv_file = 'visualizationOrder.csv'
-    # manager.exportToCSV(table_name, output_csv_file)
 
-    # generate pdf
+    # export csv
+    table_name = '`Order`'
+    output_csv_file = 'visualizationOrder.csv'
+    manager.exportToCSV(table_name, output_csv_file)
+    #
+    # # generate pdf
     data = manager.load_data('visualizationOrder.csv')
     manager.visualizePlotting(data)
     manager.predictionPlotting(data)

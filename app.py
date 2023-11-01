@@ -668,13 +668,6 @@ if __name__ == '__main__':
     #
     # print(app.registerOM(par1))
 
-    # generate pdf
-    # data = manager.load_data('visualizationOrder.csv')
-    # manager.visualizePlotting(data)
-    # manager.predictionPlotting(data)
-    # manager.openPdfInBrowser('DataVisualization.pdf')
-    # manager.openPdfInBrowser('DataPrediction.pdf')
-
     # Customer功能测试 租车流程测试 正常全流程
     # app = app()
     # par = ["zhangruixian@gmail.com", "3022008a", '1']
@@ -852,6 +845,20 @@ if __name__ == '__main__':
     # app.login(par)
     # #app.fixBikeOP(2)
     # app.endFixBikeOP(2,13)
+
+    # 测试Manager export csv
+    # app = app()
+    # table_name = '`Order`'
+    # output_csv_file = 'visualizationOrder.csv'
+    # app.__manager.exportToCSV(table_name, output_csv_file)
+    #
+    # 测试Manager generate pdf
+    # app = app()
+    # data = app.__manager.load_data('visualizationOrder.csv')
+    # app.__manager.visualizePlotting(data)
+    # app.__manager.predictionPlotting(data)
+    # app.__manager.openPdfInBrowser('DataVisualization.pdf')
+    # app.__manager.openPdfInBrowser('DataPrediction.pdf')
 
     """
     app running
