@@ -45,6 +45,8 @@ class pay:
             )
             qr.add_data(data["qr_code"])  # 二维码所含信息
             img = qr.make_image()  # 生成二维码图片
+            new_size = (200, 200)  # 新的宽度和高度
+            img = img.resize(new_size)
             img.save('qrcode_image/qr_test_ali' + '_' + self.out_trade_no +'.png')
             print('二维码保存成功！')
 

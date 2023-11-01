@@ -276,9 +276,9 @@ class app:
             return False
 
     # 充值
-    def topUp(self, total: float):
-        QRcode = self.generateQRcodeString(total)  # 可以在集成的时候把它单独拿出来 先生成QRcode再支付 或者刷新按钮
-        if QRcode is not None:
+    def topUp(self):
+        # QRcode = self.generateQRcodeString(total)  # 可以在集成的时候把它单独拿出来 先生成QRcode再支付 或者刷新按钮
+        if self.__QRcodeURL is not None:
             flag = self.__customer.topUpBalance()
             return flag
         else:

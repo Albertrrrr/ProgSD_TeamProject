@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import font
 from app import app
-from GUI import MapPage, UserCenter, LoginPage, order_history, StopPage
+from GUI import MapPage, UserCenter, LoginPage, order_history, StopPage,TopUpBanlance
 
 class CustomerPage():
     def __init__(self, app:app, master=None):
@@ -35,15 +35,20 @@ class CustomerPage():
         button4.place(x=200, y=350, width=260, height=50)
         button5 = Button(text="User center",  command = self.user_center, font=b2_font, bg='purple', fg='white')
         button5.place(x=620, y=350, width=260, height=50)
-        button6 = Button(text="Back", command = self.login, font=b2_font, bg='red', fg='white')
+        button6 = Button(text="Top Up", command = self.topUp, font=b2_font, bg='red', fg='white')
         button6.place(x=200, y=450, width=260, height=50)
 
     def rent(self):
         StopPage.StopPage(self.__app,self.__root).CreatePage()
+
     def login(self):
         for widget in self.page.winfo_children():
             widget.destroy()
         LoginPage.LoginPage(self.__root).CreatePage()
+
+    def topUp(self):
+        TopUpBanlance.TopUpBanlancePage(self.__app,self.__root).CreatePage()
+
     def history_order(self):
         order_history.HistoryPage(self.__app, self.__root).CreatePage()
 
