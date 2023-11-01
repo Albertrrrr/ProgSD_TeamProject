@@ -22,50 +22,50 @@ class RentReturnPage(object):
         stop_label = Label(self.page, text="Current Stop:", bg="lightcyan", font=("Arial", 14))
         stop_label.place(x=50, y=60)
 
-        label = Label(self.page, text = str(self.__app.stopID))
-        label.place(x=240, y = 60)
+        label = Label(self.page, text = str(self.__app.stopID), font=("Arial", 20))
+        label.place(x=210, y = 50)
 
         # Back button
-        back_button = Button(self.page,command = self.quit, text="Back", bg='#4CAF50', fg='white')
-        back_button.place(x=100, y=130)
+        back_button = Button(self.page,command = self.quit, text="Back", bg='#000000', fg='white')
+        back_button.place(x=60, y=130)
 
         # Vehicle information
-        vehicle_label = Label(self.page, text="Vehicle information", bg="lightcyan", font=("Arial", 14))
-        vehicle_label.place(x=500, y=30)
+        vehicle_label = Label(self.page, text="Vehicle information", bg="lightcyan", font=("Arial", 14,"bold"))
+        vehicle_label.place(x=500, y=60)
 
         self.__info_text = scrolledtext.ScrolledText(self.page, width= 60 , height = 15)
-        self.__info_text.place(x=440, y=70)
+        self.__info_text.place(x=500, y=100)
 
-        r_button = Button(self.page,command = self.refresh, text = "Refresh")
-        r_button.place(x = 300, y = 10)
+        r_button = Button(self.page,command = self.refresh, text = "Refresh",bg='#4CAF50', fg='white')
+        r_button.place(x = 130, y = 130)
 
 
         # Rent
         rent_label = Label(self.page, text="Rent:", bg="lightcyan", font=("Arial", 14))
-        rent_label.place(x=50, y=280)
+        rent_label.place(x=50, y=350)
         self.__rent = Entry(self.page)
-        self.__rent.place(x=110, y=280, width=220)
+        self.__rent.place(x=110, y=350, width=220)
         rent_button = Button(self.page, command = self.rent, text="Enter", bg='#4CAF50', fg='white')
-        rent_button.place(x=350, y=280)
+        rent_button.place(x=350, y=350)
 
         # Report damage button
         report_button = Button(self.page, command= self.reportDamage, text="Report damage", bg='#4CAF50', fg='white')
-        report_button.place(x=100, y=320)
+        report_button.place(x=100, y=390)
 
         # Return
         return_label = Label(self.page, text="Return:", bg="lightcyan", font=("Arial", 14))
-        return_label.place(x=500, y=280)
+        return_label.place(x=500, y=350)
         self.__return = Entry(self.page)
-        self.__return.place(x=580, y=280, width=220)
+        self.__return.place(x=580, y=350, width=220)
         return_button = Button(self.page, command = self.pay, text="Pay", bg='#4CAF50', fg='white')
-        return_button.place(x=820, y=280)
+        return_button.place(x=820, y=350)
 
         # Enter button for Return
         return_enter_button = Button(self.page, command = self.returnBike, text="Enter", bg='#4CAF50', fg='white')
-        return_enter_button.place(x=820, y=320)
+        return_enter_button.place(x=820, y=390)
 
         self.__report = Entry(self.page)
-        self.__report.place(x=110, y=500, width=50)
+        self.__report.place(x=220, y=393, width=50)
 
     def refresh(self):
         content = self.__info_text.get('1.0', END)

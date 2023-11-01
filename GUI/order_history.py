@@ -15,7 +15,7 @@ class HistoryPage(object):
 
         self.page = Toplevel(self.__root)
         self.page.attributes('-topmost', 1)
-        self.page.geometry("1400x600")
+        self.page.geometry("1300x600")
 
         # window.config(bg='lightcyan')
 
@@ -24,7 +24,7 @@ class HistoryPage(object):
         label1.place(x=20, y=40)
 
         back_button = Button(self.page, text="Back", command = self.quit, bg='#000000', fg='white')
-        back_button.place(x=50, y=150, width = 80, height = 30)
+        back_button.place(x=50, y=120, width = 80, height = 30)
 
         # Oder information
         label2 = Label(self.page, text="Order information", font=("Arial", 16))
@@ -32,13 +32,13 @@ class HistoryPage(object):
 
 
         refresh_button = Button(self.page, text="Refresh",bg='#4CAF50', fg='white', command = self.refresh)
-        refresh_button.place(x = 50, y = 200, width = 100, height = 30)
+        refresh_button.place(x = 50, y = 170, width = 100, height = 30)
 
         self.__info_list = scrolledtext.ScrolledText(self.page, width = 125, height = 36)
         self.__info_list.place(x=400, y=60)
 
         # Unfilled orders
-        label3 = Label(self.page, text="Unfilled orders", font=("Arial", 14))
+        label3 = Label(self.page, text="Unfilled orders",bg="lightcyan", font=("Arial", 16))
         label3.place(x=50, y=250)
 
         self.__info_list2 = scrolledtext.ScrolledText(self.page, width=50, height=8)

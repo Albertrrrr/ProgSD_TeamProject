@@ -54,10 +54,10 @@ class StationPropertyPage():
                                font=("Arial", 10))
         del_clear_btn.place(x=320, y=390)
 
-        label = Label(text="放到change name旁边")
-        label.place(x=600, y=500)
-        self.__changeStationID = Entry(self.page, width=20)
-        self.__changeStationID.place(x=600, y=550)
+        battery_lbl = Label(self.page, text="Input stop ID:", bg='white', font=("Arial", 12))
+        battery_lbl.place(x=50, y=320)
+        self.__changeStationID = Entry(self.page, width=5)
+        self.__changeStationID.place(x=170, y=320)
 
         # Change battery operation
         battery_lbl = Label(self.page, text="Change station position:", bg='white', font=("Arial", 12))

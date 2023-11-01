@@ -19,7 +19,7 @@ class VehicleManagementPage():
 
         self.page = Toplevel(self.__root)
         self.page.attributes('-topmost', 1)
-        self.page.geometry("1000x600")
+        self.page.geometry("800x600")
 
         top_bar = Label(self.page, bg="lightcyan", height=3, width=800)
         top_bar.place(x=0, y=0)
