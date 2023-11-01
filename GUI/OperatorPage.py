@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import font
 
 from app import app
-from GUI import VehicleManagement,StationManagement, StationPropertyPage
+from GUI import VehicleManagement,StationManagement, StationPropertyPage, RepairManagement
 
 
 class OperatorPage():
@@ -37,7 +37,7 @@ class OperatorPage():
         button3.place(x=620, y=250, width=260, height=50)
         button4 = Button(text="Stop Property Management", command=self.property, font=b2_font, bg='orange', fg='white')
         button4.place(x=200, y=350, width=260, height=50)
-        button5 = Button(text="Add New Vehicle", font=b2_font, bg='purple', fg='white')
+        button5 = Button(text="Repair Management", command = self.repair, font=b2_font, bg='purple', fg='white')
         button5.place(x=620, y=350, width=260, height=50)
         button6 = Button(text="Repair All", font=b2_font, bg='red', fg='white')
         button6.place(x=200, y=450, width=260, height=50)
@@ -50,6 +50,9 @@ class OperatorPage():
 
     def property(self):
         StationPropertyPage.StationPropertyPage(self.__app,self.__root).CreatePage()
+
+    def repair(self):
+        RepairManagement.RepairManagementPage(self.__app,self.__root).CreatePage()
 
 
 

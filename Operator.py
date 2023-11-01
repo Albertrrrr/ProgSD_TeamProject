@@ -113,24 +113,18 @@ class Operator:
             print("Change another email")
             return False
 
-    def add(self, code: str):
+    def add(self):
 
-        codeSQL = "SELECT * FROM `Operators_ver` WHERE operatorID = %s"
-        cursor.execute(codeSQL, self.__id)
-        data = cursor.fetchone()
-        code_ver = data[-1]
-
-        if code == code_ver:
-            saveSQL = "insert ignore into Operators(operatorID,name,password,email)" \
+        saveSQL = "insert ignore into Operators(operatorID,name,password,email)" \
                       "values(%s,%s,%s,%s)"
-            addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
-            db.commit()
-            if addFlag:
-                print("Add a new Operator successfully", self.__id, self.__name, self.__password, self.__email)
-                return True
-            else:
-                print("Change another email")
-                return False
+        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
+        db.commit()
+        if addFlag:
+            print("Add a new Operator successfully", self.__id, self.__name, self.__password, self.__email)
+            return True
+        else:
+            print("Change another email")
+            return False
 
     def deleteVehicle(vehicle: Vehicle, operator):
         vehicle.delete()
@@ -257,9 +251,10 @@ class Operator:
         return flag
 
     def reportAllDetails(self):
-        flagSQL = 'SELECT * FROM `  Report` '
+        flagSQL = 'SELECT * FROM `Report` '
         cursor.execute(flagSQL)
         details = cursor.fetchall()
+        db.commit()
         res = self.detailsFormat(details)
         return res
 
@@ -267,9 +262,14 @@ class Operator:
         detailsList = list(details)
         res = []
         for i in detailsList:
+
             for j in range(3, 5):
                 i = list(i)
-                i[j] = i[j].strftime("%Y-%m-%d %H:%M:%S")
+                if i[j] is None:
+                    i[j] = 'None'
+                else:
+                    i[j] = i[j].strftime("%Y-%m-%d %H:%M:%S")
+
             res.append(i)
         return res
 

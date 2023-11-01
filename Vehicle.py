@@ -257,6 +257,7 @@ class Vehicle:
             updateSQL = "update `Vehicle` set status = %s, isLocked = %s where vehicleID = %s"
             flag = cursor.execute(updateSQL, (self.__status, self.__isLocked, self.__vehicleID))
             db.commit()
+            print("ve",flag)
             if flag == 0:
                 return False
             else:

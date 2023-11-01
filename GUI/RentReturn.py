@@ -68,6 +68,9 @@ class RentReturnPage(object):
         self.__report.place(x=110, y=500, width=50)
 
     def refresh(self):
+        content = self.__info_text.get('1.0', END)
+        if content.strip():
+            self.__info_text.delete('1.0', END)
         res = self.__app.getAvailableVehicle()
         for i in res:
             self.__info_text.insert(END, i + "\n")

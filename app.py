@@ -34,6 +34,7 @@ class app:
         self.__bikeID = None
         self.__unpaidOrder = None
         self.__stopID = None
+        self.__code_ver = None
         print("app running")
 
     @property
@@ -168,19 +169,23 @@ class app:
         return flag
 
     # 之后改为从框中输入
-    def enterCode(self):
-        code = input("Enter code: ")
-        return code
+    def generateCodeOP(self,par: list,option: str):
+        if option == '2':
+            self.__operator = Operator()
+            # par : name:str,password:str,email:str
+            self.__code_ver = self.__operator.generateCode(par)
+            if self.__code_ver is None:
+                return False
+            else:
+                return True
 
     # 注册operator 和 manager
-    def registerOM(self, par: list):
-        # 先生成code
-        operator = Operator()
-        # par : name:str,password:str,email:str
-        operator.generateCode(par)
-        userCode = self.enterCode()  # 之后修改
-        flag = operator.add(userCode)
-        return flag
+    def registerOM(self, par: list, code:str, option: str):
+        # option 2 is operator
+        if option == '2':
+            if code == self.__code_ver:
+                flag = self.__operator.add()
+                return flag
 
     """
     Customer接口方法  包括 租车 还车 支付 单独支付 报告维修 充值余额（内置生成QR码） 更改姓名 邮箱 密码 

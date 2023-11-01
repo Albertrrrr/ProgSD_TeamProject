@@ -18,12 +18,16 @@ cursor.execute("SELECT * from `Report`")
 data = cursor.fetchall()
 # 拿到属于数据库的最后一个id
 currentID = data[-1][0]
+db.commit()
 
 class Report:
     def __init__(self, customer, operator, message: str,):
-
         cursor.execute("SELECT * from `Report`")
         data = cursor.fetchall()
+        # 拿到属于数据库的最后一个id
+        db.commit()
+        currentID = data[-1][0]
+
         # 拿到属于数据库的最后一个id
 
         try:
@@ -131,6 +135,7 @@ class Report:
         flagSQL = 'SELECT * FROM `Report` WHERE fromID = %s And authen = %s'
         cursor.execute(flagSQL, (self.__formID,self.__authen))
         details = cursor.fetchall()
+        db.commit()
         return details
 
     def detailsFormat(self,details: tuple):
