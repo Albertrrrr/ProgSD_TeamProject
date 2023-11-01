@@ -418,6 +418,18 @@ class app:
         self.__manager.openPdfInBrowser('DataVisualization.pdf')
         self.__manager.openPdfInBrowser('DataPrediction.pdf')
 
+    def updateNameOM(self, newName:str):
+        flag = self.__manager.updateNmae(newName)
+        return flag
+
+    def updatePasswordOM(self, newPassword:str):
+        flag = self.__manager.updatePassword(newPassword)
+        return flag
+
+    def updateEmailOM(self, newEmail:str):
+        flag = self.manager.updateEmail(newEmail)
+        return flag
+
     """
     格式化输出：Customer 1、全部车站  2.全部可用车辆 3.全部关于自己的订单 4.自己所提交的所有报告
               Operator 1、全部车站 2、全部车辆 3、全部报告 
@@ -613,6 +625,24 @@ class app:
             "ID","FROM_ID","MESSAGE", "START_TIME", "END_TIME", "STATUS", "AUTHEN")
         res.insert(0, tableHead)
         return res
+
+    # 全部车站
+    def getAllStopsOM(self):
+        self.__stop = vehicleStop()
+        res = self.tableFormatOP(self.__stop.detailsFormat(self.__stop.stopDetailsOP()))
+        tableHead = "{:<5} {:<40} {:<40} {:<20} {:<20}".format("ID", "NAME", "AXIS", "MAX_CAPACITY", "CURRENT_CAPACITY")
+        res.insert(0, tableHead)
+        return res
+
+    # 全部车
+    def getAllVehicleOM(self):
+        self.__stop = vehicleStop()
+        res = self.tableFormatAllVehicle(self.__stop.vehicleAllList())
+        tableHead = "{:<5} {:<10} {:<10} {:<15} {:<15} {:<10} {:<10} {:<10} {:<10}".format(
+            "ID", "TYPES", "PRICE", "BATTERYSTATUS", "LOCATIONS", "STATUS", "ISRENTED","ISLOCKED", "RENTER")
+        res.insert(0, tableHead)
+        return res
+
 
 
 if __name__ == '__main__':
