@@ -1,4 +1,6 @@
 from tkinter import *
+from tkinter import font
+
 from app import app
 from GUI import ViewCustomer,ViewOperator,ViewVehicle,ViewWorkOrder,ManagerCenter
 
