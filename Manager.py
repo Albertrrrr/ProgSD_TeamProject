@@ -1,7 +1,7 @@
 import matplotlib.dates
 import pymysql
 import pandas as pd
-# import mysql.connector
+import mysql.connector
 # pip install mysql
 # pip install scikit-learn
 # pip install pandas
@@ -439,129 +439,134 @@ class Manager:
         p.close()
 
     def visualizePlotting(self, data):
+
         # End-Start-Stop Distribution
         plt.rcParams["figure.figsize"] = [12.00, 8.00]
         plt.rcParams["figure.autolayout"] = True
-        fig, ax1 = plt.subplots(3, 2)
-        ax1[0, 0].bar(self.visualizeStartStopDistribution(data).index, self.visualizeStartStopDistribution(data).values, color='coral')
-        ax1[0, 0].set_title("Start Stop Distribution")
-        ax1[0, 0].set_xlabel("Start Stop")
-        ax1[0, 0].set_ylabel("Count")
-        ax1[0, 1].bar(self.visualizeEndStopDistribution(data).index, self.visualizeEndStopDistribution(data).values, color='lightskyblue')
-        ax1[0, 1].set_title("End Stop Distribution")
-        ax1[0, 1].set_xlabel("End Stop")
-        ax1[0, 1].set_ylabel("Count")
+        fig, ax = plt.subplots(2, 2)
+        ax[0, 0].bar(self.visualizeStartStopDistribution(data).index, self.visualizeStartStopDistribution(data).values, color='coral')
+        ax[0, 0].set_title("Start Stop Distribution")
+        ax[0, 0].set_xlabel("Start Stop")
+        ax[0, 0].set_ylabel("Count")
+        ax[0, 1].bar(self.visualizeEndStopDistribution(data).index, self.visualizeEndStopDistribution(data).values, color='lightskyblue')
+        ax[0, 1].set_title("End Stop Distribution")
+        ax[0, 1].set_xlabel("End Stop")
+        ax[0, 1].set_ylabel("Count")
 
         # Count Rentals
-        ax1[1, 0].bar(self.visualizeCountRentals(data).index, self.visualizeCountRentals(data).values)
-        ax1[1, 0].set_xticklabels(self.visualizeCountRentals(data).index, rotation=30)
-        ax1[1, 0].set_title('Number of Rentals Each Day')
-        ax1[1, 0].set_xlabel('Date')
-        ax1[1, 0].set_ylabel('Number of Rentals')
+        ax[1, 0].bar(self.visualizeCountRentals(data).index, self.visualizeCountRentals(data).values)
+        ax[1, 0].set_xticklabels(self.visualizeCountRentals(data).index, rotation=30)
+        ax[1, 0].set_title('Number of Rentals Each Day')
+        ax[1, 0].set_xlabel('Date')
+        ax[1, 0].set_ylabel('Number of Rentals')
 
         # Time Intervals
-        ax1[1, 1].bar(range(1, 9), self.visualizeTimeIntervals(data),
+        ax[1, 1].bar(range(1, 9), self.visualizeTimeIntervals(data),
                 tick_label=['00:00-03:00', '03:00-06:00', '06:00-09:00', '09:00-12:00', '12:00-15:00', '15:00-18:00',
                             '18:00-21:00', '21:00-00:00'])
-        ax1[1, 1].set_xticklabels(['00:00-03:00', '03:00-06:00', '06:00-09:00', '09:00-12:00', '12:00-15:00', '15:00-18:00',
+        ax[1, 1].set_xticklabels(['00:00-03:00', '03:00-06:00', '06:00-09:00', '09:00-12:00', '12:00-15:00', '15:00-18:00',
                             '18:00-21:00', '21:00-00:00'], rotation=30)
-        ax1[1, 1].set_xlabel('Time Intervals')
-        ax1[1, 1].set_ylabel('Order Count')
-        ax1[1, 1].set_title('Order Count in 8 Time Intervals')
+        ax[1, 1].set_xlabel('Time Intervals')
+        ax[1, 1].set_ylabel('Order Count')
+        ax[1, 1].set_title('Order Count in 8 Time Intervals')
+
+        plt.savefig('DataVisualization.pdf')
+        plt.show()
+    def predictionPlotting(self,data):
+
+        plt.rcParams["figure.figsize"] = [12.00, 8.00]
+        plt.rcParams["figure.autolayout"] = True
+        fig, ax = plt.subplots(4, 2)
 
         actualRental1, predictedRental1 = self.visualizeCapacityPrediction(data, 1)
 
         # Prediction
-        ax1[2, 0].plot(pd.to_datetime(actualRental1.index), np.array(actualRental1), label='Actual Rentals')
-        ax1[2, 0].plot(pd.date_range(start = pd.to_datetime(actualRental1.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental1,
+        ax[0, 0].plot(pd.to_datetime(actualRental1.index), np.array(actualRental1), label='Actual Rentals')
+        ax[0, 0].plot(pd.date_range(start = pd.to_datetime(actualRental1.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental1,
                  label='Predicted Rentals')
-        ax1[2, 0].tick_params(axis='x', labelrotation=30)
-        ax1[2, 0].set_xlabel('Date')
-        ax1[2, 0].set_ylabel('Rental Count')
-        ax1[2, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 1')
+        ax[0, 0].tick_params(axis='x', labelrotation=30)
+        ax[0, 0].set_xlabel('Date')
+        ax[0, 0].set_ylabel('Rental Count')
+        ax[0, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 1')
 
         actualRental2, predictedRental2 = self.visualizeCapacityPrediction2(data,2)
 
         # Prediction
-        ax1[2, 1].plot(pd.to_datetime(actualRental2.index), np.array(actualRental2), label='Actual Rentals')
-        ax1[2, 1].plot(pd.date_range(start = pd.to_datetime(actualRental2.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental2,
+        ax[0, 1].plot(pd.to_datetime(actualRental2.index), np.array(actualRental2), label='Actual Rentals')
+        ax[0, 1].plot(pd.date_range(start = pd.to_datetime(actualRental2.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental2,
                  label='Predicted Rentals')
-        ax1[2, 1].tick_params(axis='x', labelrotation=30)
-        ax1[2, 1].set_xlabel('Date')
-        ax1[2, 1].set_ylabel('Rental Count')
-        ax1[2, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 2')
-
-        plt.rcParams["figure.figsize"] = [12.00, 8.00]
-        plt.rcParams["figure.autolayout"] = True
-        fig, ax2 = plt.subplots(3, 2)
+        ax[0, 1].tick_params(axis='x', labelrotation=30)
+        ax[0, 1].set_xlabel('Date')
+        ax[0, 1].set_ylabel('Rental Count')
+        ax[0, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 2')
 
         actualRental3, predictedRental3 = self.visualizeCapacityPrediction2(data,3)
 
         # Prediction
-        ax2[0, 0].plot(pd.to_datetime(actualRental3.index), np.array(actualRental3), label='Actual Rentals')
-        ax2[0, 0].plot(pd.date_range(start = pd.to_datetime(actualRental3.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental3,
+        ax[1, 0].plot(pd.to_datetime(actualRental3.index), np.array(actualRental3), label='Actual Rentals')
+        ax[1, 0].plot(pd.date_range(start = pd.to_datetime(actualRental3.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental3,
                  label='Predicted Rentals')
-        ax2[0, 0].tick_params(axis='x', labelrotation=30)
-        ax2[0, 0].set_xlabel('Date')
-        ax2[0, 0].set_ylabel('Rental Count')
-        ax2[0, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 3')
+        ax[1, 0].tick_params(axis='x', labelrotation=30)
+        ax[1, 0].set_xlabel('Date')
+        ax[1, 0].set_ylabel('Rental Count')
+        ax[1, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 3')
 
         actualRental4, predictedRental4 = self.visualizeCapacityPrediction2(data,4)
 
         # Prediction
-        ax2[0, 1].plot(pd.to_datetime(actualRental4.index), np.array(actualRental4), label='Actual Rentals')
-        ax2[0, 1].plot(pd.date_range(start = pd.to_datetime(actualRental4.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental4,
+        ax[1, 1].plot(pd.to_datetime(actualRental4.index), np.array(actualRental4), label='Actual Rentals')
+        ax[1, 1].plot(pd.date_range(start = pd.to_datetime(actualRental4.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental4,
                  label='Predicted Rentals')
-        ax2[0, 1].tick_params(axis='x', labelrotation=30)
-        ax2[0, 1].set_xlabel('Date')
-        ax2[0, 1].set_ylabel('Rental Count')
-        ax2[0, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 4')
+        ax[1, 1].tick_params(axis='x', labelrotation=30)
+        ax[1, 1].set_xlabel('Date')
+        ax[1, 1].set_ylabel('Rental Count')
+        ax[1, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 4')
 
         actualRental5, predictedRental5 = self.visualizeCapacityPrediction2(data,5)
 
         # Prediction
-        ax2[1, 0].plot(pd.to_datetime(actualRental5.index), np.array(actualRental5), label='Actual Rentals')
-        ax2[1, 0].plot(pd.date_range(start = pd.to_datetime(actualRental5.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental5,
+        ax[2, 0].plot(pd.to_datetime(actualRental5.index), np.array(actualRental5), label='Actual Rentals')
+        ax[2, 0].plot(pd.date_range(start = pd.to_datetime(actualRental5.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental5,
                  label='Predicted Rentals')
-        ax2[1, 0].tick_params(axis='x', labelrotation=30)
-        ax2[1, 0].set_xlabel('Date')
-        ax2[1, 0].set_ylabel('Rental Count')
-        ax2[1, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 5')
+        ax[2, 0].tick_params(axis='x', labelrotation=30)
+        ax[2, 0].set_xlabel('Date')
+        ax[2, 0].set_ylabel('Rental Count')
+        ax[2, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 5')
 
         actualRental6, predictedRental6 = self.visualizeCapacityPrediction2(data,1)
 
         # Prediction
-        ax2[1, 1].plot(pd.to_datetime(actualRental6.index), np.array(actualRental6), label='Actual Rentals')
-        ax2[1, 1].plot(pd.date_range(start = pd.to_datetime(actualRental6.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental6,
+        ax[2, 1].plot(pd.to_datetime(actualRental6.index), np.array(actualRental6), label='Actual Rentals')
+        ax[2, 1].plot(pd.date_range(start = pd.to_datetime(actualRental6.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental6,
                  label='Predicted Rentals')
-        ax2[1, 1].tick_params(axis='x', labelrotation=30)
-        ax2[1, 1].set_xlabel('Date')
-        ax2[1, 1].set_ylabel('Rental Count')
-        ax2[1, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 6')
+        ax[2, 1].tick_params(axis='x', labelrotation=30)
+        ax[2, 1].set_xlabel('Date')
+        ax[2, 1].set_ylabel('Rental Count')
+        ax[2, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 6')
 
         actualRental7, predictedRental7 = self.visualizeCapacityPrediction2(data,2)
 
         # Prediction
-        ax2[2, 0].plot(pd.to_datetime(actualRental7.index), np.array(actualRental7), label='Actual Rentals')
-        ax2[2, 0].plot(pd.date_range(start = pd.to_datetime(actualRental7.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental7,
+        ax[3, 0].plot(pd.to_datetime(actualRental7.index), np.array(actualRental7), label='Actual Rentals')
+        ax[3, 0].plot(pd.date_range(start = pd.to_datetime(actualRental7.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental7,
                  label='Predicted Rentals')
-        ax2[2, 0].tick_params(axis='x', labelrotation=30)
-        ax2[2, 0].set_xlabel('Date')
-        ax2[2, 0].set_ylabel('Rental Count')
-        ax2[2, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 7')
+        ax[3, 0].tick_params(axis='x', labelrotation=30)
+        ax[3, 0].set_xlabel('Date')
+        ax[3, 0].set_ylabel('Rental Count')
+        ax[3, 0].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 7')
 
         actualRental8, predictedRental8 = self.visualizeCapacityPrediction2(data,3)
 
         # Prediction
-        ax2[2, 1].plot(pd.to_datetime(actualRental8.index), np.array(actualRental8), label='Actual Rentals')
-        ax2[2, 1].plot(pd.date_range(start = pd.to_datetime(actualRental8.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental8,
+        ax[3, 1].plot(pd.to_datetime(actualRental8.index), np.array(actualRental8), label='Actual Rentals')
+        ax[3, 1].plot(pd.date_range(start = pd.to_datetime(actualRental8.index[0]) + pd.Timedelta(days=8), periods=7), predictedRental8,
                  label='Predicted Rentals')
-        ax2[2, 1].tick_params(axis='x', labelrotation=30)
-        ax2[2, 1].set_xlabel('Date')
-        ax2[2, 1].set_ylabel('Rental Count')
-        ax2[2, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 8')
+        ax[3, 1].tick_params(axis='x', labelrotation=30)
+        ax[3, 1].set_xlabel('Date')
+        ax[3, 1].set_ylabel('Rental Count')
+        ax[3, 1].set_title('Predicted Rentals for the Next 7 Days for Rental Stop 8')
 
-        plt.savefig('multi_plot_image.pdf')
+        plt.savefig('DataPrediction.pdf')
         plt.show()
 
         # filename = ('multi_plot_image')
@@ -577,11 +582,6 @@ class Manager:
 
 if __name__ == '__main__':
     manager = Manager()
-    # data = manager.load_data("visualizationOrder.csv")
-    # print(data.head())
-    # print(data.columns)
-
-    # manager = Manager()
     #
     # # export csv
     # table_name = '`Order`'
@@ -591,9 +591,9 @@ if __name__ == '__main__':
     # generate pdf
     data = manager.load_data('visualizationOrder.csv')
     manager.visualizePlotting(data)
-    filename = "multi_plot_image.pdf"
-    # manager.saveToPdf(filename)
-    manager.openPdfInBrowser(filename)
+    manager.predictionPlotting(data)
+    manager.openPdfInBrowser('DataVisualization.pdf')
+    manager.openPdfInBrowser('DataPrediction.pdf')
 
     # 新用户
     # manager = Manager()
