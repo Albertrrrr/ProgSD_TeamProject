@@ -35,6 +35,10 @@ class StopPage():
         b2 = Button(self.page, command = self.refresh, text = "Refresh",bg='#4CAF50', fg='white', font=("Arial", 12), padx=10, pady=10)
         b2.place(x=300, y=10)
 
+        b3 = Button(self.page, command=self.quit, text="back", bg='#000000', fg='white', font=("Arial", 12),
+                    padx=10, pady=10)
+        b3.place(x=220, y=10)
+
         self.__info_text = scrolledtext.ScrolledText(self.page, width = 100, height = 30)
         self.__info_text.place(x=25, y=120)
 
@@ -48,3 +52,6 @@ class StopPage():
         res = self.__app.getAllStopsCU()
         for i in res:
             self.__info_text.insert(END, i + "\n")
+
+    def quit(self):
+        self.page.destroy()

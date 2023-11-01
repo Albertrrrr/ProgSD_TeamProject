@@ -36,24 +36,24 @@ class TopUpBanlancePage():
 
         # Labels for Current Balance, Card Holder Name, Card Number, Expiration Date, and Top-up Amount
         label2 = Label(self.page, text="Recharge amount:", font=l2_font)
-        label2.place(x=180, y=200)
+        label2.place(x=120, y=200)
         label3 = Label(self.page, text="QR code:", font=l2_font)
         label3.place(x=600, y=200)
 
         self.__amount = Entry(self.page, font=l2_font)
-        self.__amount.place(x=360, y=200, width=68, height=30)
+        self.__amount.place(x=300, y=200, width=68, height=30)
 
         # Buttons
         button1 = Button(self.page, command=self.quit, text="Go Back", font=b_font, bg='red', fg='white')
-        button1.place(x=300, y=525, width=100, height=40)
+        button1.place(x=150, y=325, width=100, height=40)
         button2 = Button(self.page, command=self.top_up, text="Generate", font=b_font, bg='green', fg='white')
-        button2.place(x=300, y=300, width=100, height=40)
+        button2.place(x=400, y=190, width=100, height=40)
 
         button3 = Button(self.page, command=self.refresh, text="Refresh", font=b_font)
         button3.place(x=700, y=200, width=100, height=40)
 
         button4 = Button(self.page, command=self.true, text="Top-up", font=b_font)
-        button4.place(x=600, y=525, width=100, height=40)
+        button4.place(x=300, y=325, width=100, height=40)
 
 
 
