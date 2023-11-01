@@ -1,7 +1,7 @@
 import matplotlib.dates
 import pymysql
 import pandas as pd
-import mysql.connector
+# import mysql.connector
 # pip install mysql
 # pip install scikit-learn
 # pip install pandas
@@ -51,6 +51,16 @@ class OperatorError(Exception):
     pass
 
 class Manager:
+    cursor.execute("SELECT * from Managers")
+    db.commit()
+    # 使用 fetchone() 方法获取单条数据.
+    data = cursor.fetchall()
+    # 拿到属于数据库的最后一个id
+    try:
+        currentID = data[-1][0]
+    except:
+        currentID = 0
+
     def __init__(self, email=None):
         if email is None:
             self.__id = None
@@ -111,6 +121,7 @@ class Manager:
         self.__par = par
 
         cursor.execute("SELECT * from Managers_ver")
+        db.commit()
         data = cursor.fetchall()
         try:
             currentID = data[-1][0]
@@ -127,31 +138,30 @@ class Manager:
         addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
         db.commit()
 
-        if addFlag:
-            print("Add a new Managers_ver successfully", self.__id, self.__name, self.__password, self.__email)
-            return True
-        else:
-            print("Change another email")
-            return False
-
-    def add(self, code: str):
-
         codeSQL = "SELECT * FROM `Managers_ver` WHERE managerID = %s"
         cursor.execute(codeSQL, self.__id)
         data = cursor.fetchone()
         code_ver = data[-1]
 
-        if code == code_ver:
-            saveSQL = "insert ignore into Managers(managerID,name,password,email)" \
-                      "values(%s,%s,%s,%s)"
-            addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
-            db.commit()
-            if addFlag:
-                print("Add a new Manager successfully", self.__id, self.__name, self.__password, self.__email)
-                return True
-            else:
-                print("Change another email")
-                return False
+        if addFlag:
+            print("Add a new Managers_ver successfully", self.__id, self.__name, self.__password, self.__email)
+            return code_ver
+        else:
+            print("Change another email")
+            return code_ver
+
+    def add(self):
+        saveSQL = "insert ignore into Managers(managerID,name,password,email)" \
+                  "values(%s,%s,%s,%s)"
+        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
+        db.commit()
+        if addFlag:
+            print("Add a new Manager successfully", self.__id, self.__name, self.__password, self.__email)
+            return True
+        else:
+            print("Change another email")
+            return False
+
 
     def delete(self):
         deleteSQL = "delete from Managers where managerID = %s"

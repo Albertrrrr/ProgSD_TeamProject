@@ -174,6 +174,9 @@ class app:
             self.__operator = Operator()
             # par : name:str,password:str,email:str
             self.__code_ver = self.__operator.generateCode(par)
+        if option == '3':
+            self.__manager = Manager()
+            self.__code_ver = self.__manager.generateCode(par)
 
         return self.__code_ver
 
@@ -186,11 +189,14 @@ class app:
     # 注册operator 和 manager
     def registerOM(self, par: list, code:str, option: str):
         # option 2 is operator
-        print(code)
-        print(self.__code_ver)
         if option == '2':
             if code == self.__code_ver:
                 flag = self.__operator.add()
+                return flag
+
+        if option == '3':
+            if code == self.__code_ver:
+                flag = self.__manager.add()
                 return flag
 
     """
