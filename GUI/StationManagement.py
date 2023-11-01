@@ -25,7 +25,7 @@ class StationManagementPage():
         top_bar.place(x=0, y=0)
 
         # Top title
-        title_label = Label(top_bar, text="🔍 Property Management", bg="lightcyan", font=("Arial", 12, "bold"))
+        title_label = Label(top_bar, text="🔍 Stop Management", bg="lightcyan", font=("Arial", 12, "bold"))
         title_label.place(x=10, y=5)
 
         # Buttons
@@ -40,9 +40,9 @@ class StationManagementPage():
         self.__info_list.place(x=50, y=80)
 
         # Delete vehicle operation
-        del_lbl = Label(self.page, text="Add a new bike:", bg='white', font=("Arial", 12))
+        del_lbl = Label(self.page, text="Add a new bike:", bg="#add8e6", font=("Arial", 12))
         del_lbl.place(x=50, y=350)
-        del_entry_lbl = Label(self.page, text="place", bg='white', font=("Arial", 10))
+        del_entry_lbl = Label(self.page, text="place", font=("Arial", 10))
         del_entry_lbl.place(x=50, y=390)
         self.__addPlace = Entry(self.page, width=20)
         self.__addPlace.place(x=85, y=390)
@@ -52,9 +52,9 @@ class StationManagementPage():
         del_clear_btn.place(x=320, y=390)
 
         # Change battery operation
-        battery_lbl = Label(self.page, text="delete station:", bg='white', font=("Arial", 12))
+        battery_lbl = Label(self.page, text="delete station:", bg="#add8e6", font=("Arial", 12))
         battery_lbl.place(x=50, y=510)
-        battery_entry_lbl = Label(self.page, text="id", bg='white', font=("Arial", 10))
+        battery_entry_lbl = Label(self.page, text="id", font=("Arial", 10))
         battery_entry_lbl.place(x=50, y=550)
         self.__delete_stationName = Entry(self.page, width=20)
         self.__delete_stationName.place(x=85, y=550)
@@ -64,17 +64,17 @@ class StationManagementPage():
         battery_clear_btn.place(x=320, y=550)
 
         # Move vehicle operation
-        move_lbl = Label(self.page, text="Add a new station:", bg='white', font=("Arial", 12))
+        move_lbl = Label(self.page, text="Add a new station:", bg="#add8e6" ,font=("Arial", 12))
         move_lbl.place(x=400, y=350)
-        move_entry_lbl = Label(self.page, text="name", bg='white', font=("Arial", 10))
+        move_entry_lbl = Label(self.page, text="name",  font=("Arial", 10))
         move_entry_lbl.place(x=400, y=400)
         self.__statioName = Entry(self.page, width=20)
         self.__statioName.place(x=435, y=400)
-        move_entry_lbl = Label(self.page, text="place", bg='white', font=("Arial", 10))
+        move_entry_lbl = Label(self.page, text="place",  font=("Arial", 10))
         move_entry_lbl.place(x=400, y=450)
         self.__stationPlace = Entry(self.page, width=20)
         self.__stationPlace.place(x=435, y=450)
-        move_entry_lbl = Label(self.page, text="Max", bg='white', font=("Arial", 10))
+        move_entry_lbl = Label(self.page, text="Max",  font=("Arial", 10))
         move_entry_lbl.place(x=400, y=500)
         self.__stationMax = Entry(self.page, width=20)
         self.__stationMax.place(x=435, y=500)

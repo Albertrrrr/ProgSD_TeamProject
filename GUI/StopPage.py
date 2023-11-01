@@ -22,8 +22,11 @@ class StopPage():
                                pady=10)
         title_label.place(x=10, y=10)
 
+        title_label = Label(self.page, text="Input stop ID:",  font=("Arial", 12))
+        title_label.place(x=500, y=20)
+
         self.__entry = Entry(self.page, width=10)
-        self.__entry.place(x=500, y=15)
+        self.__entry.place(x=600, y=21)
 
         # Replace Back button with Enter button
         enter_btn = Button(self.page, command = self.rentReturn, text="Enter", bg='#4CAF50', fg='white', font=("Arial", 12), padx=10, pady=10)

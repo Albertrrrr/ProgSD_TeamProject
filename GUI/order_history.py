@@ -21,10 +21,10 @@ class HistoryPage(object):
 
         # Oder history information
         label1 = Label(self.page, text="Order history information", bg="lightcyan", font=("Arial", 18))
-        label1.place(x=20, y=40)
+        label1.place(x=20, y=90)
 
         back_button = Button(self.page, text="Back", command = self.quit, bg='#000000', fg='white')
-        back_button.place(x=50, y=120, width = 80, height = 30)
+        back_button.place(x=50, y=20, width = 80, height = 30)
 
         # Oder information
         label2 = Label(self.page, text="Order information", font=("Arial", 16))

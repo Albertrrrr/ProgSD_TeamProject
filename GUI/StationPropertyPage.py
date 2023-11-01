@@ -41,9 +41,9 @@ class StationPropertyPage():
         self.__info_list.place(x=50, y=80)
 
         # Delete vehicle operation
-        del_lbl = Label(self.page, text="Change station name:", bg='white', font=("Arial", 12))
+        del_lbl = Label(self.page, text="Change station name:", bg="#add8e6", font=("Arial", 12))
         del_lbl.place(x=50, y=350)
-        del_entry_lbl = Label(self.page, text="name", bg='white', font=("Arial", 10))
+        del_entry_lbl = Label(self.page, text="name",  font=("Arial", 10))
         del_entry_lbl.place(x=50, y=390)
         self.__changeName = Entry(self.page, width=20)
         self.__changeName.place(x=85, y=390)
@@ -54,15 +54,15 @@ class StationPropertyPage():
                                font=("Arial", 10))
         del_clear_btn.place(x=320, y=390)
 
-        battery_lbl = Label(self.page, text="Input stop ID:", bg='white', font=("Arial", 12))
+        battery_lbl = Label(self.page, text="Input stop ID:", font=("Arial", 12))
         battery_lbl.place(x=50, y=320)
         self.__changeStationID = Entry(self.page, width=5)
         self.__changeStationID.place(x=170, y=320)
 
         # Change battery operation
-        battery_lbl = Label(self.page, text="Change station position:", bg='white', font=("Arial", 12))
+        battery_lbl = Label(self.page, text="Change station position:", bg="#add8e6", font=("Arial", 12))
         battery_lbl.place(x=50, y=450)
-        battery_entry_lbl = Label(self.page, text="name", bg='white', font=("Arial", 10))
+        battery_entry_lbl = Label(self.page, text="name",  font=("Arial", 10))
         battery_entry_lbl.place(x=50, y=490)
 
         self.__changePosition = Entry(self.page, width=20)
@@ -75,9 +75,9 @@ class StationPropertyPage():
         battery_clear_btn.place(x=320, y=490)
 
         # Move vehicle operation
-        move_lbl = Label(self.page, text="Change capacity:", bg='white', font=("Arial", 12))
+        move_lbl = Label(self.page, text="Change capacity:", bg="#add8e6", font=("Arial", 12))
         move_lbl.place(x=400, y=350)
-        move_entry_lbl = Label(self.page, text="name", bg='white', font=("Arial", 10))
+        move_entry_lbl = Label(self.page, text="name",  font=("Arial", 10))
         move_entry_lbl.place(x=400, y=390)
         self.__changeCapacity = Entry(self.page, width=20)
         self.__changeCapacity.place(x=435, y=390)

@@ -11,7 +11,7 @@ class ViewOperatorPage():
 
         self.page = Toplevel(self.__root)
         self.page.attributes('-topmost', 1)
-        self.page.geometry("1000x600")
+        self.page.geometry("700x600")
 
         title_label = Label(self.page, text="🔍 View All Operators", bg="lightcyan", font=("Arial", 14, "bold"),
                                padx=10,

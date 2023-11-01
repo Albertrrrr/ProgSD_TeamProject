@@ -34,7 +34,7 @@ class UserCenterPage():
 
         # Modify email
         email_lbl = Label(self.page, text="Modify email", bg="#add8e6", font=("Arial", 16))
-        email_lbl.place(x=300, y=250)
+        email_lbl.place(x=350, y=250)
         self.__newemail = Entry(self.page, width=25)
         self.__newemail.place(x=480, y=253)
         email_btn = Button(self.page, text="OK", command = self.changeemail, bg="#4CAF50", fg="white", font=("Arial", 12))
@@ -42,7 +42,7 @@ class UserCenterPage():
 
         # Change name
         name_lbl = Label(self.page, text="Change name", bg="#add8e6", font=("Arial", 16))
-        name_lbl.place(x=300, y=340)
+        name_lbl.place(x=340, y=340)
         self.__newusername = Entry(self.page, width=25)
         self.__newusername.place(x=480, y=343)
         name_btn = Button(self.page, text="OK", command = self.changename, bg="#4CAF50", fg="white", font=("Arial", 12))

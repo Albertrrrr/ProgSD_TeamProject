@@ -41,9 +41,9 @@ class VehicleManagementPage():
         self.__info_text.place(x=50, y=80)
 
         # Delete vehicle operation
-        del_lbl = Label(self.page, text="Delete vehicle:", bg='white', font=("Arial", 12))
+        del_lbl = Label(self.page, text="Delete vehicle:", bg="#add8e6", font=("Arial", 12))
         del_lbl.place(x=50, y=350)
-        del_entry_lbl = Label(self.page, text="ID:", bg='white', font=("Arial", 10))
+        del_entry_lbl = Label(self.page, text="ID:", font=("Arial", 10))
         del_entry_lbl.place(x=50, y=390)
         self.__delete = Entry(self.page, width=20)
         self.__delete.place(x=85, y=390)
@@ -53,9 +53,9 @@ class VehicleManagementPage():
         del_clear_btn.place(x=320, y=390)
 
         # Change battery operation
-        battery_lbl = Label(self.page, text="Change battery:", bg='white', font=("Arial", 12))
+        battery_lbl = Label(self.page, text="Change battery:", bg="#add8e6", font=("Arial", 12))
         battery_lbl.place(x=50, y=450)
-        battery_entry_lbl = Label(self.page, text="ID:", bg='white', font=("Arial", 10))
+        battery_entry_lbl = Label(self.page, text="ID:", font=("Arial", 10))
         battery_entry_lbl.place(x=50, y=490)
         self.__battery = Entry(self.page, width=20)
         self.__battery.place(x=85, y=490)
@@ -65,13 +65,13 @@ class VehicleManagementPage():
         battery_clear_btn.place(x=320, y=490)
 
         # Move vehicle operation
-        move_lbl = Label(self.page, text="Move vehicle:", bg='white', font=("Arial", 12))
+        move_lbl = Label(self.page, text="Move vehicle:", bg="#add8e6", font=("Arial", 12))
         move_lbl.place(x=400, y=350)
-        move_entry_lbl = Label(self.page, text="ID:", bg='white', font=("Arial", 10))
+        move_entry_lbl = Label(self.page, text="ID:", font=("Arial", 10))
         move_entry_lbl.place(x=400, y=390)
         self.__vehicle = Entry(self.page, width=20)
         self.__vehicle.place(x=435, y=390)
-        move_input_lbl = Label(self.page, text="Move:", bg='white', font=("Arial", 10))
+        move_input_lbl = Label(self.page, text="Move:", font=("Arial", 10))
         move_input_lbl.place(x=400, y=430)
         self.__vehicle_move = Entry(self.page, width=20)
         self.__vehicle_move.place(x=435, y=430)
@@ -81,9 +81,9 @@ class VehicleManagementPage():
         move_clear_btn.place(x=670, y=390)
 
         # Track vehicle operation
-        track_lbl = Label(self.page, text="Track vehicle:", bg='white', font=("Arial", 12))
+        track_lbl = Label(self.page, text="Track vehicle:", bg="#add8e6", font=("Arial", 12))
         track_lbl.place(x=400, y=470)
-        track_entry_lbl = Label(self.page, text="ID:", bg='white', font=("Arial", 10))
+        track_entry_lbl = Label(self.page, text="ID:", font=("Arial", 10))
         track_entry_lbl.place(x=400, y=510)
         self.__track = Entry(self.page, width=20)
         self.__track.place(x=435, y=510)

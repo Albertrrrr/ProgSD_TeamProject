@@ -19,6 +19,12 @@ class ViewWorkOrderPage():
         title_label = Label(self.page, text="🔍 View Work Order", bg="lightcyan", font=("Arial", 14, "bold"),padx=10,pady=10)
         title_label.place(x=10, y=10)
 
+        title_label = Label(self.page, text="Report information", font=("Arial", 14,))
+        title_label.place(x=20, y=373)
+
+        title_label = Label(self.page, text="Record information", font=("Arial", 14,))
+        title_label.place(x=20, y=80)
+
         # Buttons
 
         refresh_btn = Button(self.page, command = self.refresh, text="Refresh", bg='#4CAF50', fg='white', font=("Arial", 12), padx=10, pady=10)
@@ -28,10 +34,10 @@ class ViewWorkOrderPage():
         back_btn.place(x=400, y=10)
 
         self.__info_list = scrolledtext.ScrolledText(self.page, width=135, height=20)
-        self.__info_list.place(x=25, y=80)
+        self.__info_list.place(x=25, y=110)
 
         self.__info_list_2 = scrolledtext.ScrolledText(self.page, width=135, height=14)
-        self.__info_list_2.place(x=25, y=350)
+        self.__info_list_2.place(x=25, y=400)
 
         # 看维修记录
         list = self.__app.getALLRecordOM()
