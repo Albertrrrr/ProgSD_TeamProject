@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import font
 
 from app import app
-from GUI import VehicleManagement,StationManagement, StationPropertyPage, RepairManagement
+from GUI import VehicleManagement,StationManagement, StationPropertyPage, RepairManagement, OperatorCenter
 
 
 class OperatorPage():
@@ -39,7 +39,7 @@ class OperatorPage():
         button4.place(x=200, y=350, width=260, height=50)
         button5 = Button(text="Repair Management", command = self.repair, font=b2_font, bg='purple', fg='white')
         button5.place(x=620, y=350, width=260, height=50)
-        button6 = Button(text="Repair All", font=b2_font, bg='red', fg='white')
+        button6 = Button(text="Operator Center", command = self.center, font=b2_font, bg='red', fg='white')
         button6.place(x=200, y=450, width=260, height=50)
 
     def vehicle_management(self):
@@ -53,6 +53,9 @@ class OperatorPage():
 
     def repair(self):
         RepairManagement.RepairManagementPage(self.__app,self.__root).CreatePage()
+
+    def center(self):
+        OperatorCenter.OperatorCenterPage(self.__app,self.__root).CreatePage()
 
 
 

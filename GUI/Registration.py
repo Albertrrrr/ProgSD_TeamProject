@@ -74,8 +74,24 @@ class RegisterPage():
 
         button2 = Button(self.page, text="Register" , command=self.registerCheck, font=b_font, bg='green', fg='white')
         button2.place(x=450, y=530, width=100, height=40)
-        button2 = Button(self.page,text="Get verification_code", font=b_font)
+        button2 = Button(self.page,command = self.Code, text="Get verification_code", font=b_font)
         button2.place(x=760, y=400, width=200, height=30)
+
+    def Code(self):
+        username = self.__username.get()
+        password = self.__password.get()
+        email = self.__email.get()
+
+        par = [username, password, email]
+
+        selected = self.__selected_value.get()
+        k = self.__app.generateCodeOP(par, str(selected))
+        print("k",k)
+        flagCode = self.__app.flagCode()
+        if flagCode:
+            msgbox.showinfo("Success", "Successfully generate Code!", parent=self.page)
+        else:
+            msgbox.showwarning("Warning", "Check your email and password!", parent=self.page)
 
     def registerCheck(self):
         username =  self.__username.get()
@@ -88,17 +104,19 @@ class RegisterPage():
 
         if selected == 1:
             flag = self.__app.register(par=par)
-            if(flag):
+            if flag:
                 msgbox.showinfo("Success","Successfully Register!",parent = self.page)
             else:
                 msgbox.showwarning("Warning","Check your email and password!",parent = self.page)
 
         elif selected == 2:
-            flag = self.__app.registerOM(par=par)
-            if (flag):
+
+            code = self.__captcha.get()
+            flag = self.__app.registerOM(par,code,str(selected))
+            if flag:
                 msgbox.showinfo("Success","Successfully Register!",parent = self.page)
             else:
-                msgbox.showwarning("Warning", "Check your email and password!",parent = self.page)
+                msgbox.showwarning("Warning","Check your CAPTCHA!",parent = self.page)
 
         elif selected == 3:
             flag = self.__app.registerOM(par=par)

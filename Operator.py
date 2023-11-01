@@ -15,14 +15,7 @@ mysql_config = {
 # connect to mysql
 db = pymysql.connect(**mysql_config)
 cursor = db.cursor()
-cursor.execute("SELECT * from Operators ORDER BY operatorID")
-# 使用 fetchone() 方法获取单条数据.
-data = cursor.fetchall()
-# 拿到属于数据库的最后一个id
-try:
-    currentID = data[-1][0]
-except:
-    currentID = 0
+
 
 
 class OperatorError(Exception):
@@ -30,6 +23,16 @@ class OperatorError(Exception):
 
 
 class Operator:
+    cursor.execute("SELECT * from Operators ORDER BY operatorID")
+    # 使用 fetchone() 方法获取单条数据.
+    db.commit()
+    data = cursor.fetchall()
+    # 拿到属于数据库的最后一个id
+    try:
+        currentID = data[-1][0]
+    except:
+        currentID = 0
+
     def __init__(self, email=None):
         if email is None:
             self.__id = None
@@ -90,7 +93,9 @@ class Operator:
         self.__par = par
 
         cursor.execute("SELECT * from Operators_ver")
+        db.commit()
         data = cursor.fetchall()
+
         try:
             currentID = data[-1][0]
         except:
@@ -106,12 +111,19 @@ class Operator:
         addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
         db.commit()
 
+
+        codeSQL = "SELECT * FROM `Operators_ver` WHERE operatorID = %s"
+        cursor.execute(codeSQL, self.__id)
+        db.commit()
+        data = cursor.fetchone()
+        code_ver = data[-1]
+
         if addFlag:
             print("Add a new Operators_ver successfully", self.__id, self.__name, self.__password, self.__email)
-            return True
+            return code_ver
         else:
             print("Change another email")
-            return False
+            return code_ver
 
     def add(self):
 

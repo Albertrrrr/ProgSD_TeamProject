@@ -13,6 +13,10 @@ class OperatorCenterPage():
         self.__app = app
 
     def CreatePage(self):
+        self.page = Toplevel(self.__root)
+        self.page.attributes('-topmost', 1)
+        self.page.geometry("1000x600")
+
         title_label = Label(self.page, text="Operator center", bg="#add8e6", font=("Arial", 30, "bold"))
         title_label.pack(pady=20)
 
