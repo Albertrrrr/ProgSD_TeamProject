@@ -158,11 +158,13 @@ class vehicleStop:
     def stopDetails(self):
         cursor.execute("SELECT locationID,name,maxCapacity,currentCapacity from `VehicleStop`")
         details = cursor.fetchall()
+        db.commit()
         return details
 
     def stopDetailsOP(self):
         cursor.execute("SELECT * from `VehicleStop`")
         details = cursor.fetchall()
+        db.commit()
         return details
 
     def detailsFormat(self, details: tuple):

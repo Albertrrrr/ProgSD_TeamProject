@@ -98,6 +98,8 @@ class LoginPage(object):
                 self.loginManager()
             else:
                 msgbox.showwarning("Warning", "Check your email and password!")
+        else:
+            msgbox.showwarning(("Warning","Please Check your RadioButton!"))
 
 
 

@@ -35,6 +35,12 @@ class RepairManagementPage():
         back_btn = Button(top_bar, command = self.quit, text="Back", bg='#4CAF50', fg='white', font=("Arial", 10))
         back_btn.place(x=320, y=5)
 
+        b1 = Label(self.page, text = "Report Information: ", font=("Arial", 10))
+        b1.place(x = 40, y = 50)
+
+        b2 = Label(self.page, text = "Vehicle Informationn: ", font=("Arial", 10))
+        b2.place(x = 40, y = 400)
+
         # Huge display box (Text widget)
         self.__info_list = scrolledtext.ScrolledText(self.page, width=130, height=15)
         self.__info_list.place(x=50, y=80)
