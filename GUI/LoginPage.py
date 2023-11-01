@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter.messagebox as msgbox
 from tkinter import font
-from GUI import Registration, customer_homapage, OperatorPage, Manager_homepage,MapPage
+from GUI import Registration, customer_homapage, OperatorPage, ManagerHomePage
 from app import app
 
 
@@ -67,7 +67,7 @@ class LoginPage(object):
         OperatorPage.OperatorPage(self.__app,self.__root).CreatePage()
 
     def loginManager(self):
-        Manager_homepage.ManagerPage(self.__app,self.__root).CreatePage()
+        ManagerHomePage.ManagerHomePage(self.__app,self.__root).CreatePage()
 
     def loginCheck(self):
         email = self.__email.get()
@@ -92,14 +92,12 @@ class LoginPage(object):
             else:
                 msgbox.showwarning("Warning", "Check your email and password!")
 
-
-
-        # elif selected == 3:
-        #     flag = self.__app.login(par=par)
-        #     if (flag):
-        #         self.loginManager()
-        #     else:
-        #         msgbox.showwarning("Warning", "Check your email and password!")
+        elif selected == 3:
+            flag = self.__app.login(par=par)
+            if flag:
+                self.loginManager()
+            else:
+                msgbox.showwarning("Warning", "Check your email and password!")
 
 
 

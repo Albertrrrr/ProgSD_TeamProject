@@ -119,11 +119,13 @@ class RegisterPage():
                 msgbox.showwarning("Warning","Check your CAPTCHA!",parent = self.page)
 
         elif selected == 3:
-            flag = self.__app.registerOM(par=par)
-            if (flag):
-                msgbox.showinfo("Successfully Register!",parent = self.page)
+
+            code = self.__captcha.get()
+            flag = self.__app.registerOM(par, code, str(selected))
+            if flag:
+                msgbox.showinfo("Success", "Successfully Register!", parent=self.page)
             else:
-                msgbox.showwarning("Warning", "Check your email and password!",parent = self.page)
+                msgbox.showwarning("Warning", "Check your CAPTCHA!", parent=self.page)
 
 
 

@@ -419,7 +419,7 @@ class app:
         self.__manager.openPdfInBrowser('DataPrediction.pdf')
 
     def updateNameOM(self, newName:str):
-        flag = self.__manager.updateNmae(newName)
+        flag = self.__manager.updateName(newName)
         return flag
 
     def updatePasswordOM(self, newPassword:str):
