@@ -391,18 +391,26 @@ class app:
     """
        Manager接口方法   
     """
+    # generate pdf
+
     def managerViewPdf(self):
         # export csv
-        table_name = '`Order`'
-        output_csv_file = 'visualizationOrder.csv'
-        self.__manager.exportToCSV(table_name, output_csv_file)
+        # table_name = '`Order`'
+        # output_csv_file = 'visualizationOrder.csv'
+        # self.__manager.exportToCSV(table_name, output_csv_file)
+        #
+        # # generate pdf
+        # data = self.__manager.load_data('visualizationOrder.csv')
+        # self.__manager.visualizePlotting(data)
+        # filename = "multi_plot_image.pdf"
+        # # manager.saveToPdf(filename)
+        # self.__manager.openPdfInBrowser(filename)
 
-        # generate pdf
         data = self.__manager.load_data('visualizationOrder.csv')
         self.__manager.visualizePlotting(data)
-        filename = "multi_plot_image.pdf"
-        # manager.saveToPdf(filename)
-        self.__manager.openPdfInBrowser(filename)
+        self.__manager.predictionPlotting(data)
+        self.__manager.openPdfInBrowser('DataVisualization.pdf')
+        self.__manager.openPdfInBrowser('DataPrediction.pdf')
 
     """
     格式化输出：Customer 1、全部车站  2.全部可用车辆 3.全部关于自己的订单 4.自己所提交的所有报告
@@ -623,6 +631,13 @@ if __name__ == '__main__':
     # print(app.login(par3))
     #
     # print(app.registerOM(par1))
+
+    # generate pdf
+    # data = manager.load_data('visualizationOrder.csv')
+    # manager.visualizePlotting(data)
+    # manager.predictionPlotting(data)
+    # manager.openPdfInBrowser('DataVisualization.pdf')
+    # manager.openPdfInBrowser('DataPrediction.pdf')
 
     # Customer功能测试 租车流程测试 正常全流程
     # app = app()
