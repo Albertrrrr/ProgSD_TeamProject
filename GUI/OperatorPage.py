@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter import font
+
 from app import app
-from GUI import VehicleManagement
+from GUI import VehicleManagement,StationManagement, StationPropertyPage
 
 
 class OperatorPage():
@@ -32,9 +33,9 @@ class OperatorPage():
         # Operator Buttons
         button2 = Button(text="Vehicle Management", command = self.vehicle_management, font=b2_font, bg='blue', fg='white')
         button2.place(x=200, y=250, width=260, height=50)
-        button3 = Button(text="Move Vehicle", font=b2_font, bg='green', fg='white')
+        button3 = Button(text="Stop Management", command = self.move, font=b2_font, bg='green', fg='white')
         button3.place(x=620, y=250, width=260, height=50)
-        button4 = Button(text="Charge Vehicle", font=b2_font, bg='orange', fg='white')
+        button4 = Button(text="Stop Property Management", command=self.property, font=b2_font, bg='orange', fg='white')
         button4.place(x=200, y=350, width=260, height=50)
         button5 = Button(text="Add New Vehicle", font=b2_font, bg='purple', fg='white')
         button5.place(x=620, y=350, width=260, height=50)
@@ -43,5 +44,17 @@ class OperatorPage():
 
     def vehicle_management(self):
         VehicleManagement.VehicleManagementPage(self.__app,self.__root).CreatePage()
+
+    def move(self):
+        StationManagement.StationManagementPage(self.__app,self.__root).CreatePage()
+
+    def property(self):
+        StationPropertyPage.StationPropertyPage(self.__app,self.__root).CreatePage()
+
+
+
+
+
+
 
 

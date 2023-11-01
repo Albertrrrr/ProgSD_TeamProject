@@ -43,7 +43,7 @@ button2.place(x=600, y=525, width=100, height=40)
 
 
 # Load and display an image
-image_path = "G:\ProgSD_TeamProject\qrcode_image\qr_test_ali_14.png"  # Change this to your image file path
+image_path = r"C:\Users\zyj_8\Documents\GitHub\ProgSD_TeamProject\qrcode_image\qr_test_ali_20231024202355_1.png"  # Change this to your image file path
 img = PhotoImage(file=image_path)
 img = img.subsample(2)  # Adjust the subsample factor to resize the image (e.g., 2 halves the size)
 

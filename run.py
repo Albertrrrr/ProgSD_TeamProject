@@ -7,6 +7,5 @@ def main():
     LoginPage.LoginPage(root).CreatePage()
     root.mainloop()
 
-
 if __name__ == "__main__":
     main()

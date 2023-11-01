@@ -33,6 +33,16 @@ class OrderError(Exception):
 class Order:
     # par 格式 email, vehicleID
     def __init__(self, customer: Customer, vehicle:Vehicle):
+        cursor.execute("SELECT * from `Order`")
+        # 使用 fetchone() 方法获取单条数据.
+        data = cursor.fetchall()
+        db.commit()
+        # 拿到属于数据库的最后一个id
+        try:
+            currentID = data[-1][0]
+        except:
+            currentID = 0
+
         if vehicle is None:
             self.__customer = customer
             self.__renterID = self.__customer.id
@@ -255,8 +265,11 @@ class Order:
 
     def orderDetails(self):
         flagSQL = 'SELECT * FROM `Order` WHERE renter = %s'
+        print(self.__renterID)
         cursor.execute(flagSQL, self.__renterID)
+        db.commit()
         details = cursor.fetchall()
+
         return details
 
     def detailsFormat(self, details: tuple):
@@ -305,11 +318,11 @@ class Order:
             res.append(finalString)
         return res
 
-
     def payTo(self):
         accountBalance = self.__customer.balance
         idSQL = 'SELECT * FROM `Order` WHERE renter = %s AND isPaid = 0'
         cursor.execute(idSQL, self.__renterID)
+        db.commit()
         index = cursor.fetchone()
         print(index)
         try:

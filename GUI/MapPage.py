@@ -41,10 +41,10 @@ class MapPage(object):
             str_local_info = "Location_ID:" + str(row[0]) + "  \n" + str(row[1])
             print(str_local_info)
 
-            xx_str = position.split('，')[0]
+            xx_str = position.split(',')[0]
             xx = float(xx_str[1:])
 
-            yy_str = position.split('，')[1]
+            yy_str = position.split(',')[1]
             yy = float(yy_str[:-1])
 
             print(yy)

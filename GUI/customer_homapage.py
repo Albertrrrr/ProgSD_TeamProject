@@ -40,7 +40,6 @@ class CustomerPage():
 
     def rent(self):
         StopPage.StopPage(self.__app,self.__root).CreatePage()
-
     def login(self):
         for widget in self.page.winfo_children():
             widget.destroy()

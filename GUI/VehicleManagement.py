@@ -35,9 +35,7 @@ class VehicleManagementPage():
         back_btn = Button(top_bar, text="Back", command = self.quit, bg='#4CAF50', fg='white', font=("Arial", 10))
         back_btn.place(x=320, y=5)
 
-        # Huge display box (Text widget)
-        # self.__info_list = Listbox(self.page, width=100, height=15)
-        # self.__info_list.place(x=50, y=80)
+
 
         self.__info_text = scrolledtext.ScrolledText(self.page, width=100, height=15)
         self.__info_text.place(x=50, y=80)
@@ -97,6 +95,9 @@ class VehicleManagementPage():
         self.__track_message.place(x = 400, y = 545)
 
     def refresh(self):
+        content = self.__info_text.get('1.0', END)
+        if content.strip():
+            self.__info_text.delete('1.0', END)
         res = self.__app.getAllVehicleOP()
         for i in res:
             self.__info_text.insert(END, i + "\n")

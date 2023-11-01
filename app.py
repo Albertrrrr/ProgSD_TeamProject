@@ -1,3 +1,4 @@
+import random
 import re
 
 from Customer import Customer
@@ -32,7 +33,16 @@ class app:
         self.__stop = None
         self.__bikeID = None
         self.__unpaidOrder = None
+        self.__stopID = None
         print("app running")
+
+    @property
+    def stopID(self):
+        return self.__stopID
+
+    @stopID.setter
+    def stopID(self, value):
+        self.__stopID = value
 
     @property
     def manager(self):
@@ -184,13 +194,13 @@ class app:
         try:
             flag = self.__order.startRent()
         except Exception as e:
-            self.__unpaidOrder = self.__order.detailsFormat(self.__order.toPayOrder())
-            id = str(self.__unpaidOrder[0][0])
-            startTime = self.__unpaidOrder[0][3]
-            cost = str(self.__unpaidOrder[0][-5])
-            self.__error = "You will need to pay id:" + id + " for a total of £" + cost + " for orders timed from: " + startTime  # get属性 可以拿到该值
-            print(self.__error)
-            return False
+            # self.__unpaidOrder = self.__order.detailsFormat(self.__order.toPayOrder())
+            # id = str(self.__unpaidOrder[0][0])
+            # startTime = self.__unpaidOrder[0][3]
+            # cost = str(self.__unpaidOrder[0][-5])
+            # self.__error = "You will need to pay id:" + id + " for a total of £" + cost + " for orders timed from: " + startTime  # get属性 可以拿到该值
+            # print(self.__error)
+            flag = False
         return flag
 
     # 还车
@@ -216,6 +226,7 @@ class app:
 
     # 单独支付订单
     def payToOrder(self):
+        self.__order = Order(self.__customer,None)
         flag = self.__order.payTo()
         if flag:
             flagClosed = self.__order.close()
@@ -274,6 +285,10 @@ class app:
     def updateCustomerPassword(self, newPassword: str):
         flag = self.__customer.updatePassword(newPassword)
         return flag
+
+    def getUnfilledOrder(self):
+        res = self.__customer.unpaidDetails()
+        return res
 
     """
     Operator接口方法   
@@ -389,27 +404,35 @@ class app:
     def getAllStopsCU(self):
         self.__stop = vehicleStop()
         res = self.tableFormat(self.__stop.detailsFormat(self.__stop.stopDetails()))
-        tableHead = "{:<5} {:<20} {:<25} {:<25}".format("ID", "NAME", "MAX_CAPACITY", "CURRENT_CAPACITY")
+        tableHead = "{:<5} {:<50} {:<25} {:<25}".format("ID", "NAME", "MAX_CAPACITY", "CURRENT_CAPACITY")
         res.insert(0, tableHead)
         return res
 
     # 格式化输出 全部可用车辆（选定车站）
-    def getAvailableVehicle(self, stopID: int):
-        self.__stop = vehicleStop(stopID)
-        res = self.tableFormat(self.__stop.vehicleToList())
-        tableHead = "{:<5} {:<20} {:<25} {:<25}".format("ID", "TYPE", "BATTERYSTATUS", "STATUS")
+    def getAvailableVehicle(self):
+        self.__stop = vehicleStop(self.__stopID)
+        res = self.tableFormatVehicle(self.__stop.vehicleToList())
+        tableHead = "{:<5} {:<20} {:<20} {:<25}".format("ID", "TYPE", "BATTERYSTATUS", "STATUS")
         res.insert(0, tableHead)
+        return res
+
+    def tableFormatVehicle(self, details: list):
+        res = []
+        for i in details:
+            finalString = "{:<5} {:<20} {:<20} {:<25}".format(*i)
+            res.append(finalString)
         return res
 
     def tableFormat(self, details: list):
         res = []
         for i in details:
-            finalString = "{:<5} {:<20} {:<25} {:<25}".format(*i)
+            finalString = "{:<5} {:<50} {:<25} {:<25}".format(*i)
             res.append(finalString)
         return res
 
     # 全部关于自己的订单
     def getOrderList(self):
+        print(self.__customer.orderDetails())
         res = self.tableFormatOrder(self.__customer.orderDetails())
         tableHead = "{:<4} {:<4} {:<3} {:<3} {:<20} {:<20} {:<20} {:<24} {:<5} {:<6} {:<6}".format(
             "ID", "BIKE", "S-S", "E-S", "START_TIME", "END_TIME", "CREATE_TIME", "FINISH_TIME", "COST", "ISPAID",
@@ -444,14 +467,14 @@ class app:
     def getAllStopsOP(self):
         self.__stop = vehicleStop()
         res = self.tableFormatOP(self.__stop.detailsFormat(self.__stop.stopDetailsOP()))
-        tableHead = "{:<5} {:<20} {:<25} {:<25} {:<25}".format("ID", "NAME", "AXIS", "MAX_CAPACITY", "CURRENT_CAPACITY")
+        tableHead = "{:<5} {:<40} {:<40} {:<20} {:<20}".format("ID", "NAME", "AXIS", "MAX_CAPACITY", "CURRENT_CAPACITY")
         res.insert(0, tableHead)
         return res
 
     def tableFormatOP(self, details: list):
         res = []
         for i in details:
-            finalString = "{:<5} {:<20} {:<25} {:<25} {:<25}".format(*i)
+            finalString = "{:<5} {:<40} {:<40} {:<20} {:<20}".format(*i)
             res.append(finalString)
         return res
 
@@ -569,11 +592,11 @@ class app:
 
 if __name__ == '__main__':
     import time
-    app = app()
-
-    par1 = ["manager123@gmail.com", "manager123", "3"]
-    app.login(par1)
-    app.managerViewPdf()
+    # app = app()
+    #
+    # par1 = ["manager123@gmail.com", "manager123", "3"]
+    # app.login(par1)
+    # app.managerViewPdf()
     # 用户测试
     # app = app()
     # par1 = ["Yuqing Ren", "9988", "renyuqing@gmail.com"]
@@ -700,10 +723,12 @@ if __name__ == '__main__':
     Login 'renyuqing5588@gmail.com' successfully
     """
     # 测试Operator 增加车辆
-    # app = app()
+    app = app()
     # par = ["zhangruixian@gmail.com", "3022008", '2']
     # app.login(par)
-    # app.addVehicleOP(['Bike',2,'normal'])
+    # for i in range(20):
+    #     Rand = random.randint(1,8)
+    #     app.addVehicleOP(['bike',Rand,'normal'])
 
     """
     app running

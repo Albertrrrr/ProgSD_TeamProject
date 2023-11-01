@@ -1,4 +1,6 @@
 from tkinter import *
+from tkinter import scrolledtext
+
 from app import app
 import pymysql
 import tkinter.messagebox as msgbox
@@ -13,7 +15,7 @@ class HistoryPage(object):
 
         self.page = Toplevel(self.__root)
         self.page.attributes('-topmost', 1)
-        self.page.geometry("1100x600")
+        self.page.geometry("1400x600")
 
         # window.config(bg='lightcyan')
 
@@ -32,33 +34,31 @@ class HistoryPage(object):
         refresh_button = Button(self.page, text="Refresh",bg='#4CAF50', fg='white', command = self.refresh)
         refresh_button.place(x = 50, y = 200, width = 100, height = 30)
 
-        self.__info_list = Listbox(self.page)
-        self.__info_list.place(x=300, y=60, width=780, height=520)
+        self.__info_list = scrolledtext.ScrolledText(self.page, width = 125, height = 36)
+        self.__info_list.place(x=400, y=60)
 
         # Unfilled orders
         label3 = Label(self.page, text="Unfilled orders", font=("Arial", 14))
         label3.place(x=50, y=250)
 
-        self.__info_list2 = Listbox(self.page)
-        self.__info_list2.place(x=50, y=300, width=200, height=30)
+        self.__info_list2 = scrolledtext.ScrolledText(self.page, width=50, height=8)
+        self.__info_list2.place(x=10, y=300)
 
 
         # You have successfully paid order
-        label4 = Label(self.page, text="You have successfully paid order", font=("Arial", 12))
-        label4.place(x=40, y=450)
+
 
         pay_button = Button(self.page, command = self.pay, text="Pay", bg='#4CAF50', fg='white')
-        pay_button.place(x=130, y=530)
+        pay_button.place(x=100, y=460,width = 120, height = 60)
 
-        entry3 = Entry(self.page)
-        entry3.place(x=100, y=480, width=100, height=30)
+
 
     def pay(self):
         flag = self.__app.payToOrder()
         if(flag):
-            msgbox.showinfo("Success", "Successfully pay!")
+            msgbox.showinfo("Success", "Successfully pay!",parent=self.page)
         else:
-            msgbox.showwarning("Warning","Unable to pay")
+            msgbox.showwarning("Warning","Unable to pay",parent=self.page)
 
 
     def quit(self):
@@ -68,7 +68,7 @@ class HistoryPage(object):
         res = self.__app.getOrderList()
         unpaidlist = self.__app.getUnfilledOrder()
         for i in res:
-            self.__info_list.insert(END, i)
+            self.__info_list.insert(END, i + "\n")
         for i in unpaidlist:
-            self.__info_list2.insert(END,i)
+            self.__info_list2.insert(END, i + "\n")
 

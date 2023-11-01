@@ -230,6 +230,7 @@ class Customer:
         else:
             print("top up account balance failed")
             return False
+
     def detailsFormat(self, details: tuple):
         detailsList = list(details)
         res = []
@@ -238,13 +239,18 @@ class Customer:
         return res
 
     def orderDetails(self):
+        print(self.__id)
         flagSQL = 'SELECT orderID,bike,startStop,endStop,startTime,endTime,createTime,finishTime,cost,isPaid,status FROM `Order` WHERE renter = %s'
         cursor.execute(flagSQL, self.__id)
+        db.commit()
         details = cursor.fetchall()
         res = self.detailsFormat(details)
         for i in res:
             for k in range(4,8):
-                i[k] = i[k].strftime("%Y-%m-%d %H:%M:%S")
+                if i[k] is not None:
+                    i[k] = i[k].strftime("%Y-%m-%d %H:%M:%S")
+                else:
+                    i[k] = 'None'
 
             for j in range(9,11):
                 if i[j] == 1 or i[j] == '1':
@@ -263,5 +269,24 @@ class Customer:
             if i[-2] == 1 or i[-2] == '1':
                     i[-2] = "True"
         return res
+
+    def unpaidDetails(self):
+        flagSQL = 'SELECT orderID,bike,startTime,cost,isPaid FROM `Order` WHERE renter = %s and isPaid = 0'
+        cursor.execute(flagSQL, self.__id)
+        db.commit()
+        details = cursor.fetchall()
+        key = self.detailsFormat(details)
+        res = []
+        for i in key:
+            i[2] = i[2].strftime("%Y-%m-%d %H:%M:%S")
+            finalString = "{:<5} {:<5} {:<20} {:<8} {:<5}".format(*i)
+            res.append(finalString)
+        tableHead = "{:<5} {:<5} {:<20} {:<8} {:<5}".format(
+            "ID", "BIKE", "START_TIME", "COST", "ISPAID")
+        res.insert(0, tableHead)
+
+        return res
+
+
 
 

@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter.messagebox as msgbox
 from tkinter import font
-from GUI import Registration, customer_homapage, Operator, Manager_homepage,MapPage
+from GUI import Registration, customer_homapage, OperatorPage, Manager_homepage,MapPage
 from app import app
 
 
@@ -64,7 +64,7 @@ class LoginPage(object):
 
     def loginOperator(self):
         self.page.destroy()
-        Operator.OperatorPage(self.__app,self.__root).CreatePage()
+        OperatorPage.OperatorPage(self.__app,self.__root).CreatePage()
 
     def loginManager(self):
         Manager_homepage.ManagerPage(self.__app,self.__root).CreatePage()

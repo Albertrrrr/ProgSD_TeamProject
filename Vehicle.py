@@ -18,6 +18,7 @@ cursor = db.cursor()
 cursor.execute("SELECT * from `Vehicle`")
 # 使用 fetchone() 方法获取单条数据.
 data = cursor.fetchall()
+db.commit()
 # 拿到属于数据库的最后一个id
 currentID = data[-1][0]
 
@@ -29,6 +30,13 @@ class VehicleCapacityError(Exception):
 class Vehicle:
     def __init__(self, customer: Customer, vehicleID: int = None):
         if vehicleID is None:
+            cursor.execute("SELECT * from `Vehicle`")
+            # 使用 fetchone() 方法获取单条数据.
+            data = cursor.fetchall()
+            db.commit()
+            # 拿到属于数据库的最后一个id
+            currentID = data[-1][0]
+
             self.__vehicleID = currentID + 1
             self.__types = None
             self.__price = None
@@ -46,6 +54,7 @@ class Vehicle:
             oneSQL = "SELECT * FROM `Vehicle` WHERE vehicleID = %s"
             cursor.execute(oneSQL, vehicleID)
             oneData = cursor.fetchone()
+            db.commit()
 
             print(oneData)
 
@@ -189,6 +198,8 @@ class Vehicle:
         searchSQL = "SELECT `maxCapacity`,`currentCapacity` FROM `VehicleStop` WHERE locationID = %s"
         cursor.execute(searchSQL, self.__locations)
         capacityList = cursor.fetchall()
+        db.commit()
+
         for row in capacityList:
             currentCapacity = row[1]
             maxCapacity = row[0]

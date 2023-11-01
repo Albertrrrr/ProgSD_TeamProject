@@ -15,17 +15,25 @@ cursor = db.cursor()
 cursor.execute("SELECT * from `VehicleStop`")
 # 使用 fetchone() 方法获取单条数据.
 data = cursor.fetchall()
+db.commit()
 # 拿到属于数据库的最后一个id
 currentID = data[-1][0]
 
 class vehicleStop:
     def __init__(self, locationID:int = None):
+        cursor.execute("SELECT * from `VehicleStop`")
+        # 使用 fetchone() 方法获取单条数据.
+        data = cursor.fetchall()
+        db.commit()
+        # 拿到属于数据库的最后一个id
+        currentID = data[-1][0]
         if locationID is None:
             pass
         else:
             oneSQL = "SELECT * FROM `VehicleStop` WHERE locationID = %s"
             cursor.execute(oneSQL, locationID)
             oneData = cursor.fetchone()
+            db.commit()
             self.__id = oneData[0]
             self.__name = oneData[1]
             self.__axis = oneData[2]
@@ -169,6 +177,7 @@ class vehicleStop:
         searchSQL = "SELECT * FROM `Vehicle` WHERE locations = %s AND isLocked = 0"
         cursor.execute(searchSQL, self.__id)
         data = cursor.fetchall()
+        db.commit()
         res = []
         for i in data:
             tupleID = (i[0],i[1],i[3],i[5])

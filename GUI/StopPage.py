@@ -1,11 +1,15 @@
 from tkinter import *
-import tkinter.messagebox as msgbox
+# import tkinter.messagebox as msgbox
 from tkinter import ttk, scrolledtext
+
+from GUI import RentReturn
 from app import app
 
 class StopPage():
     def __init__(self, app: app, master=None):
         self.__info_list = None
+        self.__info_text = None
+        self.__entry = StringVar()
         self.__root = master
         self.__app = app
 
@@ -18,14 +22,26 @@ class StopPage():
                                pady=10)
         title_label.place(x=10, y=10)
 
-        # Replace Refresh button with an Entry
-        self.__info_text = scrolledtext.ScrolledText(self.page, width=120, height=30)
-        self.__info_text.place(x=260, y=10)
+        self.__entry = Entry(self.page, width=20)
+        self.__entry.place(x=600, y=10)
 
         # Replace Back button with Enter button
-        enter_btn = Button(self.page, text="Enter", bg='#4CAF50', fg='white', font=("Arial", 12), padx=10, pady=10)
+        enter_btn = Button(self.page, command = self.rentReturn, text="Enter", bg='#4CAF50', fg='white', font=("Arial", 12), padx=10, pady=10)
         enter_btn.place(x=400, y=10)
 
-        # Text field
-        text_field = Text(self.page, height=26, width=83, relief="solid", borderwidth=1)
-        text_field.place(x=25, y=120)
+        b2 = Button(self.page, command = self.refresh, text = "Refresh")
+        b2.place(x = 800, y = 200)
+
+        self.__info_text = scrolledtext.ScrolledText(self.page, width = 100, height = 30)
+        self.__info_text.place(x=25, y=120)
+
+    def rentReturn(self):
+        stopID = self.__entry.get()
+        self.__app.stopID = stopID
+        RentReturn.RentReturnPage(self.__app,self.__root).CreatePage()
+
+
+    def refresh(self):
+        res = self.__app.getAllStopsCU()
+        for i in res:
+            self.__info_text.insert(END, i + "\n")
