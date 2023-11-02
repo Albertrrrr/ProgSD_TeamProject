@@ -41,7 +41,7 @@ Once you have successfully run it, you can register your own account to complete
 
 ## GUI Desgin
 ### Prototype
-<img src="https://github.com/CreateMiracle0523/ProgSD_TeamProject/blob/0b3ef6f8d683f8b12d549955853bf05104eb9862/Prototype%20drawing/1.png" width="300">  
+<img src="https://github.com/CreateMiracle0523/ProgSD_TeamProject/blob/0b3ef6f8d683f8b12d549955853bf05104eb9862/Prototype%20drawing/1.png" width="500">  
 
 ### Project Showcase
-()
+<img src="https://github.com/CreateMiracle0523/ProgSD_TeamProject/blob/1b9b37a80dec7442bf56e390c6e045c1b7f67dec/index.png" width="500">  
