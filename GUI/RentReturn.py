@@ -43,29 +43,37 @@ class RentReturnPage(object):
         # Rent
         rent_label = Label(self.page, text="Rent:", bg="lightcyan", font=("Arial", 14))
         rent_label.place(x=50, y=350)
+        rent_label = Label(self.page, text="ID", font=("Arial", 10))
+        rent_label.place(x=125, y=350)
+        rent_label = Label(self.page, text="Report:", bg="lightcyan", font=("Arial", 14))
+        rent_label.place(x=50, y=400)
+        rent_label = Label(self.page, text="ID", font=("Arial", 10))
+        rent_label.place(x=125, y=400)
         self.__rent = Entry(self.page)
-        self.__rent.place(x=110, y=350, width=220)
+        self.__rent.place(x=160, y=350, width=120)
         rent_button = Button(self.page, command = self.rent, text="Enter", bg='#4CAF50', fg='white')
         rent_button.place(x=350, y=350)
 
         # Report damage button
         report_button = Button(self.page, command= self.reportDamage, text="Report damage", bg='#4CAF50', fg='white')
-        report_button.place(x=100, y=390)
+        report_button.place(x=350, y=400)
 
         # Return
         return_label = Label(self.page, text="Return:", bg="lightcyan", font=("Arial", 14))
         return_label.place(x=500, y=350)
+        return_label = Label(self.page, text="ID", font=("Arial", 10))
+        return_label.place(x=600, y=350)
         self.__return = Entry(self.page)
-        self.__return.place(x=580, y=350, width=220)
+        self.__return.place(x=620, y=350, width=110)
         return_button = Button(self.page, command = self.pay, text="Pay", bg='#4CAF50', fg='white')
-        return_button.place(x=820, y=350)
+        return_button.place(x=620, y=390,width = 100)
 
         # Enter button for Return
         return_enter_button = Button(self.page, command = self.returnBike, text="Enter", bg='#4CAF50', fg='white')
-        return_enter_button.place(x=820, y=390)
+        return_enter_button.place(x=820, y=350)
 
         self.__report = Entry(self.page)
-        self.__report.place(x=220, y=393, width=50)
+        self.__report.place(x=160, y=400, width=120)
 
         res = self.__app.getAvailableVehicle()
         for i in res:

@@ -26,9 +26,6 @@ class OperatorPage():
         label1 = Label(text="Operator", font=l1_font)
         label1.place(x=400, y=80)
 
-        # Sign Out Button
-        button1 = Button(text="Sign Out", font=b_font, bg='red', fg='white')
-        button1.place(x=900, y=150, width=90, height=40)
 
         # Operator Buttons
         button2 = Button(text="Vehicle Management", command = self.vehicle_management, font=b2_font, bg='blue', fg='white')

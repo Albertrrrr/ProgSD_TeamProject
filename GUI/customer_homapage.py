@@ -7,7 +7,6 @@ class CustomerPage():
     def __init__(self, app:app, master=None):
         self.__root = master
         self.__app = app
-        self.CreatePage()
 
     def CreatePage(self):
 
@@ -21,10 +20,6 @@ class CustomerPage():
         # Label for Operator
         label1 = Label(text="Welcome customer!", font=l1_font)
         label1.place(x=350, y=80)
-
-        # Sign Out Button
-        button1 = Button(text="Sign Out", font=b_font, bg='red', fg='white')
-        button1.place(x=900, y=150, width=90, height=40)
 
         # Operator Buttons
         button2 = Button(text="View Map", command = self.map, font=b2_font, bg='blue', fg='white')
@@ -57,6 +52,10 @@ class CustomerPage():
 
     def map(self):
         MapPage.MapPage(self.__root).CreatePage()
+
+
+
+
 
 
 

@@ -1,6 +1,6 @@
 from tkinter import *
 import tkinter.messagebox as msgbox
-from tkinter import ttk, scrolledtext
+from tkinter import scrolledtext
 from app import app
 
 class StationManagementPage():

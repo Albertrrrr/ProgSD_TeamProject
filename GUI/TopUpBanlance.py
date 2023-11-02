@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import font
 from app import app
 import tkinter.messagebox as msgbox
-import os
 from pathlib import Path
 from PIL import Image,ImageTk
 

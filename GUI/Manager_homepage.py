@@ -22,10 +22,6 @@ class ManagerPage():
         label1 = Label(text="Welcome manager!", font=l1_font)
         label1.place(x=350, y=80)
 
-        # Sign Out Button
-        button1 = Button(text="Sign Out", font=b_font, bg='red', fg='white')
-        button1.place(x=900, y=150, width=90, height=40)
-
         # Operator Buttons
         button2 = Button(text="View PDF", font=b2_font, bg='blue', fg='white')
         button2.place(x=200, y=250, width=260, height=50)
