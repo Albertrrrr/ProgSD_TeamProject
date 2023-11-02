@@ -294,7 +294,10 @@ class Manager:
         for i in detailsList:
             for j in range(3, 5):
                 i = list(i)
-                i[j] = i[j].strftime("%Y-%m-%d %H:%M:%S")
+                if i[j] is None:
+                    i[j] = "None"
+                else:
+                    i[j] = i[j].strftime("%Y-%m-%d %H:%M:%S")
             res.append(i)
         return res
     def load_data(self, filename):
