@@ -7,7 +7,7 @@ Additionally, we set the database which is MySQL on Google Cloud to support our 
 
 ## Update Bate 1.0
 - improve security, you just need to change mysql_config from `config.py` only
-- improve other building platform, in particular macOS 
+- improve support for other building platform, in particular macOS 
 - improve user friendliness 
 
 ## Environment Preparation 
