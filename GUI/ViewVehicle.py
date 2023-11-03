@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import scrolledtext
 from app import app
+from tkmacosx import Button
+
 
 class ViewVehiclePage():
     def __init__(self, app: app, master=None):

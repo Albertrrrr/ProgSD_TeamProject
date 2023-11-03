@@ -1,6 +1,8 @@
 from tkinter import *
 import tkintermapview
 import pymysql
+from tkmacosx import Button
+from config import mysql_config
 
 class MapPage(object):
     def __init__(self,  master=None):
@@ -20,13 +22,6 @@ class MapPage(object):
 
         # vehicle_local_list = self.user.get_locations()
 
-        mysql_config = {
-            'host': '35.246.24.203',
-            'port': 3306,
-            'user': 'root',
-            'passwd': '3022008a',
-            'database': 'progSDTeamProject',
-        }
         # connect to mysql
         db = pymysql.connect(**mysql_config)
         cursor = db.cursor()

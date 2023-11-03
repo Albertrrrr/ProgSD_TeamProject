@@ -24,44 +24,27 @@ import webbrowser
 from matplotlib.backends.backend_pdf import PdfPages
 from Records import Records
 from Vehicle import Vehicle, VehicleCapacityError
-
-
-# mysql configs
-mysql_config = {
-    'host': '35.246.24.203',
-    'port': 3306,
-    'user': 'root',
-    'passwd': '3022008a',
-    'database': 'progSDTeamProject',
-}
-# connect to mysql
-db = pymysql.connect(**mysql_config)
-cursor = db.cursor()
-cursor.execute("SELECT * from Managers")
-# 使用 fetchone() 方法获取单条数据.
-data = cursor.fetchall()
-# 拿到属于数据库的最后一个id
-try:
-    currentID = data[-1][0]
-except:
-    currentID = 0
+from config import mysql_config
 
 
 class OperatorError(Exception):
     pass
 
 class Manager:
-    cursor.execute("SELECT * from Managers")
-    db.commit()
-    # 使用 fetchone() 方法获取单条数据.
-    data = cursor.fetchall()
-    # 拿到属于数据库的最后一个id
-    try:
-        currentID = data[-1][0]
-    except:
-        currentID = 0
-
     def __init__(self, email=None):
+        self.__db = pymysql.connect(**mysql_config)
+        self.__cursor = self.__db.cursor()
+
+        self.__cursor.execute("SELECT * from Managers")
+        self.__db.commit()
+        # 使用 fetchone() 方法获取单条数据.
+        data = self.__cursor.fetchall()
+        # 拿到属于数据库的最后一个id
+        try:
+            currentID = data[-1][0]
+        except:
+            currentID = 0
+
         if email is None:
             self.__id = None
             self.__name = None
@@ -71,8 +54,8 @@ class Manager:
             pass
         else:
             oneSQL = "SELECT * FROM Managers WHERE email = %s"
-            cursor.execute(oneSQL, email)
-            oneData = cursor.fetchone()
+            self.__cursor.execute(oneSQL, email)
+            oneData = self.__cursor.fetchone()
 
             if oneData == None:
                 raise OperatorError("You have to check your email and password")
@@ -120,9 +103,9 @@ class Manager:
     def generateCode(self, par: list):
         self.__par = par
 
-        cursor.execute("SELECT * from Managers_ver")
-        db.commit()
-        data = cursor.fetchall()
+        self.__cursor.execute("SELECT * from Managers_ver")
+        self.__db.commit()
+        data = self.__cursor.fetchall()
         try:
             currentID = data[-1][0]
         except:
@@ -135,12 +118,12 @@ class Manager:
 
         saveSQL = "insert ignore into Managers_ver(managerID,name,password,email,code_ver)" \
                   "values(%s,%s,%s,%s,(LPAD(FLOOR(RAND() * 10000), 4, '0')))"
-        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
-        db.commit()
+        addFlag = self.__cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
+        self.__db.commit()
 
         codeSQL = "SELECT * FROM `Managers_ver` WHERE managerID = %s"
-        cursor.execute(codeSQL, self.__id)
-        data = cursor.fetchone()
+        self.__cursor.execute(codeSQL, self.__id)
+        data = self.__cursor.fetchone()
         code_ver = data[-1]
 
         if addFlag:
@@ -153,8 +136,8 @@ class Manager:
     def add(self):
         saveSQL = "insert ignore into Managers(managerID,name,password,email)" \
                   "values(%s,%s,%s,%s)"
-        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
-        db.commit()
+        addFlag = self.__cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
+        self.__db.commit()
         if addFlag:
             print("Add a new Manager successfully", self.__id, self.__name, self.__password, self.__email)
             return True
@@ -164,16 +147,16 @@ class Manager:
 
     def delete(self):
         deleteSQL = "delete from Managers where managerID = %s"
-        cursor.execute(deleteSQL, self.__id)
-        db.commit()
+        self.__cursor.execute(deleteSQL, self.__id)
+        self.__db.commit()
         print("Delete operator successfully", self.__id)
 
     # 更新名字
     def updateName(self, newName: str):
         self.__name = newName
         updateSQL = "update Managers set name = %s where managerID = %s"
-        flag = cursor.execute(updateSQL, (self.__name, self.__id))
-        db.commit()
+        flag = self.__cursor.execute(updateSQL, (self.__name, self.__id))
+        self.__db.commit()
         if flag == 0:
             print("Change unsuccessfully")
             return False
@@ -186,8 +169,8 @@ class Manager:
     def updatePassword(self, newPassword: str):
         self.__password = newPassword
         updateSQL = "update Managers set password = %s where managerID = %s"
-        flag = cursor.execute(updateSQL, (self.__password, self.__id))
-        db.commit()
+        flag = self.__cursor.execute(updateSQL, (self.__password, self.__id))
+        self.__db.commit()
         if flag == 0:
             print("Change unsuccessfully")
             return False
@@ -199,13 +182,13 @@ class Manager:
     def updateEmail(self, newEmail: str):
         self.__email = newEmail
         deleteSQL = "delete from Managers where managerID = %s"
-        cursor.execute(deleteSQL, self.__id)
-        db.commit()
+        self.__cursor.execute(deleteSQL, self.__id)
+        self.__db.commit()
 
         saveSQL = "insert ignore into Managers(managerID,name,password,email)" \
                   "values(%s,%s,%s,%s)"
-        flag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
-        db.commit()
+        flag = self.__cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
+        self.__db.commit()
 
         if flag == 0:
             print("Change unsuccessfully")
@@ -237,16 +220,16 @@ class Manager:
 
     def getAllCustomer(self):
         flagSQL = 'SELECT customerID,name,email,accountBalance FROM `Customers`'
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
+        self.__cursor.execute(flagSQL)
+        details = self.__cursor.fetchall()
         res = self.detailsFormatOM(details)
         return res
 
     # 获得全部Operator
     def getAllOperator(self):
         flagSQL = 'SELECT operatorID,name,email FROM `Operators`'
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
+        self.__cursor.execute(flagSQL)
+        details = self.__cursor.fetchall()
         res = self.detailsFormatOM(details)
         return res
 
@@ -260,8 +243,8 @@ class Manager:
     # 获得全部的Order
     def getAllOrder(self):
         flagSQL = 'SELECT orderID,bike,renter,startStop,endStop,startTime,endTime,createTime,finishTime,cost,isPaid,status FROM `Order`'
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
+        self.__cursor.execute(flagSQL)
+        details = self.__cursor.fetchall()
         res = self.detailsFormatOM(details)
         for i in res:
             for k in range(5, 9):
@@ -275,8 +258,8 @@ class Manager:
     # 获得全部的Records
     def getAllRecord(self):
         flagSQL = 'SELECT * FROM `Records`'
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
+        self.__cursor.execute(flagSQL)
+        details = self.__cursor.fetchall()
         res = self.detailsFormatOM(details)
         for i in res:
             i[2] = i[2].strftime("%Y-%m-%d %H:%M:%S")
@@ -284,8 +267,8 @@ class Manager:
         return res
     def reportAllDetailsOM(self):
         flagSQL = 'SELECT * FROM `Report`'
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
+        self.__cursor.execute(flagSQL)
+        details = self.__cursor.fetchall()
         res = self.detailsFormatReportOM(details)
         return res
     def detailsFormatReportOM(self, details: tuple):

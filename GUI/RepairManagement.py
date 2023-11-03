@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter.messagebox as msgbox
 from tkinter import ttk, scrolledtext
 from app import app
+from tkmacosx import Button
 
 
 class RepairManagementPage():
@@ -29,17 +30,18 @@ class RepairManagementPage():
         title_label.place(x=10, y=5)
 
         # Buttons
-        refresh_btn = Button(top_bar, command = self.refresh, text="Refresh", bg='#4CAF50', fg='white', font=("Arial", 10))
+        refresh_btn = Button(top_bar, command=self.refresh, text="Refresh", bg='#4CAF50', fg='white',
+                             font=("Arial", 10))
         refresh_btn.place(x=230, y=5)
 
-        back_btn = Button(top_bar, command = self.quit, text="Back", bg='#4CAF50', fg='white', font=("Arial", 10))
+        back_btn = Button(top_bar, command=self.quit, text="Back", bg='#4CAF50', fg='white', font=("Arial", 10))
         back_btn.place(x=320, y=5)
 
-        b1 = Label(self.page, text = "Report Information: ", font=("Arial", 10))
-        b1.place(x = 40, y = 50)
+        b1 = Label(self.page, text="Report Information: ", font=("Arial", 10))
+        b1.place(x=40, y=50)
 
-        b2 = Label(self.page, text = "Vehicle Informationn: ", font=("Arial", 10))
-        b2.place(x = 40, y = 400)
+        b2 = Label(self.page, text="Vehicle Informationn: ", font=("Arial", 10))
+        b2.place(x=40, y=400)
 
         # Huge display box (Text widget)
         self.__info_list = scrolledtext.ScrolledText(self.page, width=130, height=15)
@@ -52,15 +54,17 @@ class RepairManagementPage():
         del_entry_lbl.place(x=50, y=360)
         self.__repairID = Entry(self.page, width=10)
         self.__repairID.place(x=90, y=360)
-        del_enter_btn = Button(self.page, command = self.startRepair, text="Enter", bg='#4CAF50', fg='white', font=("Arial", 10))
+        del_enter_btn = Button(self.page, command=self.startRepair, text="Enter", bg='#4CAF50', fg='white',
+                               font=("Arial", 10))
         del_enter_btn.place(x=180, y=360)
-        del_clear_btn = Button(self.page, command = self.clear_1,text="Clear", bg='#4CAF50', fg='white', font=("Arial", 10))
+        del_clear_btn = Button(self.page, command=self.clear_1, text="Clear", bg='#4CAF50', fg='white',
+                               font=("Arial", 10))
         del_clear_btn.place(x=250, y=360)
 
         # Move vehicle operation
         move_lbl = Label(self.page, text="Over repair:", bg="#add8e6", font=("Arial", 12))
         move_lbl.place(x=470, y=320)
-        move_entry_lbl = Label(self.page, text="bikeID",  font=("Arial", 10))
+        move_entry_lbl = Label(self.page, text="bikeID", font=("Arial", 10))
         move_entry_lbl.place(x=462, y=360)
         self.__overRepairBike = Entry(self.page, width=10)
         self.__overRepairBike.place(x=515, y=360)
@@ -69,13 +73,22 @@ class RepairManagementPage():
         self.__overRepairID = Entry(self.page, width=10)
         self.__overRepairID.place(x=515, y=390)
 
-        move_enter_btn = Button(self.page, command = self.overRepair, text="Enter", bg='#4CAF50', fg='white', font=("Arial", 10))
+        move_enter_btn = Button(self.page, command=self.overRepair, text="Enter", bg='#4CAF50', fg='white',
+                                font=("Arial", 10))
         move_enter_btn.place(x=600, y=360)
-        move_clear_btn = Button(self.page, command=self.clear_2, text="Clear", bg='#4CAF50', fg='white', font=("Arial", 10))
+        move_clear_btn = Button(self.page, command=self.clear_2, text="Clear", bg='#4CAF50', fg='white',
+                                font=("Arial", 10))
         move_clear_btn.place(x=670, y=360)
 
         self.__info_list_2 = scrolledtext.ScrolledText(self.page, width=130, height=10)
         self.__info_list_2.place(x=50, y=430)
+
+        res_1 = self.__app.getALLReportOP()
+        for i in res_1:
+            self.__info_list.insert(END, i + "\n")
+        res_2 = self.__app.getAllVehicleOP()
+        for i in res_2:
+            self.__info_list_2.insert(END, i + "\n")
 
     def quit(self):
         self.page.destroy()
@@ -107,15 +120,15 @@ class RepairManagementPage():
     def overRepair(self):
         bike = self.__overRepairBike.get()
         id = self.__overRepairID.get()
-        flag = self.__app.endFixBikeOP(int(bike),int(id))
+        flag = self.__app.endFixBikeOP(int(bike), int(id))
         if flag:
             msgbox.showinfo("Success", "Successfully change!", parent=self.page)
         else:
             msgbox.showwarning("Warning", "Please Check!", parent=self.page)
 
     def clear_1(self):
-        self.__repairID.delete(0,END)
+        self.__repairID.delete(0, END)
 
     def clear_2(self):
-        self.__overRepairID.delete(0,END)
-        self.__overRepairBike.delete(0,END)
+        self.__overRepairID.delete(0, END)
+        self.__overRepairBike.delete(0, END)

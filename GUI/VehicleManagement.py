@@ -2,6 +2,8 @@ from tkinter import *
 import tkinter.messagebox as msgbox
 from tkinter import ttk, scrolledtext
 from app import app
+from tkmacosx import Button
+
 
 class VehicleManagementPage():
     def __init__(self, app:app, master=None):
@@ -93,6 +95,10 @@ class VehicleManagementPage():
         track_clear_btn.place(x=670, y=510)
         self.__track_message = Label(self.page,font = ("Arial",12))
         self.__track_message.place(x = 400, y = 545)
+
+        res = self.__app.getAllVehicleOP()
+        for i in res:
+            self.__info_text.insert(END, i + "\n")
 
     def refresh(self):
         content = self.__info_text.get('1.0', END)

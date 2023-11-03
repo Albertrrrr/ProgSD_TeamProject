@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter.messagebox as msgbox
 from tkinter import ttk, scrolledtext
 from app import app
+from tkmacosx import Button
 
 
 class StationPropertyPage():
@@ -88,6 +89,10 @@ class StationPropertyPage():
         move_clear_btn = Button(self.page, command=self.clear_2, text="Clear", bg='#4CAF50', fg='white',
                                 font=("Arial", 10))
         move_clear_btn.place(x=670, y=390)
+
+        res = self.__app.getAllStopsOP()
+        for i in res:
+            self.__info_list.insert(END, i + "\n")
 
     def refresh(self):
         content = self.__info_list.get('1.0', END)

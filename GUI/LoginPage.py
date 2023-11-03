@@ -3,6 +3,7 @@ import tkinter.messagebox as msgbox
 from tkinter import font
 from GUI import Registration, customer_homapage, OperatorPage, ManagerHomePage
 from app import app
+from tkmacosx import Button
 
 
 class LoginPage(object):

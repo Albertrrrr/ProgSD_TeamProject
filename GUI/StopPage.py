@@ -1,8 +1,9 @@
 from tkinter import *
 from tkinter import ttk, scrolledtext
-
+from tkmacosx import Button
 from GUI import RentReturn
 from app import app
+
 
 class StopPage():
     def __init__(self, app: app, master=None):

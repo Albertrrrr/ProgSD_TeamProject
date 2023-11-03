@@ -4,18 +4,9 @@ Introduction to Customer Class
 import pymysql
 from pay import pay
 import datetime
+from config import mysql_config
 
 # mysql configs
-mysql_config = {
-    'host': '35.246.24.203',
-    'port': 3306,
-    'user': 'root',
-    'passwd': '3022008a',
-    'database': 'progSDTeamProject',
-}
-# connect to mysql
-db = pymysql.connect(**mysql_config)
-cursor = db.cursor()
 
 
 class CustomerError(Exception):
@@ -25,21 +16,13 @@ class CustomerError(Exception):
 class Customer:
     def __init__(self, email=None):
 
-        # mysql configs
-        mysql_config = {
-            'host': '35.246.24.203',
-            'port': 3306,
-            'user': 'root',
-            'passwd': '3022008a',
-            'database': 'progSDTeamProject',
-        }
         # connect to mysql
-        db = pymysql.connect(**mysql_config)
-        cursor = db.cursor()
+        self.__db = pymysql.connect(**mysql_config)
+        self.__cursor = self.__db.cursor()
 
-        cursor.execute("SELECT * from Customers ORDER BY customerID")
+        self.__cursor.execute("SELECT * from Customers ORDER BY customerID")
         # 使用 fetchone() 方法获取单条数据.
-        data = cursor.fetchall()
+        data = self.__cursor.fetchall()
 
 
         try:
@@ -59,8 +42,8 @@ class Customer:
         else:
 
             oneSQL = "SELECT * FROM Customers WHERE email = %s"
-            cursor.execute(oneSQL, email)
-            oneData = cursor.fetchone()
+            self.__cursor.execute(oneSQL, email)
+            oneData = self.__cursor.fetchone()
 
             if oneData == None:
                 raise CustomerError("You have to check your email and password")
@@ -133,8 +116,8 @@ class Customer:
 
         saveSQL = "insert ignore into Customers(customerID,name,password,email,accountBalance)" \
                   "values(%s,%s,%s,%s,%s)"
-        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email, self.__balance))
-        db.commit()
+        addFlag = self.__cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email, self.__balance))
+        self.__db.commit()
         if addFlag:
             print("Add a new customer successfully", self.__id, self.__name, self.__password, self.__email,
                   self.__balance)
@@ -146,8 +129,8 @@ class Customer:
     # 删除customer 在manager中补充
     def delete(self):
         deleteSQL = "delete from Customers where customerID = %s"
-        flag = cursor.execute(deleteSQL, self.__id)
-        db.commit()
+        flag = self.__cursor.execute(deleteSQL, self.__id)
+        self.__db.commit()
         if flag == 0:
             print("Change unsuccessfully")
             return False
@@ -160,8 +143,8 @@ class Customer:
     def updateName(self, newName: str):
         self.__name = newName
         updateSQL = "update Customers set name = %s where customerID = %s"
-        flag = cursor.execute(updateSQL, (self.__name, self.__id))
-        db.commit()
+        flag = self.__cursor.execute(updateSQL, (self.__name, self.__id))
+        self.__db.commit()
         if flag:
             print("Change successfully")
             return True
@@ -174,8 +157,8 @@ class Customer:
     def updatePassword(self, newPassword: str):
         self.__password = newPassword
         updateSQL = "update Customers set password = %s where customerID = %s"
-        flag = cursor.execute(updateSQL, (self.__password, self.__id))
-        db.commit()
+        flag = self.__cursor.execute(updateSQL, (self.__password, self.__id))
+        self.__db.commit()
         if flag:
             print("Change successfully")
             return True
@@ -186,13 +169,13 @@ class Customer:
     # 更新邮件 主键
     def updateEmail(self, newEmail: str):
         deleteSQL = "delete from Customers where customerID = %s"
-        cursor.execute(deleteSQL, self.__id)
-        db.commit()
+        self.__cursor.execute(deleteSQL, self.__id)
+        self.__db.commit()
 
         saveSQL = "insert ignore into Customers(customerID,name,password,email,accountBalance)" \
                   "values(%s,%s,%s,%s,%s)"
-        flag = cursor.execute(saveSQL, (self.__id, self.name, self.password, newEmail, self.__balance))
-        db.commit()
+        flag = self.__cursor.execute(saveSQL, (self.__id, self.name, self.password, newEmail, self.__balance))
+        self.__db.commit()
 
         if flag:
             print("Change successfully")
@@ -204,8 +187,8 @@ class Customer:
     def updateBalance(self, newBalance: str):
         self.__balance = newBalance
         updateSQL = "update Customers set accountBalance = %s where customerID = %s"
-        cursor.execute(updateSQL, (self.__balance, self.__id))
-        db.commit()
+        self.__cursor.execute(updateSQL, (self.__balance, self.__id))
+        self.__db.commit()
         print("Change balance successfully")
 
     def generateQRCode(self, topUpNumber: float):
@@ -223,8 +206,8 @@ class Customer:
         if flag:
             self.__balance += self.__topUpNUmber
             topUpBalanceSQL = "update Customers set accountBalance = %s where customerID = %s"
-            cursor.execute(topUpBalanceSQL, (self.__balance, self.__id))
-            db.commit()
+            self.__cursor.execute(topUpBalanceSQL, (self.__balance, self.__id))
+            self.__db.commit()
             print("successfully top up account balance")
             return True
         else:
@@ -241,9 +224,9 @@ class Customer:
     def orderDetails(self):
         print(self.__id)
         flagSQL = 'SELECT orderID,bike,startStop,endStop,startTime,endTime,createTime,finishTime,cost,isPaid,status FROM `Order` WHERE renter = %s'
-        cursor.execute(flagSQL, self.__id)
-        db.commit()
-        details = cursor.fetchall()
+        self.__cursor.execute(flagSQL, self.__id)
+        self.__db.commit()
+        details = self.__cursor.fetchall()
         res = self.detailsFormat(details)
         for i in res:
             for k in range(4,8):
@@ -259,8 +242,8 @@ class Customer:
 
     def reportDetails(self):
         flagSQL = 'SELECT reportID,message,startTime,endTime,status FROM `Report` WHERE fromID = %s'
-        cursor.execute(flagSQL, self.__id)
-        details = cursor.fetchall()
+        self.__cursor.execute(flagSQL, self.__id)
+        details = self.__cursor.fetchall()
         res = self.detailsFormat(details)
         for i in res:
             for k in range(2, 4):
@@ -272,9 +255,9 @@ class Customer:
 
     def unpaidDetails(self):
         flagSQL = 'SELECT orderID,bike,startTime,cost,isPaid FROM `Order` WHERE renter = %s and isPaid = 0'
-        cursor.execute(flagSQL, self.__id)
-        db.commit()
-        details = cursor.fetchall()
+        self.__cursor.execute(flagSQL, self.__id)
+        self.__db.commit()
+        details = self.__cursor.fetchall()
         key = self.detailsFormat(details)
         res = []
         for i in key:

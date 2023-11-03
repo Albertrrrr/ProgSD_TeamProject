@@ -4,6 +4,12 @@ UofG ProgSD TeamProject
 This project is to create a software system to support an electric vehicle share programme.
 We use Python for our implementation, with a user interface written in Tkinter.
 Additionally, we set the database which is MySQL on Google Cloud to support our project.
+
+## Update Bate 1.0
+- improve security, you just need to change mysql_config from `config.py` only
+- improve other building platform, in particular macOS 
+- improve user friendliness 
+
 ## Environment Preparation 
 ### Install Anaconda Environment
 `conda create -n projectBike python=3.6`
@@ -34,7 +40,7 @@ This is the root file to start the project, run `run.py` to start the project.
 ### Notice
 - When you run before, please be sure to complete the environment configuration and database configuration has been changed, otherwise you are still running the data used by our project.  
 
-- You have to change the `mysql_config` parameter of the file, usually it is written at the beginning of the file
+- You have to change the `mysql_config` in `config.py`
 
 ### Test
 Once you have successfully run it, you can register your own account to complete the test

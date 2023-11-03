@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import font
 from app import app
+from tkmacosx import Button
+
 
 class ManagerPage():
     def __init__(self, app:app, master=None):

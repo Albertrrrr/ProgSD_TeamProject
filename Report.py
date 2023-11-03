@@ -1,31 +1,19 @@
 
 import pymysql
 import datetime
+from config import mysql_config
 # mysql configs
 
-mysql_config = {
-    'host': '35.246.24.203',
-    'port': 3306,
-    'user': 'root',
-    'passwd': '3022008a',
-    'database': 'progSDTeamProject',
-}
-# connect to mysql
-db = pymysql.connect(**mysql_config)
-cursor = db.cursor()
-
-cursor.execute("SELECT * from `Report`")
-data = cursor.fetchall()
-# 拿到属于数据库的最后一个id
-currentID = data[-1][0]
-db.commit()
 
 class Report:
     def __init__(self, customer, operator, message: str,):
-        cursor.execute("SELECT * from `Report`")
-        data = cursor.fetchall()
+        self.__db = pymysql.connect(**mysql_config)
+        self.__cursor = self.__db.cursor()
+
+        self.__cursor.execute("SELECT * from `Report`")
+        data = self.__cursor.fetchall()
         # 拿到属于数据库的最后一个id
-        db.commit()
+        self.__db.commit()
         currentID = data[-1][0]
 
         # 拿到属于数据库的最后一个id
@@ -115,8 +103,8 @@ class Report:
 
     def report(self):
         reportSQL = "insert into `Report`(reportID,fromID,message,startTime,endTIme,status,authen) values(%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(reportSQL, (self.__reportID,self.__formID,self.__message,self.__startTime,self.__endTime,self.__status,self.__authen))
-        db.commit()
+        self.__cursor.execute(reportSQL, (self.__reportID,self.__formID,self.__message,self.__startTime,self.__endTime,self.__status,self.__authen))
+        self.__db.commit()
         print("Add a new report successfully", self.__reportID, self.__message)
 
     #done 方法之后要修改为manager修改 传入manager对象才能进行修改
@@ -126,16 +114,16 @@ class Report:
         self.__status = 1
 
         doneSQL = "update `Report` set endTime = %s,status = %s where reportID = %s"
-        cursor.execute(doneSQL, (self.__endTime, self.__status, reportID))
-        db.commit()
+        self.__cursor.execute(doneSQL, (self.__endTime, self.__status, reportID))
+        self.__db.commit()
 
         print("Successfully, processed the report id: ", reportID)
 
     def reportDetails(self):
         flagSQL = 'SELECT * FROM `Report` WHERE fromID = %s And authen = %s'
-        cursor.execute(flagSQL, (self.__formID,self.__authen))
-        details = cursor.fetchall()
-        db.commit()
+        self.__cursor.execute(flagSQL, (self.__formID,self.__authen))
+        details = self.__cursor.fetchall()
+        self.__db.commit()
         return details
 
     def detailsFormat(self,details: tuple):
@@ -154,8 +142,8 @@ class Report:
         current_time = datetime.datetime.now()
         self.__startTime = current_time.strftime("%Y-%m-%d %H:%M:%S")
         updateSQL = "update `Report` set message = %s,startTime = %s where reportID = %s"
-        cursor.execute(updateSQL, (self.__message, self.__startTime, reportID))
-        db.commit()
+        self.__cursor.execute(updateSQL, (self.__message, self.__startTime, reportID))
+        self.__db.commit()
         print("Successfully, updates the report id: ", reportID)
 
 

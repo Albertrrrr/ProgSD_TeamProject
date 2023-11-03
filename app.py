@@ -8,20 +8,14 @@ from Order import Order
 from Vehicle import Vehicle, VehicleCapacityError
 from vehicleStop import vehicleStop
 from Manager import Manager
-
-mysql_config = {
-    'host': '35.246.24.203',
-    'port': 3306,
-    'user': 'root',
-    'password': '3022008a',
-    'database': 'progSDTeamProject',
-}
-# connect to mysql
-db = pymysql.connect(**mysql_config)
-
+from config import mysql_config
 
 class app:
     def __init__(self):
+        self.__mysql_config = mysql_config
+        self.__db = pymysql.connect(**self.__mysql_config)
+        self.__cursor = self.__db.cursor()
+
         self.__customer = None
         self.__operator = None
         self.__manager = None
@@ -123,22 +117,22 @@ class app:
         currentEmail = par[0]
         currentPassword = par[1]
         option = par[2]
-        cursor = db.cursor()
+        cursor = self.__db.cursor()
 
         if option == '1':
             oneSQL = "SELECT * FROM Customers WHERE email = %s"
             cursor.execute(oneSQL, currentEmail)
-            db.commit()
+            self.__db.commit()
 
         elif option == '2':
             oneSQL = "SELECT * FROM Operators WHERE email = %s"
             cursor.execute(oneSQL, currentEmail)
-            db.commit()
+            self.__db.commit()
 
         elif option == '3':
             oneSQL = "SELECT * FROM Managers WHERE email = %s"
             cursor.execute(oneSQL, currentEmail)
-            db.commit()
+            self.__db.commit()
 
         oneData = cursor.fetchone()
 

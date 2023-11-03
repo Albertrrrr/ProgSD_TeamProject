@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter.messagebox as msgbox
 from tkinter import ttk, scrolledtext
 from app import app
+from tkmacosx import Button
 
 class ManagerCenterPage():
     def __init__(self, app: app, master=None):

@@ -3,14 +3,22 @@ from tkinter import font
 from app import app
 import tkinter.messagebox as msgbox
 from pathlib import Path
-from PIL import Image,ImageTk
+from PIL import Image, ImageTk
+import platform
 
 
 class TopUpBanlancePage():
 
     def __init__(self, app: app, master=None):
+        system = platform.system()
         current_file_path = Path(__file__).resolve()
-        self.__dir = str(current_file_path.parent.parent) + "\\"
+
+        # support other os
+        if system == "windows":
+            self.__dir = str(current_file_path.parent.parent) + "\\"
+        else:
+            self.__dir = str(current_file_path.parent.parent) + "/"
+
         self.__url = None
         self.__root = master
         self.__app = app
@@ -54,8 +62,6 @@ class TopUpBanlancePage():
         button4 = Button(self.page, command=self.true, text="Top-up", font=b_font)
         button4.place(x=300, y=325, width=100, height=40)
 
-
-
     def quit(self):
         self.page.destroy()
 
@@ -67,7 +73,7 @@ class TopUpBanlancePage():
         self.__image_label = Label(self.page, image=self.__img)
 
         self.__image_label.place(x=590, y=280)
-        self.__image_label.config(x=590,y=280)
+        self.__image_label.config(x=590, y=280)
         self.__image_label.pack()
 
     def true(self):

@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import scrolledtext
 from app import app
 import tkinter.messagebox as msgbox
+from tkmacosx import Button
+
 
 class HistoryPage(object):
     def __init__(self, app:app, master=None):

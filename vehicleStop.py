@@ -1,39 +1,25 @@
 import pymysql
+from config import mysql_config
 
-# mysql configs
-mysql_config = {
-    'host': '35.246.24.203',
-    'port': 3306,
-    'user': 'root',
-    'passwd': '3022008a',
-    'database': 'progSDTeamProject',
-}
-# connect to mysql
-db = pymysql.connect(**mysql_config)
-cursor = db.cursor()
-
-cursor.execute("SELECT * from `VehicleStop`")
-# 使用 fetchone() 方法获取单条数据.
-data = cursor.fetchall()
-db.commit()
-# 拿到属于数据库的最后一个id
-currentID = data[-1][0]
 
 class vehicleStop:
     def __init__(self, locationID:int = None):
-        cursor.execute("SELECT * from `VehicleStop`")
+        self.__db = pymysql.connect(**mysql_config)
+        self.__cursor = self.__db.cursor()
+
+        self.__cursor.execute("SELECT * from `VehicleStop`")
         # 使用 fetchone() 方法获取单条数据.
-        data = cursor.fetchall()
-        db.commit()
+        data = self.__cursor.fetchall()
+        self.__db.commit()
         # 拿到属于数据库的最后一个id
-        currentID = data[-1][0]
+        self.__currentID = data[-1][0]
         if locationID is None:
             pass
         else:
             oneSQL = "SELECT * FROM `VehicleStop` WHERE locationID = %s"
-            cursor.execute(oneSQL, locationID)
-            oneData = cursor.fetchone()
-            db.commit()
+            self.__cursor.execute(oneSQL, locationID)
+            oneData = self.__cursor.fetchone()
+            self.__db.commit()
             self.__id = oneData[0]
             self.__name = oneData[1]
             self.__axis = oneData[2]
@@ -81,21 +67,21 @@ class vehicleStop:
         self.__maxCapacity = value
 
     def add(self, par: list):
-        self.__id = currentID + 1
+        self.__id = self.__currentID + 1
         self.__name = par[0]
         self.__axis = par[1]
         self.__maxCapacity = par[2]
 
         searchSQL = "SELECT COUNT(*) FROM Vehicle WHERE locations = %s AND isLocked = 0 AND isRented = 0"
-        cursor.execute(searchSQL,self.__id)
-        data = cursor.fetchone()
+        self.__cursor.execute(searchSQL,self.__id)
+        data = self.__cursor.fetchone()
         self.__currentCapacity = data[0]
 
         saveSQL = "insert ignore into VehicleStop(locationID,name,axis,maxCapacity,currentCapacity)" \
                   "values(%s,%s,%s,%s,%s)"
 
-        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__axis, self.__maxCapacity,self.__currentCapacity))
-        db.commit()
+        addFlag = self.__cursor.execute(saveSQL, (self.__id, self.__name, self.__axis, self.__maxCapacity,self.__currentCapacity))
+        self.__db.commit()
         if addFlag:
             print("Add a new vehicle stop successfully", self.__id, self.__name, self.__axis, self.__maxCapacity,self.__currentCapacity)
             return True
@@ -105,8 +91,8 @@ class vehicleStop:
 
     def delete(self):
         deleteSQL = "delete from VehicleStop where locationID = %s"
-        flag = cursor.execute(deleteSQL, self.__id)
-        db.commit()
+        flag = self.__cursor.execute(deleteSQL, self.__id)
+        self.__db.commit()
         if flag == 0:
             return False
         else:
@@ -116,8 +102,8 @@ class vehicleStop:
     def updateName(self, newName: str):
         self.__name = newName
         updateSQL = "update VehicleStop set name = %s where locationID = %s"
-        flag = cursor.execute(updateSQL, (self.__name, self.__id))
-        db.commit()
+        flag = self.__cursor.execute(updateSQL, (self.__name, self.__id))
+        self.__db.commit()
         if flag == 0:
             print("Change unsuccessfully")
             return False
@@ -128,8 +114,8 @@ class vehicleStop:
     def updateMaxCapacity(self, newMaxCapacity: int):
         self.__maxCapacity = newMaxCapacity
         updateSQL = "update VehicleStop set maxCapacity = %s where locationID = %s"
-        flag = cursor.execute(updateSQL, (self.__maxCapacity, self.__id))
-        db.commit()
+        flag = self.__cursor.execute(updateSQL, (self.__maxCapacity, self.__id))
+        self.__db.commit()
         if flag == 0:
             print("Change unsuccessfully")
             return False
@@ -140,11 +126,11 @@ class vehicleStop:
     def updateAxis(self, newAxis:str):
         self.__axis = newAxis
         deleteSQL = "delete from `VehicleStop` where locationID = %s"
-        cursor.execute(deleteSQL, self.__id)
-        db.commit()
+        self.__cursor.execute(deleteSQL, self.__id)
+        self.__db.commit()
         par = [self.__name, self.__axis, self.__maxCapacity]
         flag = self.add(par)
-        db.commit()
+        self.__db.commit()
 
         if flag == 0:
             print("Change unsuccessfully")
@@ -156,15 +142,15 @@ class vehicleStop:
     #更新新的Vechile数量 已经设置了Mysql触发器
 
     def stopDetails(self):
-        cursor.execute("SELECT locationID,name,maxCapacity,currentCapacity from `VehicleStop`")
-        details = cursor.fetchall()
-        db.commit()
+        self.__cursor.execute("SELECT locationID,name,maxCapacity,currentCapacity from `VehicleStop`")
+        details = self.__cursor.fetchall()
+        self.__db.commit()
         return details
 
     def stopDetailsOP(self):
-        cursor.execute("SELECT * from `VehicleStop`")
-        details = cursor.fetchall()
-        db.commit()
+        self.__cursor.execute("SELECT * from `VehicleStop`")
+        details = self.__cursor.fetchall()
+        self.__db.commit()
         return details
 
     def detailsFormat(self, details: tuple):
@@ -177,9 +163,9 @@ class vehicleStop:
     #输出属于该车站的所有可用车辆
     def vehicleToList(self):
         searchSQL = "SELECT * FROM `Vehicle` WHERE locations = %s AND isLocked = 0"
-        cursor.execute(searchSQL, self.__id)
-        data = cursor.fetchall()
-        db.commit()
+        self.__cursor.execute(searchSQL, self.__id)
+        data = self.__cursor.fetchall()
+        self.__db.commit()
         res = []
         for i in data:
             tupleID = (i[0],i[1],i[3],i[5])
@@ -188,11 +174,11 @@ class vehicleStop:
 
     def vehicleAllList(self):
         searchSQL = "SELECT * FROM `Vehicle`"
-        cursor.execute(searchSQL)
+        self.__cursor.execute(searchSQL)
 
-        db.commit()
+        self.__db.commit()
 
-        data = cursor.fetchall()
+        data = self.__cursor.fetchall()
         res = self.detailsFormat(data)
 
         for i in res:

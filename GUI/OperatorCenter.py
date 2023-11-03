@@ -2,6 +2,8 @@ from tkinter import *
 import tkinter.messagebox as msgbox
 from tkinter import ttk, scrolledtext
 from app import app
+from tkmacosx import Button
+
 
 class OperatorCenterPage():
     def __init__(self, app: app, master=None):

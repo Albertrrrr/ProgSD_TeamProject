@@ -3,27 +3,8 @@ import datetime
 from Customer import Customer
 from Vehicle import Vehicle
 from vehicleStop import vehicleStop
+from config import mysql_config
 
-# mysql configs
-mysql_config = {
-    'host': '35.246.24.203',
-    'port': 3306,
-    'user': 'root',
-    'passwd': '3022008a',
-    'database': 'progSDTeamProject',
-}
-# connect to mysql
-db = pymysql.connect(**mysql_config)
-cursor = db.cursor()
-
-cursor.execute("SELECT * from `Order`")
-# 使用 fetchone() 方法获取单条数据.
-data = cursor.fetchall()
-# 拿到属于数据库的最后一个id
-try:
-    currentID = data[-1][0]
-except:
-    currentID = 0
 
 
 class OrderError(Exception):
@@ -33,10 +14,15 @@ class OrderError(Exception):
 class Order:
     # par 格式 email, vehicleID
     def __init__(self, customer: Customer, vehicle:Vehicle):
-        cursor.execute("SELECT * from `Order`")
+
+        # connect to mysql
+        self.__db = pymysql.connect(**mysql_config)
+        self.__cursor = self.__db.cursor()
+
+        self.__cursor.execute("SELECT * from `Order`")
         # 使用 fetchone() 方法获取单条数据.
-        data = cursor.fetchall()
-        db.commit()
+        data = self.__cursor.fetchall()
+        self.__db.commit()
         # 拿到属于数据库的最后一个id
         try:
             currentID = data[-1][0]
@@ -90,8 +76,8 @@ class Order:
             self.__endStop = None
 
             flagSQL = 'SELECT * FROM `Order` WHERE renter = %s'
-            cursor.execute(flagSQL, self.__renterID)
-            orderList = cursor.fetchall()
+            self.__cursor.execute(flagSQL, self.__renterID)
+            orderList = self.__cursor.fetchall()
 
             for i in orderList:
                 if i[9] == '0':
@@ -201,9 +187,9 @@ class Order:
             self.__vehicle.rent()
             self.__bikeID = self.__vehicle.vehicleID
             startSQL = "insert into `Order`(orderID,renter,bike,startTime,endTime,createTime,finishTime,cost,isPaid,status,startStop,endStop) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(startSQL, (self.__id, self.__renterID, self.__bikeID, self.__startTime, self.__endTime,
+            self.__cursor.execute(startSQL, (self.__id, self.__renterID, self.__bikeID, self.__startTime, self.__endTime,
                                       self.__createTime, self.__finishTime, self.__cost, self.__isPaid, self.__status,self.__startStop,self.__endStop))
-            db.commit()
+            self.__db.commit()
             print("Add a new order id : " + str(self.__id) + " successfully from: " + self.__email)
             return True
 
@@ -227,8 +213,8 @@ class Order:
 
 
         updateSQL = "update `Order` set endTime = %s,cost = %s,endStop = %s where orderID = %s"
-        flag = cursor.execute(updateSQL, (self.__endTime, self.__cost, self.__endStop, self.__id))
-        db.commit()
+        flag = self.__cursor.execute(updateSQL, (self.__endTime, self.__cost, self.__endStop, self.__id))
+        self.__db.commit()
 
         if flag == 1:
             return True
@@ -242,8 +228,8 @@ class Order:
             self.__customer.updateBalance(accountBalance)
             self.__isPaid = 1
             updateSQL = "update `Order` set isPaid = %s where orderID = %s"
-            cursor.execute(updateSQL, (self.__isPaid, self.__id))
-            db.commit()
+            self.__cursor.execute(updateSQL, (self.__isPaid, self.__id))
+            self.__db.commit()
             print("successfully paid")
             return True
         else:
@@ -256,8 +242,8 @@ class Order:
             self.__status = 1
 
             updateSQL = "update `Order` set finishTime = %s,status = %s where orderID = %s"
-            cursor.execute(updateSQL, (self.__finishTime, self.__status, self.__id))
-            db.commit()
+            self.__cursor.execute(updateSQL, (self.__finishTime, self.__status, self.__id))
+            self.__db.commit()
             return True
         else:
             return False
@@ -266,9 +252,9 @@ class Order:
     def orderDetails(self):
         flagSQL = 'SELECT * FROM `Order` WHERE renter = %s'
         print(self.__renterID)
-        cursor.execute(flagSQL, self.__renterID)
-        db.commit()
-        details = cursor.fetchall()
+        self.__cursor.execute(flagSQL, self.__renterID)
+        self.__db.commit()
+        details = self.__cursor.fetchall()
 
         return details
 
@@ -321,9 +307,9 @@ class Order:
     def payTo(self):
         accountBalance = self.__customer.balance
         idSQL = 'SELECT * FROM `Order` WHERE renter = %s AND isPaid = 0'
-        cursor.execute(idSQL, self.__renterID)
-        db.commit()
-        index = cursor.fetchone()
+        self.__cursor.execute(idSQL, self.__renterID)
+        self.__db.commit()
+        index = self.__cursor.fetchone()
         print(index)
         try:
             self.__cost = index[-5]
@@ -336,8 +322,8 @@ class Order:
             self.__customer.updateBalance(accountBalance)
             self.__isPaid = 1
             updateSQL = "update `Order` set isPaid = %s where orderID = %s"
-            cursor.execute(updateSQL, (self.__isPaid, self.__id))
-            db.commit()
+            self.__cursor.execute(updateSQL, (self.__isPaid, self.__id))
+            self.__db.commit()
             print("successfully paid: ", self.__id)
 
             current_time = datetime.datetime.now()
@@ -345,8 +331,8 @@ class Order:
             self.__status = 1
 
             updateSQL = "update `Order` set finishTime = %s,status = %s where orderID = %s"
-            cursor.execute(updateSQL, (self.__finishTime, self.__status, self.__id))
-            db.commit()
+            self.__cursor.execute(updateSQL, (self.__finishTime, self.__status, self.__id))
+            self.__db.commit()
 
             self.__isFlag = 1
             self.__isPaid = 1

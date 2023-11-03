@@ -2,19 +2,8 @@ import pymysql
 
 from Records import Records
 from Vehicle import Vehicle, VehicleCapacityError
+from config import mysql_config
 
-
-# mysql configs
-mysql_config = {
-    'host': '35.246.24.203',
-    'port': 3306,
-    'user': 'root',
-    'passwd': '3022008a',
-    'database': 'progSDTeamProject',
-}
-# connect to mysql
-db = pymysql.connect(**mysql_config)
-cursor = db.cursor()
 
 
 
@@ -23,17 +12,21 @@ class OperatorError(Exception):
 
 
 class Operator:
-    cursor.execute("SELECT * from Operators ORDER BY operatorID")
-    # 使用 fetchone() 方法获取单条数据.
-    db.commit()
-    data = cursor.fetchall()
-    # 拿到属于数据库的最后一个id
-    try:
-        currentID = data[-1][0]
-    except:
-        currentID = 0
 
     def __init__(self, email=None):
+        self.__db = pymysql.connect(**mysql_config)
+        self.__cursor = self.__db.cursor()
+
+        self.__cursor.execute("SELECT * from Operators ORDER BY operatorID")
+        # 使用 fetchone() 方法获取单条数据.
+        self.__db.commit()
+        data = self.__cursor.fetchall()
+        # 拿到属于数据库的最后一个id
+        try:
+            currentID = data[-1][0]
+        except:
+            currentID = 0
+
         if email is None:
             self.__id = None
             self.__name = None
@@ -43,8 +36,8 @@ class Operator:
             pass
         else:
             oneSQL = "SELECT * FROM Operators WHERE email = %s"
-            cursor.execute(oneSQL, email)
-            oneData = cursor.fetchone()
+            self.__cursor.execute(oneSQL, email)
+            oneData = self.__cursor.fetchone()
 
             if oneData == None:
                 raise OperatorError("You have to check your email and password")
@@ -92,9 +85,9 @@ class Operator:
     def generateCode(self, par: list):
         self.__par = par
 
-        cursor.execute("SELECT * from Operators_ver")
-        db.commit()
-        data = cursor.fetchall()
+        self.__cursor.execute("SELECT * from Operators_ver")
+        self.__db.commit()
+        data = self.__cursor.fetchall()
 
         try:
             currentID = data[-1][0]
@@ -108,14 +101,14 @@ class Operator:
 
         saveSQL = "insert ignore into Operators_ver(operatorID,name,password,email,code_ver)" \
                   "values(%s,%s,%s,%s,(LPAD(FLOOR(RAND() * 10000), 4, '0')))"
-        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
-        db.commit()
+        addFlag = self.__cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
+        self.__db.commit()
 
 
         codeSQL = "SELECT * FROM `Operators_ver` WHERE operatorID = %s"
-        cursor.execute(codeSQL, self.__id)
-        db.commit()
-        data = cursor.fetchone()
+        self.__cursor.execute(codeSQL, self.__id)
+        self.__db.commit()
+        data = self.__cursor.fetchone()
         code_ver = data[-1]
 
         if addFlag:
@@ -129,8 +122,8 @@ class Operator:
 
         saveSQL = "insert ignore into Operators(operatorID,name,password,email)" \
                       "values(%s,%s,%s,%s)"
-        addFlag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
-        db.commit()
+        addFlag = self.__cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
+        self.__db.commit()
         if addFlag:
             print("Add a new Operator successfully", self.__id, self.__name, self.__password, self.__email)
             return True
@@ -148,8 +141,8 @@ class Operator:
     def updateName(self, newName: str):
         self.__name = newName
         updateSQL = "update Operators set name = %s where operatorID = %s"
-        flag = cursor.execute(updateSQL, (self.__name, self.__id))
-        db.commit()
+        flag = self.__cursor.execute(updateSQL, (self.__name, self.__id))
+        self.__db.commit()
         if flag == 0:
             print("Change unsuccessfully")
             return False
@@ -162,8 +155,8 @@ class Operator:
     def updatePassword(self, newPassword: str):
         self.__password = newPassword
         updateSQL = "update Operators set password = %s where operatorID = %s"
-        flag = cursor.execute(updateSQL, (self.__password, self.__id))
-        db.commit()
+        flag = self.__cursor.execute(updateSQL, (self.__password, self.__id))
+        self.__db.commit()
         if flag == 0:
             print("Change unsuccessfully")
             return False
@@ -175,13 +168,13 @@ class Operator:
     def updateEmail(self, newEmail: str):
         self.__email = newEmail
         deleteSQL = "delete from Operators where operatorID = %s"
-        cursor.execute(deleteSQL, self.__id)
-        db.commit()
+        self.__cursor.execute(deleteSQL, self.__id)
+        self.__db.commit()
 
         saveSQL = "insert ignore into Operators(operatorID,name,password,email)" \
                   "values(%s,%s,%s,%s)"
-        flag = cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
-        db.commit()
+        flag = self.__cursor.execute(saveSQL, (self.__id, self.__name, self.__password, self.__email))
+        self.__db.commit()
 
         if flag == 0:
             print("Change unsuccessfully")
@@ -264,9 +257,9 @@ class Operator:
 
     def reportAllDetails(self):
         flagSQL = 'SELECT * FROM `Report` '
-        cursor.execute(flagSQL)
-        details = cursor.fetchall()
-        db.commit()
+        self.__cursor.execute(flagSQL)
+        details = self.__cursor.fetchall()
+        self.__db.commit()
         res = self.detailsFormat(details)
         return res
 
