@@ -117,6 +117,10 @@ class StationManagementPage():
         place = self.__addPlace.get()
         selected = self.__bike_type.get()
         str_selected = str(selected)
+        if str(str_selected) == 1:
+            str_selected = "bike"
+        else:
+            str_selected = "E-bike"
         par = [str_selected, int(place), "normal"]
         flag = self.__app.addVehicleOP(par)
         if flag:
